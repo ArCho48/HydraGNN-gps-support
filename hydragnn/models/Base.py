@@ -130,10 +130,10 @@ class Base(Module):
         # Option to set initially large output bias (UQ).
         self.initial_bias = initial_bias
 
-        # Specify global attention usage (add relative edge attr if model can handle edge feats)
+        # Specify global attention usage: specify input embedding dims and edge embedding dims; if model can handle edge features, enforce use of relative edge encodings
         if self.global_attn_engine:
             self.use_global_attn = True
-            self.embed_dim = self.edge_embed_dim = hidden_dim
+            self.embed_dim = self.edge_embed_dim = hidden_dim #ensure that all input to gps have the same dimensionality
             if self.is_edge_model:
                 if "edge_attr" not in self.input_args:
                     self.input_args += ", edge_attr"
@@ -141,7 +141,8 @@ class Base(Module):
                     self.conv_args += ", edge_attr"
         else:
             self.use_global_attn = False
-            self.embed_dim = input_dim
+            #ensure that all inputs maintain original dimensionality if gps is turned off
+            self.embed_dim = input_dim         
             self.edge_embed_dim = self.edge_dim
 
         self.use_encodings = False # provision to decouple encodings from globalAtt later
@@ -168,7 +169,9 @@ class Base(Module):
         self.conv_checkpointing = False
     
     def _apply_global_attn(self, mpnn):
+        # choose to use global attention or mpnn
         if self.use_global_attn:
+            # specify global attention engine; use this to support more engines in future
             if self.global_attn_engine == 'GPS':
                 return GPSConv(
                     channels=self.hidden_dim,
@@ -199,12 +202,14 @@ class Base(Module):
             ), "Data must have edge attributes if use_edge_attributes is set."
             conv_args.update({"edge_attr": data.edge_attr})
 
-        # TODO: add comment on why and what
         if self.use_global_attn:
+            #encode node positional embeddings
             x = self.pos_emb(data.pe)
+            # if node features are available, genrate mebeddings, concatenate with positional embeddings and map to hidden dim
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
                 x = self.node_lin(x)
+            # repeat for edge features and relative edge encodings
             if self.is_edge_model:
                 e = self.rel_pos_emb(data.rel_pe)
                 if self.use_edge_attr:

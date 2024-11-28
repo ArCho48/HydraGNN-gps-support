@@ -62,7 +62,7 @@ class DIMEStack(Base):
         self.num_after_skip = num_after_skip
         self.edge_dim = edge_dim
         self.radius = radius
-
+        self.is_edge_model = True #specify that mpnn cannot handle edge features
         super().__init__(input_args, conv_args, *args, **kwargs)
 
         self.rbf = BesselBasisLayer(num_radial, radius, envelope_exponent)
@@ -190,14 +190,15 @@ class DIMEStack(Base):
 
         if self.use_global_attn:
             x = self.pos_emb(data.pe)
-            e = self.rel_pos_emb(data.rel_pe)
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
                 x = self.node_lin(x)
-            if self.use_edge_attr:
-                e = torch.cat((self.edge_emb(conv_args['edge_attr']), e), 1 )
-                e = self.edge_lin(e)    
-            conv_args.update({"edge_attr": e})
+            if self.is_edge_model:
+                e = self.rel_pos_emb(data.rel_pe)
+                if self.use_edge_attr:
+                    e = torch.cat((self.edge_emb(conv_args['edge_attr']), e), 1 )
+                    e = self.edge_lin(e)    
+                conv_args.update({"edge_attr": e})
             return x, data.pos, conv_args 
         else:
             return data.x, data.pos, conv_args
