@@ -33,21 +33,19 @@ class GATStack(Base):
         self.heads = heads
         self.negative_slope = negative_slope
         self.edge_dim = edge_dim
-
+        self.is_edge_model = False #specify that mpnn cannot handle edge features
         super().__init__(input_args, conv_args, *args, **kwargs)
 
     def _init_conv(self):
         """Here this function overwrites _init_conv() in Base since it has different implementation
         in terms of dimensions due to the multi-head attention"""
-        self.graph_convs.append(self.get_conv(self.input_dim, self.hidden_dim, True))
-        self.feature_layers.append(BatchNorm(self.hidden_dim * self.heads))
+        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.embed_dim, self.hidden_dim, concat=True)))
+        self.feature_layers.append(BatchNorm(self.hidden_dim * self.hidden_dim))
         for _ in range(self.num_conv_layers - 2):
-            conv = self.get_conv(self.hidden_dim * self.heads, self.hidden_dim, True)
-            self.graph_convs.append(conv)
+            self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim * self.heads, self.hidden_dim, concat=True)))
             self.feature_layers.append(BatchNorm(self.hidden_dim * self.heads))
-        conv = self.get_conv(self.hidden_dim * self.heads, self.hidden_dim, False)
-        self.graph_convs.append(conv)
-        self.feature_layers.append(BatchNorm(self.hidden_dim))
+        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim * self.heads, self.hidden_dim, concat=False)))
+        self.feature_layers.append(BatchNorm(self.hidden_dim))   
 
     def _init_node_conv(self):
         """Here this function overwrites _init_conv() in Base since it has different implementation

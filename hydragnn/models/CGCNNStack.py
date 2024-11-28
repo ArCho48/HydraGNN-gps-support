@@ -30,7 +30,7 @@ class CGCNNStack(Base):
         self.edge_dim = edge_dim
 
         # CGCNN does not change embedding dimensions
-        # We use input dimension (first argument of base constructor)
+        # We use input dimension (first argument of base constructor)00
         #    also as hidden dimension (second argument of base constructor)
         # We therefore pass all required args explicitly.
         super().__init__(
@@ -53,7 +53,9 @@ class CGCNNStack(Base):
             assert self.input_args == "inv_node_feat, equiv_node_feat, edge_index"
             assert self.conv_args == "inv_node_feat, edge_index"
 
-    def get_conv(self, input_dim, _):
+    def get_conv(self, input_dim, _, edge_dim=None):
+        if not edge_dim:
+            edge_dim = self.edge_dim
         cgcnn = CGConv(
             channels=input_dim,
             dim=self.edge_dim,

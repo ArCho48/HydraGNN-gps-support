@@ -15,6 +15,8 @@ from torch_geometric.data import Data
 from typing import List, Union
 
 from hydragnn.models.GINStack import GINStack
+from hydragnn.models.GINEStack import GINEStack
+from hydragnn.models.GGCNStack import GGCNStack
 from hydragnn.models.PNAStack import PNAStack
 from hydragnn.models.PNAPlusStack import PNAPlusStack
 from hydragnn.models.GATStack import GATStack
@@ -38,10 +40,14 @@ def create_model_config(
     use_gpu: bool = True,
 ):
     return create_model(
-        config["Architecture"]["model_type"],
+        config["Architecture"]["mpnn_type"],
         config["Architecture"]["input_dim"],
         config["Architecture"]["hidden_dim"],
         config["Architecture"]["output_dim"],
+        config["Architecture"]["pe_dim"],
+        config["Architecture"]["global_attn_engine"],
+        config["Architecture"]["global_attn_type"],
+        config["Architecture"]["global_attn_heads"],
         config["Architecture"]["output_type"],
         config["Architecture"]["output_heads"],
         config["Architecture"]["activation_function"],
@@ -80,10 +86,14 @@ def create_model_config(
 
 # FIXME: interface does not include ilossweights_hyperp, ilossweights_nll, dropout
 def create_model(
-    model_type: str,
+    mpnn_type: str,
     input_dim: int,
     hidden_dim: int,
     output_dim: list,
+    pe_dim: int,
+    global_attn_engine: str,   
+    global_attn_type: str,
+    global_attn_heads: int,
     output_type: list,
     output_heads: dict,
     activation_function: str,
@@ -125,13 +135,17 @@ def create_model(
     device = get_device(use_gpu, verbosity_level=verbosity)
 
     # Note: model-specific inputs must come first.
-    if model_type == "GIN":
+    if mpnn_type == "GIN":
         model = GINStack(
             "inv_node_feat, equiv_node_feat, edge_index",
             "inv_node_feat, edge_index",
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -144,7 +158,53 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "PNA":
+    elif mpnn_type == "GINE":
+        model = GINEStack(
+            "inv_node_feat, equiv_node_feat, edge_index",
+            "inv_node_feat, edge_index",
+            input_dim,
+            hidden_dim,
+            output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
+            output_type,
+            output_heads,
+            activation_function,
+            loss_function_type,
+            equivariance,
+            loss_weights=task_weights,
+            freeze_conv=freeze_conv,
+            initial_bias=initial_bias,
+            num_conv_layers=num_conv_layers,
+            num_nodes=num_nodes,
+        )
+
+    elif mpnn_type == "GGCN":
+        model = GGCNStack(
+            "inv_node_feat, equiv_node_feat, edge_index",
+            "inv_node_feat, edge_index",
+            input_dim,
+            hidden_dim,
+            output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
+            output_type,
+            output_heads,
+            activation_function,
+            loss_function_type,
+            equivariance,
+            loss_weights=task_weights,
+            freeze_conv=freeze_conv,
+            initial_bias=initial_bias,
+            num_conv_layers=num_conv_layers,
+            num_nodes=num_nodes,
+        )
+
+    elif mpnn_type == "PNA":
         assert pna_deg is not None, "PNA requires degree input."
         model = PNAStack(
             "inv_node_feat, equiv_node_feat, edge_index",
@@ -154,6 +214,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -166,7 +230,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "PNAPlus":
+    elif mpnn_type == "PNAPlus":
         assert pna_deg is not None, "PNAPlus requires degree input."
         assert (
             envelope_exponent is not None
@@ -184,6 +248,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -196,7 +264,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "GAT":
+    elif mpnn_type == "GAT":
         # FIXME: expose options to users
         heads = 6
         negative_slope = 0.05
@@ -209,6 +277,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -221,7 +293,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "MFC":
+    elif mpnn_type == "MFC":
         assert max_neighbours is not None, "MFC requires max_neighbours input."
         model = MFCStack(
             "inv_node_feat, equiv_node_feat, edge_index",
@@ -230,6 +302,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -242,13 +318,17 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "CGCNN":
+    elif mpnn_type == "CGCNN":
         model = CGCNNStack(
             "inv_node_feat, equiv_node_feat, edge_index",  # input_args
             "inv_node_feat, edge_index",  # conv_args
             edge_dim,
             input_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,            
             output_type,
             output_heads,
             activation_function,
@@ -261,13 +341,17 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "SAGE":
+    elif mpnn_type == "SAGE":
         model = SAGEStack(
             "inv_node_feat, equiv_node_feat, edge_index",  # input_args
             "inv_node_feat, edge_index",  # conv_args
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -279,7 +363,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "SchNet":
+    elif mpnn_type == "SchNet":
         assert num_gaussians is not None, "SchNet requires num_guassians input."
         assert num_filters is not None, "SchNet requires num_filters input."
         assert radius is not None, "SchNet requires radius input."
@@ -292,6 +376,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -305,7 +393,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "DimeNet":
+    elif mpnn_type == "DimeNet":
         assert basis_emb_size is not None, "DimeNet requires basis_emb_size input."
         assert (
             envelope_exponent is not None
@@ -333,6 +421,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -346,7 +438,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "EGNN":
+    elif mpnn_type == "EGNN":
         model = EGCLStack(
             "inv_node_feat, equiv_node_feat, edge_index, edge_attr",  # input_args
             "",  # conv_args
@@ -354,6 +446,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -367,7 +463,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "PAINN":
+    elif mpnn_type == "PAINN":
         model = PAINNStack(
             # edge_dim,   # To-do add edge_features
             "inv_node_feat, equiv_node_feat, edge_index, diff, dist",
@@ -377,6 +473,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -388,7 +488,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "PNAEq":
+    elif mpnn_type == "PNAEq":
         assert pna_deg is not None, "PNAEq requires degree input."
         model = PNAEqStack(
             "inv_node_feat, equiv_node_feat, edge_index, edge_rbf, edge_vec",
@@ -400,6 +500,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -411,7 +515,7 @@ def create_model(
             num_nodes=num_nodes,
         )
 
-    elif model_type == "MACE":
+    elif mpnn_type == "MACE":
         assert radius is not None, "MACE requires radius input."
         assert num_radial is not None, "MACE requires num_radial input."
         assert max_ell is not None, "MACE requires max_ell input."
@@ -434,6 +538,10 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
             output_type,
             output_heads,
             activation_function,
@@ -446,7 +554,7 @@ def create_model(
             num_nodes=num_nodes,
         )
     else:
-        raise ValueError("Unknown model_type: {0}".format(model_type))
+        raise ValueError("Unknown mpnn_type: {0}".format(mpnn_type))
 
     if conv_checkpointing:
         model.enable_conv_checkpointing()

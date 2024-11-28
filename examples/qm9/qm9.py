@@ -2,6 +2,7 @@ import os
 import json
 import torch
 import torch_geometric
+from torch_geometric.transforms import AddLaplacianEigenvectorPE
 import argparse
 
 # deprecated in torch_geometric 2.0
@@ -15,19 +16,23 @@ import hydragnn
 num_samples = 1000
 
 # Update each sample prior to loading.
-def qm9_pre_transform(data):
+def qm9_pre_transform(data, transform):
+    # LPE
+    data = transform(data)
     # Set descriptor as element type.
     data.x = data.z.float().view(-1, 1)
     # Only predict free energy (index 10 of 19 properties) for this run.
     data.y = data.y[:, 10] / len(data.x)
     graph_features_dim = [1]
     node_feature_dim = [1]
+    # gps requires relative edge features, introduced rel_lapPe as edge encodings
+    source_pe = data.pe[data.edge_index[0]] 
+    target_pe = data.pe[data.edge_index[1]] 
+    data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
     return data
-
 
 def qm9_pre_filter(data):
     return data.idx < num_samples
-
 
 def main(model_type=None):
     # FIX random seed
@@ -59,12 +64,15 @@ def main(model_type=None):
     # Enable print to log file.
     hydragnn.utils.print.print_utils.setup_log(log_name)
 
+    # LPE
+    transform = AddLaplacianEigenvectorPE(k=config["NeuralNetwork"]["Architecture"]["pe_dim"],attr_name='pe',is_undirected=True)
+
     # Use built-in torch_geometric datasets.
     # Filter function above used to run quick example.
     # NOTE: data is moved to the device in the pre-transform.
     # NOTE: transforms/filters will NOT be re-run unless the qm9/processed/ directory is removed.
     dataset = torch_geometric.datasets.QM9(
-        root="dataset/qm9", pre_transform=qm9_pre_transform, pre_filter=qm9_pre_filter
+        root="dataset/qm9", pre_transform=lambda data: qm9_pre_transform(data, transform), pre_filter=qm9_pre_filter
     )
     train, val, test = hydragnn.preprocess.split_dataset(
         dataset, config["NeuralNetwork"]["Training"]["perc_train"], False

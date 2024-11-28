@@ -29,6 +29,8 @@ import subprocess
         "EGNN",
         "PNAEq",
         "PAINN",
+        "GINE",
+        "GGCN"
     ],
 )
 @pytest.mark.parametrize("example", ["qm9", "md17"])

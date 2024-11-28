@@ -2,6 +2,7 @@ import os
 import json
 import torch
 import torch_geometric
+from torch_geometric.transforms import AddLaplacianEigenvectorPE
 import argparse
 
 # deprecated in torch_geometric 2.0
@@ -12,9 +13,9 @@ except ImportError:
 
 import hydragnn
 
-
 # Update each sample prior to loading.
-def md17_pre_transform(data, compute_edges):
+def md17_pre_transform(data, compute_edges, transform):
+    data = transform(data)
     # Set descriptor as element type.
     data.x = data.z.float().view(-1, 1)
     # Only predict energy (index 0 of 2 properties) for this run.
@@ -22,6 +23,10 @@ def md17_pre_transform(data, compute_edges):
     graph_features_dim = [1]
     node_feature_dim = [1]
     data = compute_edges(data)
+     # gps requires relative edge features, introduced rel_lapPe as edge encodings
+    source_pe = data.pe[data.edge_index[0]] 
+    target_pe = data.pe[data.edge_index[1]] 
+    data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
     return data
 
 
@@ -60,13 +65,16 @@ def main(model_type=None):
     # Preprocess configurations for edge computation
     compute_edges = hydragnn.preprocess.get_radius_graph_config(arch_config)
 
+    # LPE
+    transform = AddLaplacianEigenvectorPE(k=config["NeuralNetwork"]["Architecture"]["pe_dim"],attr_name='pe',is_undirected=True)
+
     # Fix for MD17 datasets
     torch_geometric.datasets.MD17.file_names["uracil"] = "md17_uracil.npz"
 
     dataset = torch_geometric.datasets.MD17(
         root="dataset/md17",
         name="uracil",
-        pre_transform=lambda data: md17_pre_transform(data, compute_edges),
+        pre_transform=lambda data: md17_pre_transform(data, compute_edges, transform),
         pre_filter=md17_pre_filter,
     )
     train, val, test = hydragnn.preprocess.split_dataset(
