@@ -11,8 +11,9 @@
 
 from typing import Optional
 from math import pi as PI
-
+import pdb
 import torch
+from torch import nn
 from torch import Tensor
 from torch.nn import Identity, Linear, ReLU, Sequential
 from torch_geometric.nn import Sequential as PyGSeq
@@ -45,7 +46,7 @@ class SCFStack(Base):
         self.max_neighbours = max_neighbours
         self.num_filters = num_filters
         self.num_gaussians = num_gaussians
-
+        self.is_edge_model = True #specify that mpnn can handle edge features
         super().__init__(input_args, conv_args, *args, **kwargs)
 
         pass
@@ -57,16 +58,18 @@ class SCFStack(Base):
         )
         # comment on why equiv avoids last layer
         last_layer = 1 == self.num_conv_layers
-        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.embed_dim, self.hidden_dim, last_layer)))
+        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.embed_dim, self.hidden_dim, last_layer, edge_dim=self.edge_embed_dim)))
         self.feature_layers.append(nn.Identity())
         for i in range(self.num_conv_layers - 1):
             last_layer = i == self.num_conv_layers - 2
-            self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim, self.hidden_dim, last_layer)))
+            self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim, self.hidden_dim, last_layer, edge_dim=self.edge_embed_dim)))
             self.feature_layers.append(nn.Identity())
 
-    def get_conv(self, input_dim, output_dim, last_layer):
+    def get_conv(self, input_dim, output_dim, last_layer, edge_dim=None):
+        if not edge_dim:
+            edge_dim = self.num_gaussians
         mlp = Sequential(
-            Linear(self.num_gaussians, self.num_filters),
+            Linear(edge_dim, self.num_filters),
             ShiftedSoftplus(),
             Linear(self.num_filters, self.num_filters),
         )
@@ -80,7 +83,7 @@ class SCFStack(Base):
             equivariant=self.equivariance and not last_layer,
         )
 
-        if self.use_edge_attr:
+        if self.use_edge_attr or (self.use_global_attn and self.is_edge_model):
             return PyGSeq(
                 self.input_args,
                 [
@@ -132,11 +135,11 @@ class SCFStack(Base):
     def _embedding(self, data):
         super()._embedding(data)
 
-        if (self.use_edge_attr) and (self.equivariance):
+        if (self.use_edge_attr or (self.use_global_attn and self.is_edge_model)) and (self.equivariance):
             raise Exception(
-                "For SchNet if using edge attributes, then E(3)-equivariance cannot be ensured. Please disable equivariance or edge attributes."
+                "For SchNet if using edge attributes or edge encodings for gps, then E(3)-equivariance cannot be ensured. Please disable equivariance or edge attributes."
             )
-        elif self.use_edge_attr:
+        elif self.use_edge_attr or (self.use_global_attn and self.is_edge_model):
             edge_index = data.edge_index
             data.edge_shifts = torch.zeros(
                 (data.edge_index.size(1), 3), device=data.edge_index.device

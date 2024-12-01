@@ -23,12 +23,13 @@ class CGCNNStack(Base):
         conv_args,
         edge_dim: int,
         input_dim,
+        hidden_dim,
         output_dim,
         *args,
         **kwargs,
     ):
         self.edge_dim = edge_dim
-
+        self.is_edge_model = True #specify that mpnn can handle edge features
         # CGCNN does not change embedding dimensions
         # We use input dimension (first argument of base constructor)00
         #    also as hidden dimension (second argument of base constructor)
@@ -37,13 +38,13 @@ class CGCNNStack(Base):
             input_args,
             conv_args,
             input_dim,
-            input_dim,
+            hidden_dim,
             output_dim,
             *args,
             **kwargs,
         )
 
-        if self.use_edge_attr:
+        if self.use_edge_attr or (self.use_global_attn and self.is_edge_model): #check if gps is being used and mpnn can handle edge feats
             assert (
                 self.input_args
                 == "inv_node_feat, equiv_node_feat, edge_index, edge_attr"
@@ -58,7 +59,7 @@ class CGCNNStack(Base):
             edge_dim = self.edge_dim
         cgcnn = CGConv(
             channels=input_dim,
-            dim=self.edge_dim,
+            dim=edge_dim,
             aggr="add",
             batch_norm=False,
             bias=True,

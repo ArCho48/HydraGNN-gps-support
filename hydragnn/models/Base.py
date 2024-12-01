@@ -143,7 +143,7 @@ class Base(Module):
             self.use_global_attn = False
             #ensure that all inputs maintain original dimensionality if gps is turned off
             self.embed_dim = input_dim         
-            self.edge_embed_dim = self.edge_dim
+            self.edge_embed_dim = self.edge_dim if (hasattr(self, "edge_dim") and (self.edge_dim is not None)) else None
 
         self.use_encodings = False # provision to decouple encodings from globalAtt later
 

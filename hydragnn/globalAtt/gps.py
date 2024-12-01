@@ -90,20 +90,27 @@ class GPSConv(torch.nn.Module):
         if self.norm3 is not None:
             self.norm3.reset_parameters()
 
+    # def forward(
+    #     self,
+    #     inv_node_feat: Tensor,
+    #     equiv_node_feat: Tensor,
+    #     edge_index: Adj,
+    #     edge_attr: Optional[torch.Tensor] = None,
+    #     batch: Optional[torch.Tensor] = None,
+    # ) -> Tensor:
     def forward(
         self,
         inv_node_feat: Tensor,
         equiv_node_feat: Tensor,
-        edge_index: Adj,
-        edge_attr: Optional[torch.Tensor] = None,
         batch: Optional[torch.Tensor] = None,
+        **kwargs
     ) -> Tensor:
         """Runs the forward pass of the module."""
         hs = []
-        kwargs = {"edge_index":edge_index}
-        if edge_attr is not None:
-            kwargs.update({"edge_attr":edge_attr})
-        # pdb.set_trace()  
+        # kwargs = {"edge_index":edge_index}
+        # if edge_attr is not None:
+        #     kwargs.update({"edge_attr":edge_attr})
+        # pdb.set_trace()
         if self.conv is not None:  # Local MPNN.
             h, equiv_node_feat = self.conv(inv_node_feat=inv_node_feat, equiv_node_feat=equiv_node_feat, **kwargs) 
             # h = self.mpnn_out(h) # map back mpnn (ex., GAT) output to hidden_dim

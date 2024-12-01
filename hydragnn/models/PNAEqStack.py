@@ -17,7 +17,7 @@
 ## Maybe do PNA aggregation for vectorial? To maintain equivariance, aggregation could only the Identity, but all scalers are valid.
 
 from typing import Any, Callable, Dict, List, Optional, Union
-
+import pdb
 # Torch
 import torch
 from torch import nn, Tensor
@@ -67,31 +67,33 @@ class PNAEqStack(Base):
         self.edge_dim = edge_dim
         self.num_radial = num_radial
         self.radius = radius
-
+        self.is_edge_model = True #specify that mpnn can handle edge features
         super().__init__(input_args, conv_args, *args, **kwargs)
 
         self.rbf = rbf_BasisLayer(self.num_radial, self.radius)
 
     def _init_conv(self):
         last_layer = 1 == self.num_conv_layers
-        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.embed_dim, self.hidden_dim, last_layer)))
+        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.embed_dim, self.hidden_dim, last_layer, edge_dim=self.edge_embed_dim)))
         self.feature_layers.append(nn.Identity())
         for i in range(self.num_conv_layers - 1):
             last_layer = i == self.num_conv_layers - 2
-            self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim, self.hidden_dim, last_layer)))
+            self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim, self.hidden_dim, last_layer, edge_dim=self.edge_embed_dim)))
             self.feature_layers.append(nn.Identity())
 
-    def get_conv(self, input_dim, output_dim, last_layer=False):
+    def get_conv(self, input_dim, output_dim, last_layer=False, edge_dim=None):
         hidden_dim = output_dim if input_dim == 1 else input_dim
         assert (
             hidden_dim > 1
         ), "PNAEq requires more than one hidden dimension between input_dim and output_dim."
+        if not edge_dim:
+            edge_dim = self.edge_dim
         message = PainnMessage(
             node_size=input_dim,
             x_aggregators=self.x_aggregators,
             x_scalers=self.x_scalers,
             deg=self.deg,
-            edge_dim=self.edge_dim,
+            edge_dim=edge_dim,
             num_radial=self.num_radial,
             pre_layers=1,
             post_layers=1,
@@ -186,15 +188,19 @@ class PNAEqStack(Base):
             conv_args.update({"edge_attr": data.edge_attr})
 
         if self.use_global_attn:
+            #encode node positional embeddings
             x = self.pos_emb(data.pe)
-            e = self.rel_pos_emb(data.rel_pe)
+            # if node features are available, genrate mebeddings, concatenate with positional embeddings and map to hidden dim
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
                 x = self.node_lin(x)
-            if self.use_edge_attr:
-                e = torch.cat((self.edge_emb(conv_args['edge_attr']), e), 1 )
-                e = self.edge_lin(e)    
-            conv_args.update({"edge_attr": e})
+            # repeat for edge features and relative edge encodings
+            if self.is_edge_model:
+                e = self.rel_pos_emb(data.rel_pe)
+                if self.use_edge_attr:
+                    e = torch.cat((self.edge_emb(conv_args['edge_attr']), e), 1 )
+                    e = self.edge_lin(e)    
+                conv_args.update({"edge_attr": e})
             return x, data.pos, conv_args 
         else:
             return data.x, data.pos, conv_args
@@ -339,7 +345,7 @@ class PainnMessage(MessagePassing):
             self.node_size,
             dim=-1,
         )
-
+        pdb.set_trace()
         # Create message_vector
         message_vector = v[dst] * gate_state_vector
         edge_vector = gate_edge_vector * edge_vec.unsqueeze(-1)

@@ -442,15 +442,19 @@ class MACEStack(Base):
         }
 
         if self.use_global_attn:
+            #encode node positional embeddings
             x = self.pos_emb(data.pe)
-            e = self.rel_pos_emb(data.rel_pe)
+            # if node features are available, genrate mebeddings, concatenate with positional embeddings and map to hidden dim
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
                 x = self.node_lin(x)
-            if self.use_edge_attr:
-                e = torch.cat((self.edge_emb(conv_args['edge_attr']), e), 1 )
-                e = self.edge_lin(e)    
-            conv_args.update({"edge_attr": e})
+            # repeat for edge features and relative edge encodings
+            if self.is_edge_model:
+                e = self.rel_pos_emb(data.rel_pe)
+                if self.use_edge_attr:
+                    e = torch.cat((self.edge_emb(conv_args['edge_attr']), e), 1 )
+                    e = self.edge_lin(e)    
+                conv_args.update({"edge_attr": e})
             return ( x[:, : self.hidden_dim], x[:, self.hidden_dim :], conv_args ) 
         else:
             return (

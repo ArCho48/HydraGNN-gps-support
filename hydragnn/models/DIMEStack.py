@@ -12,6 +12,8 @@
 from typing import Callable, Optional, Tuple
 from torch_geometric.typing import SparseTensor
 
+import pdb
+
 import torch
 from torch import Tensor
 from torch.nn import Identity, SiLU
@@ -62,7 +64,7 @@ class DIMEStack(Base):
         self.num_after_skip = num_after_skip
         self.edge_dim = edge_dim
         self.radius = radius
-        self.is_edge_model = True #specify that mpnn cannot handle edge features
+        self.is_edge_model = True #specify that mpnn can handle edge features
         super().__init__(input_args, conv_args, *args, **kwargs)
 
         self.rbf = BesselBasisLayer(num_radial, radius, envelope_exponent)
@@ -73,14 +75,16 @@ class DIMEStack(Base):
         pass
 
     def _init_conv(self):
-        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.embed_dim, self.hidden_dim)))
+        self.graph_convs.append(self._apply_global_attn(self.get_conv(self.embed_dim, self.hidden_dim, edge_dim=self.edge_embed_dim)))
         self.feature_layers.append(Identity())
         for _ in range(self.num_conv_layers - 1):
-            self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim, self.hidden_dim)))
+            self.graph_convs.append(self._apply_global_attn(self.get_conv(self.hidden_dim, self.hidden_dim, edge_dim=self.edge_embed_dim)))
             self.feature_layers.append(Identity())
 
-    def get_conv(self, input_dim, output_dim):
+    def get_conv(self, input_dim, output_dim, edge_dim=None):
         hidden_dim = output_dim if input_dim == 1 else input_dim
+        if not edge_dim:
+            edge_dim = self.edge_dim
         assert (
             hidden_dim > 1
         ), "DimeNet requires more than one hidden dimension between input_dim and output_dim."
@@ -89,7 +93,7 @@ class DIMEStack(Base):
             num_radial=self.num_radial,
             hidden_channels=hidden_dim,
             act=SiLU(),
-            edge_dim=self.edge_dim,
+            edge_dim=edge_dim,
         )
         inter = InteractionPPBlock(
             hidden_channels=hidden_dim,
@@ -110,8 +114,8 @@ class DIMEStack(Base):
             act=SiLU(),
             output_initializer="glorot_orthogonal",
         )
-
-        if self.use_edge_attr:
+        # pdb.set_trace()
+        if self.use_edge_attr or (self.use_global_attn and self.is_edge_model): #check if gps is being used and mpnn can handle edge feats
             return Sequential(
                 self.input_args,
                 [

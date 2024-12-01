@@ -324,6 +324,7 @@ def create_model(
             "inv_node_feat, edge_index",  # conv_args
             edge_dim,
             input_dim,
+            hidden_dim,
             output_dim,
             pe_dim,
             global_attn_engine,
