@@ -7,11 +7,11 @@
         "Architecture": {
             "global_attn_engine": "GPS",
             "global_attn_type": "multihead",
-            "mpnn_type": "PNA",
+            "mpnn_type": "DimeNet",
             "radius": 7,
             "max_neighbours": 5,
             "periodic_boundary_conditions": false,
-            "pe_dim": 2,
+            "pe_dim": 6,
             "global_attn_heads": 8,
             "hidden_dim": 64,
             "num_conv_layers": 6,

@@ -139,6 +139,7 @@ class MACEStack(Base):
         # NOTE the super() call is done at this point because some of the arguments are needed for the initialization of the
         # Base class. For example, _init_ calls _init_conv, which requires self.edge_attr_irreps, self.node_attr_irreps, etc.
         # Other arguments such as the radial type may be moved before the super() call just for streamlining the code.
+        self.is_edge_model = True #specify that mpnn can handle edge features        
         super().__init__(input_args, conv_args, *args, **kwargs)
 
         ############################ Post Inheritance ############################

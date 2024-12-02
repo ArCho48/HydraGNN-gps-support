@@ -1,4 +1,5 @@
 import os
+os.environ['TORCH_DISTRIBUTED_DEBUG'] = 'DETAIL'
 import json
 import torch
 import torch_geometric

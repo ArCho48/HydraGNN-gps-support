@@ -1,4 +1,5 @@
 import os
+import pdb
 import json
 import torch
 import torch_geometric
@@ -15,7 +16,6 @@ import hydragnn
 
 # Update each sample prior to loading.
 def md17_pre_transform(data, compute_edges, transform):
-    data = transform(data)
     # Set descriptor as element type.
     data.x = data.z.float().view(-1, 1)
     # Only predict energy (index 0 of 2 properties) for this run.
@@ -23,6 +23,7 @@ def md17_pre_transform(data, compute_edges, transform):
     graph_features_dim = [1]
     node_feature_dim = [1]
     data = compute_edges(data)
+    data = transform(data)
      # gps requires relative edge features, introduced rel_lapPe as edge encodings
     source_pe = data.pe[data.edge_index[0]] 
     target_pe = data.pe[data.edge_index[1]] 

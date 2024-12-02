@@ -16,7 +16,7 @@ import subprocess
 
 
 @pytest.mark.parametrize(
-    "model_type",
+    "mpnn_type",
     [
         "SAGE",
         "GIN",
@@ -50,7 +50,7 @@ def pytest_examples_energy(example, model_type):
 #      there to be a positional gradient via using
 #      positions in torch operations for message-passing.
 @pytest.mark.parametrize(
-    "model_type",
+    "mpnn_type",
     [
         "PNAPlus",
         "SchNet",
