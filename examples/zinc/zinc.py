@@ -44,7 +44,6 @@ lapPE = AddLaplacianEigenvectorPE(
     is_undirected=True,
 )
 
-
 def zinc_pre_transform(data):
     data.x = data.x.float().view(-1, 1)
     data.edge_attr = data.edge_attr.float().view(-1, 1)

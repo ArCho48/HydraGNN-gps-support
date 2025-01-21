@@ -144,15 +144,15 @@ def main():
     ]
 
     dim_headlayers = [
-        trial.parameters["dim_headlayers"]
-        for i in range(trial.parameters["num_headlayers"])
+        args.parameters["dim_headlayers"]
+        for i in range(args.parameters["num_headlayers"])
     ]
 
-    for head_type in trial_config["NeuralNetwork"]["Architecture"]["output_heads"]:
-        trial_config["NeuralNetwork"]["Architecture"]["output_heads"][head_type][
+    for head_type in config["NeuralNetwork"]["Architecture"]["output_heads"]:
+        config["NeuralNetwork"]["Architecture"]["output_heads"][head_type][
             "num_headlayers"
-        ] = trial.parameters["num_headlayers"]
-        trial_config["NeuralNetwork"]["Architecture"]["output_heads"][head_type][
+        ] = args.parameters["num_headlayers"]
+        config["NeuralNetwork"]["Architecture"]["output_heads"][head_type][
             "dim_headlayers"
         ] = dim_headlayers
 
@@ -178,7 +178,7 @@ def main():
         datefmt="%H:%M:%S",
     )
 
-    log_name = "zinc_deephyper_trials" if args.log is None else args.log
+    log_name = "zinc_deephyper_argss" if args.log is None else args.log
     hydragnn.utils.print.print_utils.setup_log(log_name)
     writer = hydragnn.utils.model.get_summary_writer(log_name)
 
