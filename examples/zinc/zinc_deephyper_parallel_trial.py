@@ -127,7 +127,7 @@ def main():
 
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
-    pdb.set_trace()
+
     if args.parameters["global_attn_heads"] is not None:
         config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters[
             "global_attn_heads"
