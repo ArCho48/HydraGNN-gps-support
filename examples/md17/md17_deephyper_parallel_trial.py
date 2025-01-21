@@ -6,6 +6,7 @@ import argparse
 import pdb
 import torch
 import numpy as np
+from torch_geometric.datasets import MD17
 from torch_geometric.transforms import AddLaplacianEigenvectorPE
 import hydragnn
 from hydragnn.utils.profiling_and_tracing.time_utils import Timer
@@ -213,9 +214,9 @@ def main():
     )
     
     # Fix for MD17 datasets
-    torch_geometric.datasets.MD17.file_names["uracil"] = "md17_uracil.npz"
+    MD17.file_names["uracil"] = "md17_uracil.npz"
 
-    dataset = torch_geometric.datasets.MD17(
+    dataset = MD17(
         root="dataset/md17",
         name="uracil",
         pre_transform=lambda data: md17_pre_transform(data, compute_edges, transform),
