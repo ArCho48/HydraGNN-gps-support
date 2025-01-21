@@ -6,6 +6,7 @@ import argparse
 import pdb
 import torch
 import numpy as np
+from torch_geometric.datasets import QM9
 from torch_geometric.transforms import AddLaplacianEigenvectorPE
 import hydragnn
 from hydragnn.utils.profiling_and_tracing.time_utils import Timer
@@ -217,7 +218,7 @@ def main():
     # Filter function above used to run quick example.
     # NOTE: data is moved to the device in the pre-transform.
     # NOTE: transforms/filters will NOT be re-run unless the qm9/processed/ directory is removed.
-    dataset = torch_geometric.datasets.QM9(
+    dataset = QM9(
         root="dataset/qm9",
         pre_transform=lambda data: qm9_pre_transform(data, transform),
         pre_filter=qm9_pre_filter,
