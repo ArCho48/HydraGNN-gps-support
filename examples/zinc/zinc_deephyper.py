@@ -199,7 +199,7 @@ if __name__ == "__main__":
     # Include "global_attn_heads" to list of hyperparameters if global attention engine is used
     if config["NeuralNetwork"]["Architecture"]["global_attn_engine"] is not None:
         problem.add_hyperparameter([2, 4, 8], "global_attn_heads")  # discrete parameter
-    problem.add_hyperparameter(["DimeNet", "PNA"], "mpnn_type")  # categorical parameter
+    problem.add_hyperparameter(["DimeNet", "PNA", "GIN", "SAGE"], "mpnn_type")  # categorical parameter
 
     # Define the search space for hyperparameters
     # define the evaluator to distribute the computation
