@@ -85,7 +85,7 @@ def run(trial, dequed=None):
             ##f"--ddstore",
             ## debugging
             ##f'--multi_model_list="ANI1x"',
-            f"--num_epoch=50",
+            f"--num_epoch={50}",
             f"--log={log_name}",
         ]
     )
