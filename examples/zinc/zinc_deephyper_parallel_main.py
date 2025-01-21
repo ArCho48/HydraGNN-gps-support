@@ -50,7 +50,7 @@ def run(trial, dequed=None):
 
     # TODO: Launch a subprocess with `srun` to train neural networks
     params = trial.parameters
-    log_name = "zinc_deephyper_trials" + "_" + str(trial.id)
+    log_name = "zinc_hpo_trials" + "_" + str(trial.id)
     master_addr = f"HYDRAGNN_MASTER_ADDR={dequed[0]}"
     nodelist = ",".join(dequed)
 

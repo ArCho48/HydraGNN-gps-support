@@ -33,32 +33,31 @@ def info(*args, logtype="info", sep=" "):
     getattr(logging, logtype)(sep.join(map(str, args)))
 
 
-num_samples = int(1e7) #change before final commit
-
 # Update each sample prior to loading.
-def qm9_pre_transform(data, transform):
-    # LPE
-    data = transform(data)
+def md17_pre_transform(data, compute_edges, transform):
     # Set descriptor as element type.
     data.x = data.z.float().view(-1, 1)
-    # Only predict free energy (index 10 of 19 properties) for this run.
-    data.y = data.y[:, 10] / len(data.x)
+    # Only predict energy (index 0 of 2 properties) for this run.
+    data.y = data.energy / len(data.x)
     graph_features_dim = [1]
     node_feature_dim = [1]
+    data = compute_edges(data)
+    data = transform(data)
     # gps requires relative edge features, introduced rel_lapPe as edge encodings
     source_pe = data.pe[data.edge_index[0]]
     target_pe = data.pe[data.edge_index[1]]
     data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
     return data
 
-def qm9_pre_filter(data):
-    return data.idx < num_samples
+# Randomly select ~1000 samples
+def md17_pre_filter(data):
+    return torch.rand(1) < 1.1  # TODO:change to 0.25 before merge
 
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("--inputfile", help="input file", type=str, default="qm9.json")
+    parser.add_argument("--inputfile", help="input file", type=str, default="md17.json")
     parser.add_argument("--mpnn_type", help="mpnn_type", default="PNA")
     parser.add_argument("--hidden_dim", type=int, help="hidden_dim", default=64)
     parser.add_argument(
@@ -70,7 +69,7 @@ def main():
     parser.add_argument("--ddstore", action="store_true", help="ddstore dataset")
     parser.add_argument("--ddstore_width", type=int, help="ddstore width", default=None)
     parser.add_argument("--shmem", action="store_true", help="shmem")
-    parser.add_argument("--log", help="log name", default="qm9_hpo_trials")
+    parser.add_argument("--log", help="log name", default="md17_hpo_trials")
     parser.add_argument("--num_epoch", type=int, help="num_epoch", default=None)
     parser.add_argument("--batch_size", type=int, help="batch_size", default=None)
     parser.add_argument("--everyone", action="store_true", help="gptimer")
@@ -136,7 +135,7 @@ def main():
 
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
-
+    pdb.set_trace()
     if args.parameters["global_attn_heads"] is not None:
         config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters[
             "global_attn_heads"
@@ -189,7 +188,7 @@ def main():
         datefmt="%H:%M:%S",
     )
 
-    log_name = "qm9_hpo_trials" if args.log is None else args.log
+    log_name = "md17_hpo_trials" if args.log is None else args.log
     hydragnn.utils.print.print_utils.setup_log(log_name)
     writer = hydragnn.utils.model.get_summary_writer(log_name)
 
@@ -201,7 +200,7 @@ def main():
     timer.start()
 
     # Configurable run choices (JSON file that accompanies this example script).
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qm9.json")
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "md17.json")
     with open(filename, "r") as f:
         config = json.load(f)
     verbosity = config["Verbosity"]["level"]
@@ -213,17 +212,18 @@ def main():
         is_undirected=True,
     )
     
-    # Use built-in torch_geometric datasets.
-    # Filter function above used to run quick example.
-    # NOTE: data is moved to the device in the pre-transform.
-    # NOTE: transforms/filters will NOT be re-run unless the qm9/processed/ directory is removed.
-    dataset = torch_geometric.datasets.QM9(
-        root="dataset/qm9",
-        pre_transform=lambda data: qm9_pre_transform(data, transform),
-        pre_filter=qm9_pre_filter,
+    # Fix for MD17 datasets
+    torch_geometric.datasets.MD17.file_names["uracil"] = "md17_uracil.npz"
+
+    dataset = torch_geometric.datasets.MD17(
+        root="dataset/md17",
+        name="uracil",
+        pre_transform=lambda data: md17_pre_transform(data, compute_edges, transform),
+        pre_filter=md17_pre_filter,
     )
+
     trainset, valset, testset = hydragnn.preprocess.split_dataset(
-        dataset, config["NeuralNetwork"]["Training"]["perc_train"], False
+    dataset, config["NeuralNetwork"]["Training"]["perc_train"], False
     )
 
     info(
