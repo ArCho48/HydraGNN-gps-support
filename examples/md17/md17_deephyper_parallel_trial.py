@@ -135,7 +135,7 @@ def main():
 
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
-    pdb.set_trace()
+
     if args.parameters["global_attn_heads"] is not None:
         config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters[
             "global_attn_heads"
@@ -165,8 +165,8 @@ def main():
             "dim_headlayers"
         ] = dim_headlayers
 
-    if trial.parameters["mpnn_type"] not in ["EGNN", "SchNet", "DimeNet"]:
-        trial_config["NeuralNetwork"]["Architecture"]["equivariance"] = False
+    if args.parameters["mpnn_type"] not in ["EGNN", "SchNet", "DimeNet"]:
+        config["NeuralNetwork"]["Architecture"]["equivariance"] = False
 
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
