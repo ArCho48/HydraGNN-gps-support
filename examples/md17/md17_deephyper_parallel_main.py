@@ -45,12 +45,12 @@ def run(trial, dequed=None):
     f = open(f"output-{trial.id}.txt", "w")
     python_exe = sys.executable
     python_script = os.path.join(
-        os.path.dirname(__file__), "qm9_deephyper_parallel_trial.py"
+        os.path.dirname(__file__), "md17_deephyper_parallel_trial.py"
     )
 
     # TODO: Launch a subprocess with `srun` to train neural networks
     params = trial.parameters
-    log_name = "qm9_hpo_trials" + "_" + str(trial.id)
+    log_name = "md17_hpo_trials" + "_" + str(trial.id)
     master_addr = f"HYDRAGNN_MASTER_ADDR={dequed[0]}"
     nodelist = ",".join(dequed)
 
@@ -120,7 +120,7 @@ def run(trial, dequed=None):
 
 if __name__ == "__main__":
 
-    log_name = "qm9_hpo_trials"
+    log_name = "md17_hpo_trials"
 
     # Choose the sampler (e.g., TPESampler or RandomSampler)
     from deephyper.hpo import HpProblem, CBO
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     problem.add_hyperparameter((1, 3), "dim_headlayers")  # discrete parameter
 
     # Configurable run choices (JSON file that accompanies this example script).
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qm9.json")
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "md17.json")
     with open(filename, "r") as f:
         config = json.load(f)
 
@@ -146,7 +146,7 @@ if __name__ == "__main__":
         problem.add_hyperparameter([2, 4, 8], "global_attn_heads")  # discrete parameter
     problem.add_hyperparameter(
         ["EGNN", "PNA", "SchNet", "DimeNet"], "mpnn_type"
-    )  # categorical parameter
+    )
 
     # Create the node queue
     queue, _ = read_node_list()
