@@ -137,14 +137,14 @@ def main():
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
 
-    if args.parameters["global_attn_heads"] is not None:
-        config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters[
-            "global_attn_heads"
-        ]
-        global_attn_heads = args.parameters["global_attn_heads"]
-        hidden_dim = global_attn_heads * args.parameters["hidden_dim"]
-    else:
-        hidden_dim = args.parameters["hidden_dim"]
+    #if args.parameters["global_attn_heads"] is not None:
+    #    config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters[
+    #        "global_attn_heads"
+    #    ]
+    #    global_attn_heads = args.parameters["global_attn_heads"]
+    #    hidden_dim = global_attn_heads * args.parameters["hidden_dim"]
+    #else:
+    hidden_dim = args.parameters["hidden_dim"]
 
     # Update the config dictionary with the suggested hyperparameters
     config["NeuralNetwork"]["Architecture"]["mpnn_type"] = args.parameters["mpnn_type"]

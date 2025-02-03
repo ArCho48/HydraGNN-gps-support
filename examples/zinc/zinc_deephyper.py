@@ -16,7 +16,6 @@ except:
 
 import hydragnn
 
-
 def zinc_pre_transform(data, transform):
     data.x = data.x.float().view(-1, 1)
     data.edge_attr = data.edge_attr.float().view(-1, 1)
@@ -26,7 +25,6 @@ def zinc_pre_transform(data, transform):
     target_pe = data.pe[data.edge_index[1]]
     data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
     return data
-
 
 log_name = "zinc_hpo_trials"
 
@@ -48,28 +46,18 @@ transform = AddLaplacianEigenvectorPE(
 # NOTE: data is moved to the device in the pre-transform.
 # NOTE: transforms/filters will NOT be re-run unless the zinc/processed/ directory is removed.
 train = ZINC(
-    root="dataset/zinc",
-    subset=False,
-    split="train",
-    pre_transform=lambda data: zinc_pre_transform(data, transform),
-)  # TODO:change subset=True before merge
+    root="dataset/zinc", subset=False, split="train", pre_transform=lambda data: zinc_pre_transform(data, transform)
+) #TODO:change subset=True before merge
 val = ZINC(
-    root="dataset/zinc",
-    subset=False,
-    split="val",
-    pre_transform=lambda data: zinc_pre_transform(data, transform),
-)  # TODO:change subset=True before merge
+    root="dataset/zinc", subset=False, split="val", pre_transform=lambda data: zinc_pre_transform(data, transform)
+) #TODO:change subset=True before merge
 test = ZINC(
-    root="dataset/zinc",
-    subset=False,
-    split="test",
-    pre_transform=lambda data: zinc_pre_transform(data, transform),
-)  # TODO:change subset=True before merge
+    root="dataset/zinc", subset=False, split="test", pre_transform=lambda data: zinc_pre_transform(data, transform)
+) #TODO:change subset=True before merge
 
 (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
     train, val, test, config["NeuralNetwork"]["Training"]["batch_size"]
 )
-
 
 def run(trial):
 
@@ -126,9 +114,7 @@ def run(trial):
 
     trial_config["NeuralNetwork"]["Architecture"]["equivariance"] = False
 
-    trial_config = hydragnn.utils.input_config_parsing.update_config(
-        trial_config, train_loader, val_loader, test_loader
-    )
+    trial_config = hydragnn.utils.input_config_parsing.update_config(trial_config, train_loader, val_loader, test_loader)
 
     hydragnn.utils.input_config_parsing.save_config(trial_config, trial_log_name)
 
@@ -138,9 +124,7 @@ def run(trial):
     )
     model = hydragnn.utils.distributed.get_distributed_model(model, verbosity)
 
-    learning_rate = trial_config["NeuralNetwork"]["Training"]["Optimizer"][
-        "learning_rate"
-    ]
+    learning_rate = trial_config["NeuralNetwork"]["Training"]["Optimizer"]["learning_rate"]
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, mode="min", factor=0.5, patience=5, min_lr=0.00001
@@ -191,14 +175,21 @@ if __name__ == "__main__":
     problem = HpProblem()
 
     # Define the search space for hyperparameters
-    problem.add_hyperparameter((1, 4), "num_conv_layers")  # discrete parameter
-    problem.add_hyperparameter((1, 100), "hidden_dim")  # discrete parameter
-    problem.add_hyperparameter((1, 3), "num_headlayers")  # discrete parameter
-    problem.add_hyperparameter((1, 3), "dim_headlayers")  # discrete parameter
+    problem.add_hyperparameter((1, 6), "num_conv_layers")  # discrete parameter
+    problem.add_hyperparameter([8,16,32,64,128,256,512], "hidden_dim")  # discrete parameter
+    problem.add_hyperparameter((1, 2), "num_headlayers")  # discrete parameter
+    problem.add_hyperparameter([32, 64], "dim_headlayers")  # discrete parameter
+
+    # Configurable run choices (JSON file that accompanies this example script).
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "zinc.json")
+    with open(filename, "r") as f:
+        config = json.load(f)
 
     # Include "global_attn_heads" to list of hyperparameters if global attention engine is used
-    if config["NeuralNetwork"]["Architecture"]["global_attn_engine"] is not None:
+    if config["NeuralNetwork"]["Architecture"]["global_attn_engine"]:
         problem.add_hyperparameter([2, 4, 8], "global_attn_heads")  # discrete parameter
+    else:
+        problem.add_hyperparameter([0], "global_attn_heads")  # discrete parameter
     problem.add_hyperparameter(["DimeNet", "PNA", "GIN", "SAGE"], "mpnn_type")  # categorical parameter
 
     # Define the search space for hyperparameters
