@@ -20,7 +20,6 @@ from copy import deepcopy
 import json
 import torch
 
-
 def update_config(config, train_loader, val_loader, test_loader):
     """check if config input consistent and update config with model and datasets"""
 

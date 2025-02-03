@@ -15,7 +15,7 @@ except:
 
 import hydragnn
 
-num_samples = int(1e7)  # TODO:change to 10000 before merge
+num_samples = int(1e7) #TODO:change to 10000 before merge
 
 # Update each sample prior to loading.
 def qm9_pre_transform(data, transform):
@@ -193,17 +193,23 @@ if __name__ == "__main__":
     problem = HpProblem()
 
     # Define the search space for hyperparameters
-    problem.add_hyperparameter((1, 4), "num_conv_layers")  # discrete parameter
-    problem.add_hyperparameter((1, 100), "hidden_dim")  # discrete parameter
-    problem.add_hyperparameter((1, 3), "num_headlayers")  # discrete parameter
-    problem.add_hyperparameter((1, 3), "dim_headlayers")  # discrete parameter
+    problem.add_hyperparameter((1, 6), "num_conv_layers")  # discrete parameter
+    problem.add_hyperparameter([8,16,32,64,128,256,512], "hidden_dim")  # discrete parameter
+    problem.add_hyperparameter((1, 2), "num_headlayers")  # discrete parameter
+    problem.add_hyperparameter([32, 64], "dim_headlayers")  # discrete parameter
+
+    # Configurable run choices (JSON file that accompanies this example script).
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "qm9.json")
+    with open(filename, "r") as f:
+        config = json.load(f)
 
     # Include "global_attn_heads" to list of hyperparameters if global attention engine is used
-    if config["NeuralNetwork"]["Architecture"]["global_attn_engine"] is not None:
+    if config["NeuralNetwork"]["Architecture"]["global_attn_engine"]:
         problem.add_hyperparameter([2, 4, 8], "global_attn_heads")  # discrete parameter
+    else:
+        problem.add_hyperparameter([0], "global_attn_heads")  # discrete parameter
     problem.add_hyperparameter(
-        ["EGNN", "PNA", "SchNet", "DimeNet"], "mpnn_type"
-    )  # categorical parameter
+        ["EGNN", "PNA", "SchNet", "DimeNet"], "mpnn_type")  # categorical parameter
 
     # Define the search space for hyperparameters
     # define the evaluator to distribute the computation

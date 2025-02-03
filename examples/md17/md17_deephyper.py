@@ -36,8 +36,7 @@ def md17_pre_transform(data, compute_edges, transform):
 
 # Randomly select ~1000 samples
 def md17_pre_filter(data):
-    return torch.rand(1) < 1.1  # TODO:change to 0.25 before merge
-
+    return torch.rand(1) < 1.1 #TODO:change to 0.25 before merge
 
 log_name = "md17_hpo_trials"
 
@@ -59,7 +58,7 @@ arch_config = config["NeuralNetwork"]["Architecture"]
 # Preprocess configurations for edge computation
 compute_edges = hydragnn.preprocess.get_radius_graph_config(arch_config)
 
-# Fix for MD17 datasets
+ # Fix for MD17 datasets
 torch_geometric.datasets.MD17.file_names["uracil"] = "md17_uracil.npz"
 
 dataset = torch_geometric.datasets.MD17(
@@ -74,7 +73,6 @@ train, val, test = hydragnn.preprocess.split_dataset(
 (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
     train, val, test, config["NeuralNetwork"]["Training"]["batch_size"]
 )
-
 
 def run(trial):
 
@@ -187,7 +185,6 @@ def run(trial):
     print("validation_loss.item()", validation_loss.item())
     return -validation_loss.item()
 
-
 if __name__ == "__main__":
 
     # Choose the sampler (e.g., TPESampler or RandomSampler)
@@ -198,17 +195,24 @@ if __name__ == "__main__":
     problem = HpProblem()
 
     # Define the search space for hyperparameters
-    problem.add_hyperparameter((1, 4), "num_conv_layers")  # discrete parameter
-    problem.add_hyperparameter((1, 100), "hidden_dim")  # discrete parameter
-    problem.add_hyperparameter((1, 3), "num_headlayers")  # discrete parameter
-    problem.add_hyperparameter((1, 3), "dim_headlayers")  # discrete parameter
+    problem.add_hyperparameter((1, 6), "num_conv_layers")  # discrete parameter
+    problem.add_hyperparameter([8,16,32,64,128,256,512], "hidden_dim")  # discrete parameter
+    problem.add_hyperparameter((1, 2), "num_headlayers")  # discrete parameter
+    problem.add_hyperparameter([32, 64], "dim_headlayers")  # discrete parameter
+    
+    # Configurable run choices (JSON file that accompanies this example script).
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "md17.json")
+    with open(filename, "r") as f:
+        config = json.load(f)
 
     # Include "global_attn_heads" to list of hyperparameters if global attention engine is used
-    if config["NeuralNetwork"]["Architecture"]["global_attn_engine"] is not None:
+    if config["NeuralNetwork"]["Architecture"]["global_attn_engine"]:
         problem.add_hyperparameter([2, 4, 8], "global_attn_heads")  # discrete parameter
+    else:
+        problem.add_hyperparameter([0], "global_attn_heads")  # discrete parameter
     problem.add_hyperparameter(
         ["EGNN", "PNA", "SchNet", "DimeNet"], "mpnn_type"
-    )  # categorical parameter
+    )
 
     # Define the search space for hyperparameters
     # define the evaluator to distribute the computation
