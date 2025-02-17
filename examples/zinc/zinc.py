@@ -114,4 +114,5 @@ hydragnn.train.train_validate_test(
     config["NeuralNetwork"],
     log_name,
     verbosity,
+    create_plots=True
 )

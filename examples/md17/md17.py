@@ -129,6 +129,7 @@ def main(mpnn_type=None, global_attn_engine=None, global_attn_type=None):
         config["NeuralNetwork"],
         log_name,
         verbosity,
+        create_plots=True
     )
 
 
