@@ -5,7 +5,7 @@
     "NeuralNetwork": {
         "Profile": {"enable": 1},
         "Architecture": {
-            "global_attn_engine": "GPS",
+            "global_attn_engine": "",
             "global_attn_type": "multihead",
             "mpnn_type": "PNA",
             "radius": 7,
