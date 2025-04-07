@@ -1,239 +1,151 @@
-import json
 import os
-import os.path as osp
-from typing import Callable, Dict, List, Literal, Optional
-
+import pdb
+import json
 import torch
-import tqdm
-from torch import Tensor
+import torch_geometric
+from torch_geometric.transforms import AddLaplacianEigenvectorPE
+import argparse
 
-from torch_geometric.data import (
-    HeteroData,
-    InMemoryDataset,
-    download_url,
-    extract_tar,
-)
+# deprecated in torch_geometric 2.0
+try:
+    from torch_geometric.loader import DataLoader
+except ImportError:
+    from torch_geometric.data import DataLoader
 
+import hydragnn
 
-class OPFDataset(InMemoryDataset):
-    r"""The heterogeneous OPF data from the `"Large-scale Datasets for AC
-    Optimal Power Flow with Topological Perturbations"
-    <https://arxiv.org/abs/2406.07234>`_ paper.
+# Update each sample prior to loading.
+def opf_pre_transform(data, transform):
+    # LPE
+    data = transform(data)
+    # Set descriptor as element type.
+    data.x = data.z.float().view(-1, 1)
+    # Only predict free energy (index 10 of 19 properties) for this run.
+    data.y = data.y[:, 10] / len(data.x)
+    graph_features_dim = [1]
+    node_feature_dim = [1]
+    # gps requires relative edge features, introduced rel_lapPe as edge encodings
+    source_pe = data.pe[data.edge_index[0]]
+    target_pe = data.pe[data.edge_index[1]]
+    data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
+    return data
 
-    :class:`OPFDataset` is a large-scale dataset of solved optimal power flow
-    problems, derived from the
-    `pglib-opf <https://github.com/power-grid-lib/pglib-opf>`_ dataset.
+def main(mpnn_type=None, global_attn_engine=None, global_attn_type=None):
+    # FIX random seed
+    random_state = 0
+    torch.manual_seed(random_state)
 
-    The physical topology of the grid is represented by the :obj:`"bus"` node
-    type, and the connecting AC lines and transformers. Additionally,
-    :obj:`"generator"`, :obj:`"load"`, and :obj:`"shunt"` nodes are connected
-    to :obj:`"bus"` nodes using a dedicated edge type each, *e.g.*,
-    :obj:`"generator_link"`.
+    # Set this path for output.
+    try:
+        os.environ["SERIALIZED_DATA_PATH"]
+    except KeyError:
+        os.environ["SERIALIZED_DATA_PATH"] = os.getcwd()
 
-    Edge direction corresponds to the properties of the line, *e.g.*,
-    :obj:`b_fr` is the line charging susceptance at the :obj:`from`
-    (source/sender) bus.
+    # Configurable run choices (JSON file that accompanies this example script).
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "opf.json")
+    with open(filename, "r") as f:
+        config = json.load(f)
 
-    Args:
-        root (str): Root directory where the dataset should be saved.
-        split (str, optional): If :obj:`"train"`, loads the training dataset.
-            If :obj:`"val"`, loads the validation dataset.
-            If :obj:`"test"`, loads the test dataset. (default: :obj:`"train"`)
-        case_name (str, optional): The name of the original pglib-opf case.
-            (default: :obj:`"pglib_opf_case14_ieee"`)
-        num_groups (int, optional): The dataset is divided into 20 groups with
-            each group containing 15,000 samples.
-            For large networks, this amount of data can be overwhelming.
-            The :obj:`num_groups` parameters controls the amount of data being
-            downloaded. Allowed values are :obj:`[1, 20]`.
-            (default: :obj:`20`)
-        topological_perturbations (bool, optional): Whether to use the dataset
-            with added topological perturbations. (default: :obj:`False`)
-        transform (callable, optional): A function/transform that takes in
-            a :obj:`torch_geometric.data.HeteroData` object and returns a
-            transformed version. The data object will be transformed before
-            every access. (default: :obj:`None`)
-        pre_transform (callable, optional): A function/transform that takes
-            in a :obj:`torch_geometric.data.HeteroData` object and returns
-            a transformed version. The data object will be transformed before
-            being saved to disk. (default: :obj:`None`)
-        pre_filter (callable, optional): A function that takes in a
-            :obj:`torch_geometric.data.HeteroData` object and returns a boolean
-            value, indicating whether the data object should be included in the
-            final dataset. (default: :obj:`None`)
-        force_reload (bool, optional): Whether to re-process the dataset.
-            (default: :obj:`False`)
-    """
-    url = 'https://storage.googleapis.com/gridopt-dataset'
+    # If a model type is provided, update the configuration accordingly.
+    if global_attn_engine:
+        config["NeuralNetwork"]["Architecture"][
+            "global_attn_engine"
+        ] = global_attn_engine
 
-    def __init__(
-        self,
-        root: str,
-        split: Literal['train', 'val', 'test'] = 'train',
-        case_name: Literal[
-            'pglib_opf_case14_ieee',
-            'pglib_opf_case30_ieee',
-            'pglib_opf_case57_ieee',
-            'pglib_opf_case118_ieee',
-            'pglib_opf_case500_goc',
-            'pglib_opf_case2000_goc',
-            'pglib_opf_case6470_rte',
-            'pglib_opf_case4661_sdet'
-            'pglib_opf_case10000_goc',
-            'pglib_opf_case13659_pegase',
-        ] = 'pglib_opf_case14_ieee',
-        num_groups: int = 20,
-        topological_perturbations: bool = False,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-        force_reload: bool = False,
-    ) -> None:
+    if global_attn_type:
+        config["NeuralNetwork"]["Architecture"]["global_attn_type"] = global_attn_type
 
-        self.split = split
-        self.case_name = case_name
-        self.num_groups = num_groups
-        self.topological_perturbations = topological_perturbations
+    if mpnn_type:
+        config["NeuralNetwork"]["Architecture"]["mpnn_type"] = mpnn_type
 
-        self._release = 'dataset_release_1'
-        if topological_perturbations:
-            self._release += '_nminusone'
+    verbosity = config["Verbosity"]["level"]
+    var_config = config["NeuralNetwork"]["Variables_of_interest"]
 
-        super().__init__(root, transform, pre_transform, pre_filter,
-                         force_reload=force_reload)
+    # Always initialize for multi-rank training.
+    world_size, world_rank = hydragnn.utils.distributed.setup_ddp()
 
-        idx = self.processed_file_names.index(f'{split}.pt')
-        self.load(self.processed_paths[idx])
+    log_name = f"opf_test_{mpnn_type}" if mpnn_type else "opf_test"
+    # Enable print to log file.
+    hydragnn.utils.print.print_utils.setup_log(log_name)
 
-    @property
-    def raw_dir(self) -> str:
-        return osp.join(self.root, self._release, self.case_name, 'raw')
+    # LPE
+    transform = AddLaplacianEigenvectorPE(
+        k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
+        attr_name="pe",
+        is_undirected=True,
+    )
 
-    @property
-    def processed_dir(self) -> str:
-        return osp.join(self.root, self._release, self.case_name,
-                        f'processed_{self.num_groups}')
+    # Use built-in torch_geometric datasets.
+    # Filter function above used to run quick example.
+    # NOTE: data is moved to the device in the pre-transform.
+    # NOTE: transforms/filters will NOT be re-run unless the opf/processed/ directory is removed.
+    dataset = torch_geometric.datasets.OPFDataset(
+        root="dataset/opf",
+        pre_transform=lambda data: opf_pre_transform(data, transform),
+    )
+    train, val, test = hydragnn.preprocess.split_dataset(
+        dataset, config["NeuralNetwork"]["Training"]["perc_train"], False
+    )
 
-    @property
-    def raw_file_names(self) -> List[str]:
-        return [f'{self.case_name}_{i}.tar.gz' for i in range(self.num_groups)]
+    (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
+        train, val, test, config["NeuralNetwork"]["Training"]["batch_size"]
+    )
 
-    @property
-    def processed_file_names(self) -> List[str]:
-        return ['train.pt', 'val.pt', 'test.pt']
+    config = hydragnn.utils.input_config_parsing.update_config(
+        config, train_loader, val_loader, test_loader
+    )
 
-    def download(self) -> None:
-        for name in self.raw_file_names:
-            url = f'{self.url}/{self._release}/{name}'
-            path = download_url(url, self.raw_dir)
-            extract_tar(path, self.raw_dir)
+    model = hydragnn.models.create_model_config(
+        config=config["NeuralNetwork"],
+        verbosity=verbosity,
+    )
+    model = hydragnn.utils.distributed.get_distributed_model(model, verbosity)
 
-    def process(self) -> None:
-        train_data_list = []
-        val_data_list = []
-        test_data_list = []
+    learning_rate = config["NeuralNetwork"]["Training"]["Optimizer"]["learning_rate"]
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode="min", factor=0.5, patience=5, min_lr=0.00001
+    )
 
-        for group in tqdm.tqdm(range(self.num_groups)):
-            tmp_dir = osp.join(
-                self.raw_dir,
-                'gridopt-dataset-tmp',
-                self._release,
-                self.case_name,
-                f'group_{group}',
-            )
+    # Run training with the given model and opf datasets.
+    writer = hydragnn.utils.model.model.get_summary_writer(log_name)
+    hydragnn.utils.input_config_parsing.save_config(config, log_name)
 
-            for name in os.listdir(tmp_dir):
-                with open(osp.join(tmp_dir, name)) as f:
-                    obj = json.load(f)
-
-                grid = obj['grid']
-                solution = obj['solution']
-                metadata = obj['metadata']
-
-                # Graph-level properties:
-                data = HeteroData()
-                data.x = torch.tensor(grid['context']).view(-1)
-
-                data.objective = torch.tensor(metadata['objective'])
-
-                # Nodes (only some have a target):
-                data['bus'].x = torch.tensor(grid['nodes']['bus'])
-                data['bus'].y = torch.tensor(solution['nodes']['bus'])
-
-                data['generator'].x = torch.tensor(grid['nodes']['generator'])
-                data['generator'].y = torch.tensor(
-                    solution['nodes']['generator'])
-
-                data['load'].x = torch.tensor(grid['nodes']['load'])
-
-                data['shunt'].x = torch.tensor(grid['nodes']['shunt'])
-
-                # Edges (only ac lines and transformers have features):
-                data['bus', 'ac_line', 'bus'].edge_index = (  #
-                    extract_edge_index(obj, 'ac_line'))
-                data['bus', 'ac_line', 'bus'].edge_attr = torch.tensor(
-                    grid['edges']['ac_line']['features'])
-                data['bus', 'ac_line', 'bus'].edge_label = torch.tensor(
-                    solution['edges']['ac_line']['features'])
-
-                data['bus', 'transformer', 'bus'].edge_index = (  #
-                    extract_edge_index(obj, 'transformer'))
-                data['bus', 'transformer', 'bus'].edge_attr = torch.tensor(
-                    grid['edges']['transformer']['features'])
-                data['bus', 'transformer', 'bus'].edge_label = torch.tensor(
-                    solution['edges']['transformer']['features'])
-
-                data['generator', 'generator_link', 'bus'].edge_index = (  #
-                    extract_edge_index(obj, 'generator_link'))
-                data['bus', 'generator_link', 'generator'].edge_index = (  #
-                    extract_edge_index_rev(obj, 'generator_link'))
-
-                data['load', 'load_link', 'bus'].edge_index = (  #
-                    extract_edge_index(obj, 'load_link'))
-                data['bus', 'load_link', 'load'].edge_index = (  #
-                    extract_edge_index_rev(obj, 'load_link'))
-
-                data['shunt', 'shunt_link', 'bus'].edge_index = (  #
-                    extract_edge_index(obj, 'shunt_link'))
-                data['bus', 'shunt_link', 'shunt'].edge_index = (  #
-                    extract_edge_index_rev(obj, 'shunt_link'))
-
-                if self.pre_filter is not None and not self.pre_filter(data):
-                    continue
-
-                if self.pre_transform is not None:
-                    data = self.pre_transform(data)
-
-                i = int(name.split('.')[0].split('_')[1])
-                train_limit = int(15_000 * self.num_groups * 0.9)
-                val_limit = train_limit + int(15_000 * self.num_groups * 0.05)
-                if i < train_limit:
-                    train_data_list.append(data)
-                elif i < val_limit:
-                    val_data_list.append(data)
-                else:
-                    test_data_list.append(data)
-
-        self.save(train_data_list, self.processed_paths[0])
-        self.save(val_data_list, self.processed_paths[1])
-        self.save(test_data_list, self.processed_paths[2])
-
-    def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({len(self)}, '
-                f'split={self.split}, '
-                f'case_name={self.case_name}, '
-                f'topological_perturbations={self.topological_perturbations})')
+    hydragnn.train.train_validate_test(
+        model,
+        optimizer,
+        train_loader,
+        val_loader,
+        test_loader,
+        writer,
+        scheduler,
+        config["NeuralNetwork"],
+        log_name,
+        verbosity,
+    )
 
 
-def extract_edge_index(obj: Dict, edge_name: str) -> Tensor:
-    return torch.tensor([
-        obj['grid']['edges'][edge_name]['senders'],
-        obj['grid']['edges'][edge_name]['receivers'],
-    ])
-
-
-def extract_edge_index_rev(obj: Dict, edge_name: str) -> Tensor:
-    return torch.tensor([
-        obj['grid']['edges'][edge_name]['receivers'],
-        obj['grid']['edges'][edge_name]['senders'],
-    ])
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Run the opf example with optional model type."
+    )
+    parser.add_argument(
+        "--mpnn_type",
+        type=str,
+        default=None,
+        help="Specify the model type for training (default: None).",
+    )
+    parser.add_argument(
+        "--global_attn_engine",
+        type=str,
+        default=None,
+        help="Specify if global attention is being used (default: None).",
+    )
+    parser.add_argument(
+        "--global_attn_type",
+        type=str,
+        default=None,
+        help="Specify the global attention type (default: None).",
+    )
+    args = parser.parse_args()
+    main(mpnn_type=args.mpnn_type)

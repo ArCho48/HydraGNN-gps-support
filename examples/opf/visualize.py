@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
 from torch_geometric.utils import to_networkx
-from opf import OPFDataset
+from torch_geometric.datasets import OPFDataset
 
 data = OPFDataset('dataset/')
 index = np.random.randint(len(data))
