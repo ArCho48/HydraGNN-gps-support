@@ -86,7 +86,7 @@ class niaid(AbstractBaseDataset):
     ):
         super().__init__()
 
-        datadir = datadir+'all_structures_1/'
+        df = pd.read_parquet(datadir+'niaid.parquet.gzip')
 
          # LPE
         transform = AddLaplacianEigenvectorPE(
@@ -95,79 +95,71 @@ class niaid(AbstractBaseDataset):
                 is_undirected=True,
             )
 
-        pbar = tqdm(total=260691)
-        for filename in os.listdir(datadir):
-            # Read atom_type, coordinates and properties (molecule_charge,spin,metal_node_degree,stoichiometry)
-            cf = ReadCif(datadir+filename)
-            
+        pbar = tqdm(total=df.shape[0])
+        for _, row in df.iterrows():
+            # Get coordinates
+            a, b, c, alpha, beta, gamma = float(row['_cell_length_a'].squeeze()), float(row['_cell_length_b'].squeeze()), float(row['_cell_length_c'].squeeze()), float(row['_cell_angle_alpha'].squeeze()), float(row['_cell_angle_beta'].squeeze()), float(row['_cell_angle_gamma'].squeeze())
+            pos_x, pos_y, pos_z = row[['_atom_site_fract_x']].squeeze().astype(float), row[['_atom_site_fract_y']].squeeze().astype(float), row[['_atom_site_fract_z']].squeeze().astype(float)
+            pos = np.concatenate([np.expand_dims(pos_x,axis=0),np.expand_dims(pos_y,axis=0),np.expand_dims(pos_z,axis=0)],axis=0)
+
+            # Apply transformation
+            M = self.transformation_matrix(a, b, c, alpha, beta, gamma)
+            pos = M @ pos
+            pos = pos.T
+
+            # node attributes
+            atomic_numbers = np.array([get_atomic_number(atom) for atom in row['_atom_site_type_symbol']]).astype(float)
+            if row['Filename'] == 'DB0-m3_o7_o25_f0_nbo.sym.30_repeat':
+                pdb.set_trace()
+            partial_charges = np.array(row['_atom_type_partial_charge']).astype(float)
+            x = np.concatenate([np.expand_dims(atomic_numbers,axis=1),np.expand_dims(partial_charges,axis=1)],axis=1)
+
             # Create the PyTorch Geometric Data object
             data = Data()
-            pdb.set_trace()
-
-
-            
-            counter = 1
-            bo_count = 1
-
-
-        
-
-
-            # Number of atoms in molecule            
-            n_lines = int(xyz[counter-1])
-            atom_count = 0
-            if counter == 180009: # Skip duplicate data entry
-                bo_count += 26
-            
-            # Generate node features (x) and (pos)
-            x = np.zeros((n_lines,3))
-            pos = np.zeros((n_lines,3))
-            j = 0
-            for i in range(counter+1, counter+n_lines+1):
-                line = xyz[i].split()
-                x[j][0] = float(get_atomic_number(line[0]))
-                x[j][1] = float(q[i-1].split()[-1])
-                x[j][2] = float(bo[bo_count].split()[2])    
-                pos[j] = np.array([float(line[1]),float(line[2]),float(line[3])])   
-                j += 1
-                atom_count += 1
-                bo_count += 1
-            bo_count += 2
 
             data.x = torch.Tensor(x)
             data.pos = torch.Tensor(pos)
 
-            # Create radius graph
+            # Create graph
             data = create_graph_fromXYZ(data)
             # Add edge length as edge feature
             data = compute_edge_lengths(data)
             data.edge_attr = data.edge_attr.to(torch.float32)
 
-            # Generate targets
-            tar = np.zeros(11)
-            descriptors = xyz[counter].replace(" ", "").split('|')
-            data[descriptors[3].split('=')[0]] = descriptors[3].split('=')[1]
-            data[descriptors[0].split('=')[0]] = descriptors[0].split('=')[1]
-            
-            tar[0] = float(descriptors[1].split('=')[1])
-            tar[1] = float(descriptors[2].split('=')[1])   
-            tar[2] = float(descriptors[4].split('=')[1])
-
-            gt_vals = y.loc[y['CSD_code']==data['CSD_code']].values.tolist()[0][1:-1]
-            tar[3:] = gt_vals
-            # for indx,gt in enumerate(groundtruths):
-            #     tar[indx+3] = float(gt_vals[indx])
-            data.y = torch.Tensor(tar).unsqueeze(1)
-
+            # Pre-transform
             data = niaid_pre_transform(data, transform)
             # data = add_atomic_descriptors(data)
 
             self.dataset.append(data)
-            counter += (n_lines + 3)
             pbar.update(1)
         pbar.close()
 
         random.shuffle(self.dataset)
+
+    def transformation_matrix(self, a, b, c, alpha, beta, gamma):
+        # Convert angles to radians
+        alpha1 = np.radians(alpha)
+        beta = np.radians(beta)
+        gamma = np.radians(gamma)
+
+        # Trigonometric functions
+        sin1, sin2 = np.sin(alpha1), np.sin(beta)
+        cos1, cos2, cos3 = np.cos(alpha1), np.cos(beta), np.cos(gamma)
+        cot1, cot2 = 1/np.tan(alpha1), 1/np.tan(beta)
+        csc1, csc2 = 1/np.sin(alpha1), 1/np.sin(beta)
+
+        # First row, first column element
+        term1 = cot1 * cot2 - csc1 * csc2 * cos3
+        R11 = a * sin2 * np.sqrt(1 - term1**2)
+
+        # Transformation matrix
+        M = np.array([
+            [R11, 0, 0],
+            [a * csc1 * cos3 - a * cot1 * cos2, b * sin1, 0],
+            [a * cos2, b * cos1, c]
+        ])
+
+        return M
 
     def len(self):
         return len(self.dataset)
