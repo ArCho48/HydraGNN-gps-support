@@ -109,8 +109,8 @@ class niaid(AbstractBaseDataset):
 
             # node attributes
             atomic_numbers = np.array([get_atomic_number(atom) for atom in row['_atom_site_type_symbol']]).astype(float)
-            if row['Filename'] == 'DB0-m3_o7_o25_f0_nbo.sym.30_repeat':
-                pdb.set_trace()
+            # if row['Filename'] == 'DB0-m3_o7_o25_f0_nbo.sym.30_repeat':
+            #     pdb.set_trace()
             partial_charges = np.array(row['_atom_type_partial_charge']).astype(float)
             x = np.concatenate([np.expand_dims(atomic_numbers,axis=1),np.expand_dims(partial_charges,axis=1)],axis=1)
 
@@ -127,10 +127,13 @@ class niaid(AbstractBaseDataset):
             data.edge_attr = data.edge_attr.to(torch.float32)
 
             # Pre-transform
-            data = niaid_pre_transform(data, transform)
-            # data = add_atomic_descriptors(data)
+            try:
+                data = niaid_pre_transform(data, transform)
+                # data = add_atomic_descriptors(data)
 
-            self.dataset.append(data)
+                self.dataset.append(data)
+            except:
+                print(row['Filename'])
             pbar.update(1)
         pbar.close()
 
@@ -270,7 +273,7 @@ def main(preonly=False, mpnn_type=None, global_attn_engine=None, global_attn_typ
     testset = SimplePickleDataset(
         basedir=basedir, label="testset", var_config=var_config
     )
-    
+
     (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
         trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
     )
