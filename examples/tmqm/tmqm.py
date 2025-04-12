@@ -16,10 +16,13 @@ from torch_geometric.transforms import RadiusGraph, Distance, AddLaplacianEigenv
 
 
 import hydragnn
+from hydragnn.utils.profiling_and_tracing.time_utils import Timer
+from hydragnn.utils.model import print_model
 from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
     atomicdescriptors,
 )
 from hydragnn.utils.datasets.abstractbasedataset import AbstractBaseDataset
+from hydragnn.utils.datasets.distdataset import DistDataset
 from hydragnn.utils.datasets.pickledataset import (
     SimplePickleWriter,
     SimplePickleDataset,
@@ -27,6 +30,11 @@ from hydragnn.utils.datasets.pickledataset import (
 from hydragnn.preprocess.graph_samples_checks_and_updates import gather_deg
 from hydragnn.preprocess.load_data import split_dataset
 import hydragnn.utils.profiling_and_tracing.tracer as tr
+
+try:
+    from hydragnn.utils.datasets.adiosdataset import AdiosWriter, AdiosDataset
+except ImportError:
+    pass
 
 from generate_dictionaries_pure_elements import (
     generate_dictionary_elements,
@@ -170,8 +178,7 @@ class tmQM(AbstractBaseDataset):
 
             gt_vals = y.loc[y['CSD_code']==data['CSD_code']].values.tolist()[0][1:-1]
             tar[3:] = gt_vals
-            # for indx,gt in enumerate(groundtruths):
-            #     tar[indx+3] = float(gt_vals[indx])
+ 
             data.y = torch.Tensor(tar).unsqueeze(1)
 
             data = tmqm_pre_transform(data, transform)
@@ -190,7 +197,11 @@ class tmQM(AbstractBaseDataset):
     def get(self, idx):
         return self.dataset[idx]
 
-def main(preonly=False, mpnn_type=None, global_attn_engine=None, global_attn_type=None):
+def main(preonly=False, format='pickle', ddstore=False, 
+        ddstore_width=None, shmem=False, 
+        mpnn_type=None, global_attn_engine=None, 
+        global_attn_type=None):
+
     # FIX random seed
     random_state = 0
     torch.manual_seed(random_state)
@@ -213,6 +224,8 @@ def main(preonly=False, mpnn_type=None, global_attn_engine=None, global_attn_typ
 
     comm = MPI.COMM_WORLD
 
+    modelname = "tmqm" 
+
     if preonly:
         ## local data
         dataset = tmQM(
@@ -227,35 +240,49 @@ def main(preonly=False, mpnn_type=None, global_attn_engine=None, global_attn_typ
 
         print("Local splitting: ", len(trainset), len(valset), len(testset))
 
-        ## pickle
-        basedir = os.path.join(
-            os.path.dirname(__file__), "dataset", "%s.pickle" % 'tmqm'
-        )
+        deg = gather_deg(trainset)
+        config["pna_deg"] = deg
 
-        SimplePickleWriter(
-            trainset,
-            basedir,
-            "trainset",
-            # minmax_node_feature=total.minmax_node_feature,
-            # minmax_graph_feature=total.minmax_graph_feature,
-            use_subdir=True,
-        )
-        SimplePickleWriter(
-            valset,
-            basedir,
-            "valset",
-            # minmax_node_feature=total.minmax_node_feature,
-            # minmax_graph_feature=total.minmax_graph_feature,
-            use_subdir=True,
-        )
-        SimplePickleWriter(
-            testset,
-            basedir,
-            "testset",
-            # minmax_node_feature=total.minmax_node_feature,
-            # minmax_graph_feature=total.minmax_graph_feature,
-            use_subdir=True,
-        )
+        ## adios
+        if format == "adios":
+            fname = os.path.join(
+                os.path.dirname(__file__), "./dataset/%s.bp" % modelname
+            )
+            adwriter = AdiosWriter(fname, comm)
+            adwriter.add("trainset", trainset)
+            adwriter.add("valset", valset)
+            adwriter.add("testset", testset)
+            adwriter.add_global("pna_deg", deg)
+            adwriter.save()
+
+        ## pickle
+        elif format == "pickle":
+            basedir = os.path.join(
+                os.path.dirname(__file__), "dataset", "%s.pickle" % modelname
+            )
+
+            attrs = dict()
+            attrs["pna_deg"] = deg
+
+            SimplePickleWriter(
+                trainset,
+                basedir,
+                "trainset",
+                use_subdir=True,
+                attrs=attrs,
+            )
+            SimplePickleWriter(
+                valset,
+                basedir,
+                "valset",
+                use_subdir=True,
+            )
+            SimplePickleWriter(
+                testset,
+                basedir,
+                "testset",
+                use_subdir=True,
+            )
         sys.exit(0)
 
     # If a model type is provided, update the configuration accordingly.
@@ -280,20 +307,52 @@ def main(preonly=False, mpnn_type=None, global_attn_engine=None, global_attn_typ
     # Enable print to log file.
     hydragnn.utils.print.print_utils.setup_log(log_name)
 
-    info("Pickle load")
-    basedir = os.path.join(
-        os.path.dirname(__file__), "dataset", "%s.pickle" % 'tmqm'
+    if format == "adios":
+        info("Adios load")
+        assert not (shmem and ddstore), "Cannot use both ddstore and shmem"
+        opt = {
+            "preload": False,
+            "shmem": shmem,
+            "ddstore": ddstore,
+            "ddstore_width": ddstore_width,
+        }
+        fname = os.path.join(os.path.dirname(__file__), "./dataset/%s.bp" % modelname)
+        trainset = AdiosDataset(fname, "trainset", comm, **opt, var_config=var_config)
+        valset = AdiosDataset(fname, "valset", comm, **opt, var_config=var_config)
+        testset = AdiosDataset(fname, "testset", comm, **opt, var_config=var_config)
+    elif format == "pickle":
+        info("Pickle load")
+        basedir = os.path.join(
+            os.path.dirname(__file__), "dataset", "%s.pickle" % modelname
+        )
+        trainset = SimplePickleDataset(
+            basedir=basedir, label="trainset", var_config=var_config
+        )
+        valset = SimplePickleDataset(
+            basedir=basedir, label="valset", var_config=var_config
+        )
+        testset = SimplePickleDataset(
+            basedir=basedir, label="testset", var_config=var_config
+        )
+        pna_deg = trainset.pna_deg
+        if ddstore:
+            opt = {"ddstore_width": ddstore_width}
+            trainset = DistDataset(trainset, "trainset", comm, **opt)
+            valset = DistDataset(valset, "valset", comm, **opt)
+            testset = DistDataset(testset, "testset", comm, **opt)
+            trainset.pna_deg = pna_deg
+    else:
+        raise NotImplementedError("No supported format: %s" % (format))
+
+    info(
+        "trainset,valset,testset size: %d %d %d"
+        % (len(trainset), len(valset), len(testset))
     )
-    trainset = SimplePickleDataset(
-        basedir=basedir, label="trainset", var_config=var_config
-    )
-    valset = SimplePickleDataset(
-        basedir=basedir, label="valset", var_config=var_config
-    )
-    testset = SimplePickleDataset(
-        basedir=basedir, label="testset", var_config=var_config
-    )
-    pdb.set_trace()
+
+    if ddstore:
+        os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
+        os.environ["HYDRAGNN_USE_ddstore"] = "1"
+
     (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
         trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
     )
@@ -302,11 +361,17 @@ def main(preonly=False, mpnn_type=None, global_attn_engine=None, global_attn_typ
         config, train_loader, val_loader, test_loader
     )
 
+    ## Good to sync with everyone right after DDStore setup
+    comm.Barrier()
+
     model = hydragnn.models.create_model_config(
         config=config["NeuralNetwork"],
         verbosity=verbosity,
     )
     model = hydragnn.utils.distributed.get_distributed_model(model, verbosity)
+
+    # Print details of neural network architecture
+    print_model(model)
 
     learning_rate = config["NeuralNetwork"]["Training"]["Optimizer"]["learning_rate"]
     optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
@@ -342,6 +407,38 @@ if __name__ == "__main__":
         default=False,
         help="Specify if preprocessing only (default: False).",
     )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--adios",
+        help="Adios dataset",
+        action="store_const",
+        dest="format",
+        const="adios",
+    )
+    group.add_argument(
+        "--pickle",
+        help="Pickle dataset",
+        action="store_const",
+        dest="format",
+        const="pickle",
+    )
+    parser.set_defaults(format="pickle")
+    parser.add_argument(
+        "--ddstore",
+        action="store_true", 
+        help="ddstore dataset"
+    )
+    parser.add_argument(
+        "--ddstore_width", 
+        type=int, 
+        help="ddstore width", 
+        default=None
+    )
+    parser.add_argument(
+        "--shmem", 
+        action="store_true", 
+        help="shmem"
+    )
     parser.add_argument(
         "--mpnn_type",
         type=str,
@@ -361,4 +458,6 @@ if __name__ == "__main__":
         help="Specify the global attention type (default: None).",
     )
     args = parser.parse_args()
-    main(preonly=args.preonly, mpnn_type=args.mpnn_type)
+    main(preonly=args.preonly, format=args.format, ddstore=args.ddstore, 
+        ddstore_width=args.ddstore_width, shmem=args.shmem, mpnn_type=args.mpnn_type, 
+        global_attn_engine=args.global_attn_engine, global_attn_type=args.global_attn_type)
