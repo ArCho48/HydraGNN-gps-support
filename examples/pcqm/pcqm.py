@@ -1,10 +1,10 @@
 import os
-os.environ["CUDA_VISIBLE_DEVICES"]="4"
+# os.environ["CUDA_VISIBLE_DEVICES"]="4"
 import pdb
 import json
 import torch
 import torch_geometric
-from pcqm4m_dataset import PCQM4Mv2
+from torch_geometric.datasets import PCQM4Mv2
 from torch_geometric.transforms import AddLaplacianEigenvectorPE
 import argparse
 
@@ -122,7 +122,7 @@ def main(mpnn_type=None, global_attn_engine=None, global_attn_type=None):
         split="test",
         transform=lambda data: pcqm_pre_transform(data, transform), 
     )
-    pdb.set_trace()
+
     # print_distributed(2, "Add atomic descriptors")
     # train = [
     #     add_atomic_descriptors(data)

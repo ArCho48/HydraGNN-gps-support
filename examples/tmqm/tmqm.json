@@ -49,8 +49,8 @@
         "Training": {
             "num_epoch": 200,
             "perc_train": 0.8,
-            "loss_function_type": "rmse",
-            "batch_size": 32,
+            "loss_function_type": "mse",
+            "batch_size": 16,
             "continue": 0,
             "startfrom": "existing_model",
             "Optimizer": {
