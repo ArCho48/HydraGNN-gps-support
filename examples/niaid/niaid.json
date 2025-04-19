@@ -28,12 +28,6 @@
             "num_radial": 5,
             "num_spherical": 2,
             "output_heads": {
-                "graph":{
-                    "num_sharedlayers": 2,
-                    "dim_sharedlayers": 50,
-                    "num_headlayers": 2,
-                    "dim_headlayers": [50,25]
-                },
                 "node": {
                     "num_headlayers": 3,
                     "dim_headlayers": [50,50,25],
@@ -54,8 +48,8 @@
         "Training": {
             "num_epoch": 200,
             "perc_train": 0.8,
-            "loss_function_type": "rmse",
-            "batch_size": 32,
+            "loss_function_type": "mse",
+            "batch_size": 16,
             "continue": 0,
             "startfrom": "existing_model",
             "Optimizer": {

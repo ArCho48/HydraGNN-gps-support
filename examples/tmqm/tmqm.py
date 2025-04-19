@@ -2,12 +2,13 @@ import os, sys, json, pdb
 import logging
 import argparse
 import random
-from mpi4py import MPI
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 import torch
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -43,6 +44,8 @@ from generate_dictionaries_pure_elements import (
 def info(*args, logtype="info", sep=" "):
     getattr(logging, logtype)(sep.join(map(str, args)))
 
+#torch.backends.cudnn.enabled = False
+
 def reverse_dict(input_dict):
     """Reverses a dictionary, swapping keys and values."""
     return {value: key for key, value in input_dict.items()}
@@ -51,12 +54,12 @@ def reverse_dict(input_dict):
 create_graph_fromXYZ = RadiusGraph(r=5.0)  # radius cutoff in angstrom
 compute_edge_lengths = Distance(norm=False, cat=True)
 
-# atomicdescriptor = atomicdescriptors(
-#     embeddingfilename="./embedding.json",
-#     overwritten=True,
-#     element_types=None,
-#     one_hot=False,
-# )
+#atomicdescriptor = atomicdescriptors(
+#    embeddingfilename="./embedding.json",
+#    overwritten=True,
+#    element_types=None,
+#    one_hot=False,
+#)
 
 periodic_table = generate_dictionary_elements()
 reverse_pt = reverse_dict(periodic_table)
@@ -75,16 +78,16 @@ def tmqm_pre_transform(data, transform):
     data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
     return data
 
-# def add_atomic_descriptors(data):
-#     descriptor_tensor = torch.empty((data.x.shape[0], 18))
-#     for atom_id in range(data.x.shape[0]):
-#         atomic_string = periodic_table[int(data.x[atom_id, 0].item())]
-#         descriptor_tensor[atom_id, :] = atomicdescriptor.get_atom_features(
-#             atomic_string
-#         )
-#         data.x = torch.cat([data.x, descriptor_tensor], dim=1)
+#def add_atomic_descriptors(data):
+#    descriptor_tensor = torch.empty((data.x.shape[0], 18))
+#    for atom_id in range(data.x.shape[0]):
+#        atomic_string = periodic_table[int(data.x[atom_id, 0].item())]
+#        descriptor_tensor[atom_id, :] = atomicdescriptor.get_atom_features(
+#            atomic_string
+#        )
+#        data.x = torch.cat([data.x, descriptor_tensor], dim=1)
 
-#     return data
+#    return data
 
 class tmQM(AbstractBaseDataset):
     def __init__(
@@ -171,18 +174,20 @@ class tmQM(AbstractBaseDataset):
             descriptors = xyz[counter].replace(" ", "").split('|')
             data[descriptors[3].split('=')[0]] = descriptors[3].split('=')[1]
             data[descriptors[0].split('=')[0]] = descriptors[0].split('=')[1]
-            
             tar[0] = float(descriptors[1].split('=')[1])
             tar[1] = float(descriptors[2].split('=')[1])   
             tar[2] = float(descriptors[4].split('=')[1])
-
             gt_vals = y.loc[y['CSD_code']==data['CSD_code']].values.tolist()[0][1:-1]
             tar[3:] = gt_vals
- 
             data.y = torch.Tensor(tar).unsqueeze(1)
 
+            # Delete non-array fields for adios (only for frontier)
+            del(data['CSD_code'])
+            del(data['Stoichiometry'])
+
+            # Encoders
             data = tmqm_pre_transform(data, transform)
-            # data = add_atomic_descriptors(data)
+            #data = add_atomic_descriptors(data)
 
             self.dataset.append(data)
             counter += (n_lines + 3)
@@ -356,14 +361,11 @@ def main(preonly=False, format='pickle', ddstore=False,
     (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
         trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
     )
-
+    
     config = hydragnn.utils.input_config_parsing.update_config(
         config, train_loader, val_loader, test_loader
     )
-
-    ## Good to sync with everyone right after DDStore setup
-    comm.Barrier()
-
+    
     model = hydragnn.models.create_model_config(
         config=config["NeuralNetwork"],
         verbosity=verbosity,
@@ -394,7 +396,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         config["NeuralNetwork"],
         log_name,
         verbosity,
-        create_plots=True
+        create_plots=False
     )
 
 if __name__ == "__main__":
@@ -422,7 +424,7 @@ if __name__ == "__main__":
         dest="format",
         const="pickle",
     )
-    parser.set_defaults(format="pickle")
+    parser.set_defaults(format="adios")
     parser.add_argument(
         "--ddstore",
         action="store_true", 

@@ -1,14 +1,14 @@
 import os, sys, json, pdb
-# os.environ["CUDA_VISIBLE_DEVICES"]="3,5"
 import logging
 import argparse
 import random
-from mpi4py import MPI
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 import torch
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -192,7 +192,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         os.environ["SERIALIZED_DATA_PATH"] = os.getcwd()
 
     # Configurable run choices (JSON file that accompanies this example script).
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tmqm.json")
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "niaid.json")
     with open(filename, "r") as f:
         config = json.load(f)
 
@@ -340,9 +340,6 @@ def main(preonly=False, format='pickle', ddstore=False,
         config, train_loader, val_loader, test_loader
     )
 
-    ## Good to sync with everyone right after DDStore setup
-    comm.Barrier()
-
     model = hydragnn.models.create_model_config(
         config=config["NeuralNetwork"],
         verbosity=verbosity,
@@ -373,12 +370,12 @@ def main(preonly=False, format='pickle', ddstore=False,
         config["NeuralNetwork"],
         log_name,
         verbosity,
-        create_plots=True
+        create_plots=False
     )
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Run the tmQM example with optional model type."
+        description="Run the niaid example with optional model type."
     )
     parser.add_argument(
         "--preonly",
@@ -401,7 +398,7 @@ if __name__ == "__main__":
         dest="format",
         const="pickle",
     )
-    parser.set_defaults(format="pickle")
+    parser.set_defaults(format="adios")
     parser.add_argument(
         "--ddstore",
         action="store_true", 
