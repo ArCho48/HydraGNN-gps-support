@@ -4,14 +4,18 @@ import argparse
 import random
 import numpy as np
 import pandas as pd
+from mpi4py import MPI
 from tqdm import tqdm
 
+import numpy as np
+
+import random
 import torch
-torch.cuda.init()
-from mpi4py import MPI
+
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
+
 from torch_geometric.data import Data
 from torch_geometric.transforms import RadiusGraph, Distance, AddLaplacianEigenvectorPE
 
@@ -398,7 +402,7 @@ if __name__ == "__main__":
         dest="format",
         const="pickle",
     )
-    parser.set_defaults(format="adios")
+    parser.set_defaults(format="pickle")
     parser.add_argument(
         "--ddstore",
         action="store_true", 

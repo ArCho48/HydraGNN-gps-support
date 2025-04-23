@@ -510,6 +510,8 @@ def train(
             if trace_level > 0:
                 tr.start("h2d", **syncopt)
             data = data.to(get_device())
+            print("massi: ", data, flush=True)
+            #pdb.set_trace()
             if trace_level > 0:
                 tr.stop("h2d", **syncopt)
             if compute_grad_energy:  # for force and energy prediction
@@ -517,8 +519,12 @@ def train(
                 pred = model(data)
                 loss, tasks_loss = model.module.energy_force_loss(pred, data)
             else:
+                print("massi 2", flush=True)
+                print("is cuda available", torch.cuda.is_available(), flush=True)
+                print("massi model params cuda: ", next(model.parameters()).is_cuda, flush=True)
                 pred = model(data)
                 loss, tasks_loss = model.module.loss(pred, data.y, head_index)
+                print("massi 3", flush=True)
             if trace_level > 0:
                 tr.start("forward_sync", **syncopt)
                 MPI.COMM_WORLD.Barrier()
