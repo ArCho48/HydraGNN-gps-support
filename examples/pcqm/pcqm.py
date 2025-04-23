@@ -2,6 +2,8 @@ import os
 # os.environ["CUDA_VISIBLE_DEVICES"]="4"
 import pdb
 import json
+from mpi4py import MPI
+
 import torch
 import torch_geometric
 from torch_geometric.datasets import PCQM4Mv2
