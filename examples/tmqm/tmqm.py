@@ -339,6 +339,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         testset = SimplePickleDataset(
             basedir=basedir, label="testset", var_config=var_config
         )
+        pdb.set_trace()
         pna_deg = trainset.pna_deg
         if ddstore:
             opt = {"ddstore_width": ddstore_width}
@@ -424,7 +425,7 @@ if __name__ == "__main__":
         dest="format",
         const="pickle",
     )
-    parser.set_defaults(format="adios")
+    parser.set_defaults(format="pickle")
     parser.add_argument(
         "--ddstore",
         action="store_true", 
