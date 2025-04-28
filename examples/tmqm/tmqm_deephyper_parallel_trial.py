@@ -85,7 +85,7 @@ def main():
         dest="format",
         const="multi",
     )
-    parser.set_defaults(format="adios")
+    parser.set_defaults(format="pickle")
     args = parser.parse_args()
     args.parameters = vars(args)
 

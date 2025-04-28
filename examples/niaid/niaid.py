@@ -339,10 +339,18 @@ def main(preonly=False, format='pickle', ddstore=False,
     (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
         trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
     )
+    ## Good to sync with everyone right after DDStore setup
+    comm.Barrier()
 
+    if args.ddstore:
+        train_loader.dataset.ddstore.epoch_begin()
     config = hydragnn.utils.input_config_parsing.update_config(
         config, train_loader, val_loader, test_loader
     )
+    if args.ddstore:
+        train_loader.dataset.ddstore.epoch_end()
+    ## Good to sync with everyone right after DDStore setup
+    comm.Barrier()
 
     model = hydragnn.models.create_model_config(
         config=config["NeuralNetwork"],
@@ -383,9 +391,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--preonly",
-        type=bool,
-        default=False,
-        help="Specify if preprocessing only (default: False).",
+        action="store_true",
+        help="preprocess only (no training)",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
