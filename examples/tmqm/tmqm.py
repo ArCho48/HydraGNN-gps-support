@@ -2,6 +2,7 @@ import os, sys, json, pdb
 import logging
 import argparse
 import random
+#from mpi4py import MPI
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -339,7 +340,6 @@ def main(preonly=False, format='pickle', ddstore=False,
         testset = SimplePickleDataset(
             basedir=basedir, label="testset", var_config=var_config
         )
-        pdb.set_trace()
         pna_deg = trainset.pna_deg
         if ddstore:
             opt = {"ddstore_width": ddstore_width}

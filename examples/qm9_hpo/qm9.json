@@ -3,7 +3,7 @@
         "level": 2
     },
     "NeuralNetwork": {
-        "Profile": {"enable": 1},
+        "Profile": {"enable": 0},
         "Architecture": {
             "global_attn_engine": "GPS",
             "global_attn_type": "multihead",
@@ -49,7 +49,7 @@
             "num_epoch": 20,
             "perc_train": 0.7,
             "loss_function_type": "mse",
-            "batch_size": 64,
+            "batch_size": 8,
             "continue": 0,
             "startfrom": "existing_model",
             "Optimizer": {

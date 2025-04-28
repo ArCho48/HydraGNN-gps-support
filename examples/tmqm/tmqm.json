@@ -47,10 +47,10 @@
             "denormalize_output": false
         },
         "Training": {
-            "num_epoch": 200,
+            "num_epoch": 30,
             "perc_train": 0.8,
             "loss_function_type": "mse",
-            "batch_size": 16,
+            "batch_size": 8,
             "continue": 0,
             "startfrom": "existing_model",
             "Optimizer": {
