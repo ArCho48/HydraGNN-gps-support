@@ -132,7 +132,7 @@ if __name__ == "__main__":
 
     # Define the search space for hyperparameters
     problem.add_hyperparameter((1, 6), "num_conv_layers")  # discrete parameter
-    problem.add_hyperparameter([8,16,32,64,128,256,512], "hidden_dim")  # discrete parameter
+    problem.add_hyperparameter([4,6,8,16,20,32], "hidden_dim")  # discrete parameter
     problem.add_hyperparameter((1, 2), "num_headlayers")  # discrete parameter
     problem.add_hyperparameter([32, 64], "dim_headlayers")  # discrete parameter
     

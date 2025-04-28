@@ -132,8 +132,8 @@ if __name__ == "__main__":
 
     # Define the search space for hyperparameters
     problem.add_hyperparameter((1, 6), "num_conv_layers")  # discrete parameter
-    problem.add_hyperparameter([8,16,32,64,128,256,512], "hidden_dim")  # discrete parameter
-    problem.add_hyperparameter((1, 3), "num_headlayers")  # discrete parameter
+    problem.add_hyperparameter([4,8,12,16,20,32], "hidden_dim")  # discrete parameter
+    problem.add_hyperparameter((1, 2), "num_headlayers")  # discrete parameter
     problem.add_hyperparameter([32, 64], "dim_headlayers")  # discrete parameter
 
     # Configurable run choices (JSON file that accompanies this example script).
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     )
 
     timeout = None
-    results = search.search(max_evals=20, timeout=timeout)
+    results = search.search(max_evals=200, timeout=timeout)
     print(results)
 
     sys.exit(0)

@@ -24,7 +24,7 @@ except ImportError:
     pass
 
 from scipy.interpolate import BSpline, make_interp_spline
-import adios2 as ad2
+#import adios2 as ad2
 
 ## FIMME
 torch.backends.cudnn.enabled = False
