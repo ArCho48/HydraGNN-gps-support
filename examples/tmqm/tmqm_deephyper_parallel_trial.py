@@ -1,21 +1,29 @@
 import os, json
 import logging
 import sys
-from mpi4py import MPI
+# from mpi4py import MPI
 import argparse
-import pdb
-import torch
 import numpy as np
-from torch_geometric.transforms import AddLaplacianEigenvectorPE
+
+import torch
+torch.cuda.init()
+from mpi4py import MPI
+
 import hydragnn
 from hydragnn.utils.profiling_and_tracing.time_utils import Timer
 from hydragnn.utils.model import print_model
+from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
+    atomicdescriptors,
+)
+from hydragnn.utils.datasets.abstractbasedataset import AbstractBaseDataset
 from hydragnn.utils.datasets.distdataset import DistDataset
-from hydragnn.utils.datasets.pickledataset import SimplePickleDataset
-
+from hydragnn.utils.datasets.pickledataset import (
+    SimplePickleWriter,
+    SimplePickleDataset,
+)
+from hydragnn.preprocess.graph_samples_checks_and_updates import gather_deg
+from hydragnn.preprocess.load_data import split_dataset
 import hydragnn.utils.profiling_and_tracing.tracer as tr
-
-from hydragnn.utils.print.print_utils import log
 
 try:
     from hydragnn.utils.datasets.adiosdataset import AdiosWriter, AdiosDataset
@@ -62,7 +70,6 @@ def main():
         help="use automatic differentiation to compute gradiens of energy",
         default=False,
     )
-
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--adios",
@@ -78,45 +85,21 @@ def main():
         dest="format",
         const="pickle",
     )
-    group.add_argument(
-        "--multi",
-        help="Multi dataset",
-        action="store_const",
-        dest="format",
-        const="multi",
-    )
     parser.set_defaults(format="pickle")
     args = parser.parse_args()
     args.parameters = vars(args)
 
-    graph_feature_names = ["energy"]
-    graph_feature_dims = [1]
-    node_feature_names = ["atomic_number", "cartesian_coordinates", "forces"]
-    node_feature_dims = [1, 3, 3]
-    dirpwd = os.path.dirname(os.path.abspath(__file__))
-    ##################################################################################################################
-    input_filename = os.path.join(dirpwd, args.inputfile)
-    ##################################################################################################################
     # Configurable run choices (JSON file that accompanies this example script).
+    dirpwd = os.path.dirname(os.path.abspath(__file__))
+    input_filename = os.path.join(dirpwd, args.inputfile)
     with open(input_filename, "r") as f:
         config = json.load(f)
     verbosity = config["Verbosity"]["level"]
     var_config = config["NeuralNetwork"]["Variables_of_interest"]
-    var_config["graph_feature_names"] = graph_feature_names
-    var_config["graph_feature_dims"] = graph_feature_dims
-    var_config["node_feature_names"] = node_feature_names
-    var_config["node_feature_dims"] = node_feature_dims
 
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
-    
-    #if args.parameters["global_attn_heads"] is not None:
-    #    config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters[
-    #        "global_attn_heads"
-    #    ]
-    #    global_attn_heads = args.parameters["global_attn_heads"]
-    #    hidden_dim = global_attn_heads * args.parameters["hidden_dim"]
-    #else:
+
     hidden_dim = args.parameters["hidden_dim"]
 
     # Update the config dictionary with the suggested hyperparameters
@@ -172,12 +155,6 @@ def main():
     timer = Timer("load_data")
     timer.start()
 
-    # Configurable run choices (JSON file that accompanies this example script).
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "tmqm.json")
-    with open(filename, "r") as f:
-        config = json.load(f)
-    verbosity = config["Verbosity"]["level"]
-
     modelname = "tmqm" 
 
     if args.format == "adios":
@@ -230,9 +207,16 @@ def main():
         trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
     )
 
+    ## Good to sync with everyone right after DDStore setup
+    comm.Barrier()
+
+    if args.ddstore:
+        train_loader.dataset.ddstore.epoch_begin()
     config = hydragnn.utils.input_config_parsing.update_config(
         config, train_loader, val_loader, test_loader
     )
+    if args.ddstore:
+        train_loader.dataset.ddstore.epoch_end()
     ## Good to sync with everyone right after DDStore setup
     comm.Barrier()
 
