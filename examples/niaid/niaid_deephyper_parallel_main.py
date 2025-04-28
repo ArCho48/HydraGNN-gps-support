@@ -81,10 +81,8 @@ def run(trial, dequed=None):
             f"--num_headlayers={trial.parameters['num_headlayers']}",
             f"--dim_headlayers={trial.parameters['dim_headlayers']}",
             f"--global_attn_heads={trial.parameters['global_attn_heads']}",
-            ##f"--adios",
-            ##f"--ddstore",
-            ## debugging
-            ##f'--multi_model_list="ANI1x"',
+            f"--adios",
+            f"--ddstore",
             f"--num_epoch={50}",
             f"--log={log_name}",
         ]
