@@ -10,6 +10,7 @@ torch.cuda.init()
 from mpi4py import MPI
 
 import hydragnn
+from hydragnn.utils.print.print_utils import log
 from hydragnn.utils.profiling_and_tracing.time_utils import Timer
 from hydragnn.utils.model import print_model
 from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (

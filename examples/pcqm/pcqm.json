@@ -11,7 +11,7 @@
             "radius": 7,
             "max_neighbours": 5,
             "periodic_boundary_conditions": false,
-            "pe_dim": 6,
+            "pe_dim": 4,
             "global_attn_heads": 8,
             "hidden_dim": 64,
             "num_conv_layers": 2,
@@ -41,7 +41,8 @@
             "input_node_features": [0, 1, 2, 3, 4, 5, 6, 7, 8],
             "output_names": ["gap"],
             "output_index": [0],
-            "output_dim": [1],
+            "graph_feature_dims": [1],
+            "node_feature_dims": [],
             "type": ["graph"],
             "denormalize_output": false
         },
@@ -49,7 +50,7 @@
             "num_epoch": 2,
             "perc_train": 0.7,
             "loss_function_type": "mse",
-            "batch_size": 64,
+            "batch_size": 32,
             "continue": 0,
             "startfrom": "existing_model",
             "Optimizer": {
