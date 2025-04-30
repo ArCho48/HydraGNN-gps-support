@@ -13,7 +13,7 @@
             "periodic_boundary_conditions": false,
             "pe_dim": 4,
             "global_attn_heads": 8,
-            "hidden_dim": 64,
+            "hidden_dim": 32,
             "num_conv_layers": 2,
             "int_emb_size": 32,
             "out_emb_size": 16,
@@ -47,10 +47,10 @@
             "denormalize_output": false
         },
         "Training": {
-            "num_epoch": 2,
+            "num_epoch": 30,
             "perc_train": 0.7,
             "loss_function_type": "mse",
-            "batch_size": 32,
+            "batch_size": 8,
             "continue": 0,
             "startfrom": "existing_model",
             "Optimizer": {

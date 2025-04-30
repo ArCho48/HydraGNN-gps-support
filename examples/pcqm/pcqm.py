@@ -1,4 +1,4 @@
-import os
+import os,sys
 import pdb
 import json
 import logging
@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from rdkit import Chem
-# from mpi4py import MPI
+#from mpi4py import MPI
 from sklearn.model_selection import train_test_split
 
 import pyarrow as pa
@@ -604,7 +604,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         config["NeuralNetwork"],
         log_name,
         verbosity,
-        create_plots=True
+        create_plots=False
     )
 
 if __name__ == "__main__":
