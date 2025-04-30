@@ -31,7 +31,7 @@ try:
 except ImportError:
     pass
 
-# import adios2 as ad2
+import adios2 as ad2
 
 ## FIMME
 torch.backends.cudnn.enabled = False
