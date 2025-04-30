@@ -10,7 +10,6 @@ torch.cuda.init()
 from mpi4py import MPI
 
 import hydragnn
-from hydragnn.utils.print.print_utils import log
 from hydragnn.utils.profiling_and_tracing.time_utils import Timer
 from hydragnn.utils.model import print_model
 from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
@@ -31,7 +30,7 @@ try:
 except ImportError:
     pass
 
-# import adios2 as ad2
+import adios2 as ad2
 
 ## FIMME
 torch.backends.cudnn.enabled = False
@@ -43,7 +42,7 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("--inputfile", help="input file", type=str, default="tmqm.json")
+    parser.add_argument("--inputfile", help="input file", type=str, default="pcqm.json")
     parser.add_argument("--mpnn_type", help="mpnn_type", default="PNA")
     parser.add_argument("--hidden_dim", type=int, help="hidden_dim", default=64)
     parser.add_argument(
@@ -55,7 +54,7 @@ def main():
     parser.add_argument("--ddstore", action="store_true", help="ddstore dataset")
     parser.add_argument("--ddstore_width", type=int, help="ddstore width", default=None)
     parser.add_argument("--shmem", action="store_true", help="shmem")
-    parser.add_argument("--log", help="log name", default="tmqm_hpo_trials")
+    parser.add_argument("--log", help="log name", default="pcqm_hpo_trials")
     parser.add_argument("--num_epoch", type=int, help="num_epoch", default=None)
     parser.add_argument("--batch_size", type=int, help="batch_size", default=None)
     parser.add_argument("--everyone", action="store_true", help="gptimer")
@@ -145,7 +144,7 @@ def main():
         datefmt="%H:%M:%S",
     )
 
-    log_name = "tmqm_hpo_trials" if args.log is None else args.log
+    log_name = "pcqm_hpo_trials" if args.log is None else args.log
     hydragnn.utils.print.print_utils.setup_log(log_name)
     writer = hydragnn.utils.model.get_summary_writer(log_name)
 
@@ -156,7 +155,7 @@ def main():
     timer = Timer("load_data")
     timer.start()
 
-    modelname = "tmqm" 
+    modelname = "pcqm" 
 
     if args.format == "adios":
         info("Adios load")
