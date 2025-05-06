@@ -1,10 +1,20 @@
-import pickle, os
+import os, json, pdb
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from torch_geometric.utils import to_networkx
 
-dataset = pickle.load(open('graphs.pkl','rb'))
+from hydragnn.utils.datasets.pickledataset import SimplePickleDataset
+
+# Configurable run choices (JSON file that accompanies this example script).
+filename = '../tmqm.json'
+with open(filename, "r") as f:
+    config = json.load(f)
+
+var_config = config["NeuralNetwork"]["Variables_of_interest"]
+
+dataset = SimplePickleDataset(basedir='../dataset/tmqm.pickle', label="testset", var_config=var_config)
+dataset = [data for data in dataset]
 # nx_graphs = [to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"]) for data in dataset]
 nx_graphs_sorted = sorted(dataset, key=lambda data: data.x.shape[0])
 nx_graphs_sorted = [to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"], to_undirected=True) for data in nx_graphs_sorted]
