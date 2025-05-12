@@ -2,14 +2,14 @@ import os, sys, json, pdb
 import logging
 import argparse
 import random
-#from mpi4py import MPI
+from mpi4py import MPI
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 import torch
-torch.cuda.init()
-from mpi4py import MPI
+# torch.cuda.init()
+# from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)

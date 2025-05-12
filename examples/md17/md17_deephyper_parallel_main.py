@@ -82,7 +82,7 @@ def run(trial, dequed=None):
             f"--dim_headlayers={trial.parameters['dim_headlayers']}",
             f"--global_attn_heads={trial.parameters['global_attn_heads']}",
             ##f"--pickle",
-            f"--num_epoch={50}",
+            f"--num_epoch={30}",
             f"--log={log_name}",
         ]
     )
@@ -182,7 +182,7 @@ if __name__ == "__main__":
     )
 
     timeout = None
-    results = search.search(max_evals=200, timeout=timeout)
+    results = search.search(max_evals=150, timeout=timeout)
     print(results)
 
     sys.exit(0)

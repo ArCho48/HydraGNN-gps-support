@@ -83,7 +83,7 @@ def run(trial, dequed=None):
             f"--global_attn_heads={trial.parameters['global_attn_heads']}",
             f"--adios",
             f"--ddstore",
-            f"--num_epoch={500}",
+            f"--num_epoch={30}",
             f"--log={log_name}",
         ]
     )
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     )
 
     timeout = None
-    results = search.search(max_evals=200, timeout=timeout)
+    results = search.search(max_evals=150, timeout=timeout)
     print(results)
 
     sys.exit(0)
