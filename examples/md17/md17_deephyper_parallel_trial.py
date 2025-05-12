@@ -66,7 +66,7 @@ def main():
     )
     parser.add_argument("--num_headlayers", type=int, help="num_headlayers", default=2)
     parser.add_argument("--dim_headlayers", type=int, help="dim_headlayers", default=10)
-    parser.add_argument("--global_attn_heads", help="global_attn_heads", default=None)
+    parser.add_argument("--global_attn_heads", type=int, help="global_attn_heads", default=None)
     parser.add_argument("--ddstore", action="store_true", help="ddstore dataset")
     parser.add_argument("--ddstore_width", type=int, help="ddstore width", default=None)
     parser.add_argument("--shmem", action="store_true", help="shmem")
@@ -90,65 +90,20 @@ def main():
         default=False,
     )
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument(
-        "--adios",
-        help="Adios dataset",
-        action="store_const",
-        dest="format",
-        const="adios",
-    )
-    group.add_argument(
-        "--pickle",
-        help="Pickle dataset",
-        action="store_const",
-        dest="format",
-        const="pickle",
-    )
-    group.add_argument(
-        "--multi",
-        help="Multi dataset",
-        action="store_const",
-        dest="format",
-        const="multi",
-    )
-    parser.set_defaults(format="adios")
     args = parser.parse_args()
     args.parameters = vars(args)
 
-    graph_feature_names = ["energy"]
-    graph_feature_dims = [1]
-    node_feature_names = ["atomic_number", "cartesian_coordinates", "forces"]
-    node_feature_dims = [1, 3, 3]
-    dirpwd = os.path.dirname(os.path.abspath(__file__))
-    ##################################################################################################################
-    input_filename = os.path.join(dirpwd, args.inputfile)
-    ##################################################################################################################
     # Configurable run choices (JSON file that accompanies this example script).
+    dirpwd = os.path.dirname(os.path.abspath(__file__))
+    input_filename = os.path.join(dirpwd, args.inputfile)
     with open(input_filename, "r") as f:
         config = json.load(f)
     verbosity = config["Verbosity"]["level"]
-    var_config = config["NeuralNetwork"]["Variables_of_interest"]
-    var_config["graph_feature_names"] = graph_feature_names
-    var_config["graph_feature_dims"] = graph_feature_dims
-    var_config["node_feature_names"] = node_feature_names
-    var_config["node_feature_dims"] = node_feature_dims
-
-    if args.batch_size is not None:
-        config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
-
-    #if args.parameters["global_attn_heads"] is not None:
-    #    config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters[
-    #        "global_attn_heads"
-    #    ]
-    #    global_attn_heads = args.parameters["global_attn_heads"]
-    #    hidden_dim = global_attn_heads * args.parameters["hidden_dim"]
-    #else:
-    hidden_dim = args.parameters["hidden_dim"]
 
     # Update the config dictionary with the suggested hyperparameters
+    config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters["global_attn_heads"]
     config["NeuralNetwork"]["Architecture"]["mpnn_type"] = args.parameters["mpnn_type"]
-    config["NeuralNetwork"]["Architecture"]["hidden_dim"] = hidden_dim
+    config["NeuralNetwork"]["Architecture"]["hidden_dim"] = args.parameters["hidden_dim"]
     config["NeuralNetwork"]["Architecture"]["num_conv_layers"] = args.parameters[
         "num_conv_layers"
     ]
@@ -200,12 +155,6 @@ def main():
     timer = Timer("load_data")
     timer.start()
 
-    # Configurable run choices (JSON file that accompanies this example script).
-    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "md17.json")
-    with open(filename, "r") as f:
-        config = json.load(f)
-    verbosity = config["Verbosity"]["level"]
-
     # LPE
     transform = AddLaplacianEigenvectorPE(
         k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
@@ -232,14 +181,10 @@ def main():
         % (len(trainset), len(valset), len(testset))
     )
 
-    if args.ddstore:
-        os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
-        os.environ["HYDRAGNN_USE_ddstore"] = "1"
-
     (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
         trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
     )
-
+    
     config = hydragnn.utils.input_config_parsing.update_config(
         config, train_loader, val_loader, test_loader
     )

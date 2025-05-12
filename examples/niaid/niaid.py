@@ -3,6 +3,7 @@ import logging
 import argparse
 import random
 import numpy as np
+from mpi4py import MPI
 import pandas as pd
 from tqdm import tqdm
 
@@ -10,8 +11,8 @@ import numpy as np
 
 import random
 import torch
-torch.cuda.init()
-from mpi4py import MPI
+# torch.cuda.init()
+# from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -25,6 +26,7 @@ from hydragnn.utils.model import print_model
 from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
     atomicdescriptors,
 )
+from hydragnn.utils.descriptors_and_embeddings.topologicaldescriptors import compute_topo_features
 from hydragnn.utils.datasets.abstractbasedataset import AbstractBaseDataset
 from hydragnn.utils.datasets.distdataset import DistDataset
 from hydragnn.utils.datasets.pickledataset import (
@@ -138,8 +140,9 @@ class niaid(AbstractBaseDataset):
 
             # Pre-transform
             try:
-                data = niaid_pre_transform(data, transform)
+                # data = niaid_pre_transform(data, transform)
                 # data = add_atomic_descriptors(data)
+                data = compute_topo_features(data,pe_dim)
 
                 self.dataset.append(data)
             except:
