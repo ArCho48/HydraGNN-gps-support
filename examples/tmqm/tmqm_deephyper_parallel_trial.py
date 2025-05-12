@@ -51,7 +51,7 @@ def main():
     )
     parser.add_argument("--num_headlayers", type=int, help="num_headlayers", default=2)
     parser.add_argument("--dim_headlayers", type=int, help="dim_headlayers", default=10)
-    parser.add_argument("--global_attn_heads", help="global_attn_heads", default=None)
+    parser.add_argument("--global_attn_heads", type=int, help="global_attn_heads", default=None)
     parser.add_argument("--ddstore", action="store_true", help="ddstore dataset")
     parser.add_argument("--ddstore_width", type=int, help="ddstore width", default=None)
     parser.add_argument("--shmem", action="store_true", help="shmem")
@@ -98,20 +98,16 @@ def main():
     verbosity = config["Verbosity"]["level"]
     var_config = config["NeuralNetwork"]["Variables_of_interest"]
 
-    if args.batch_size is not None:
-        config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
-
-    hidden_dim = args.parameters["hidden_dim"]
-
     # Update the config dictionary with the suggested hyperparameters
+    config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters["global_attn_heads"]
     config["NeuralNetwork"]["Architecture"]["mpnn_type"] = args.parameters["mpnn_type"]
-    config["NeuralNetwork"]["Architecture"]["hidden_dim"] = hidden_dim
+    config["NeuralNetwork"]["Architecture"]["hidden_dim"] = args.parameters["hidden_dim"]
     config["NeuralNetwork"]["Architecture"]["num_conv_layers"] = args.parameters[
         "num_conv_layers"
     ]
 
     dim_headlayers = [
-        args.parameters["dim_headlayers"]
+        args.parameters["dim_headlayers"] 
         for i in range(args.parameters["num_headlayers"])
     ]
 
@@ -123,7 +119,8 @@ def main():
             "dim_headlayers"
         ] = dim_headlayers
 
-    config["NeuralNetwork"]["Architecture"]["equivariance"] = False
+    if args.parameters["mpnn_type"] not in ["EGNN", "SchNet", "DimeNet"]:
+        config["NeuralNetwork"]["Architecture"]["equivariance"] = False
 
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size

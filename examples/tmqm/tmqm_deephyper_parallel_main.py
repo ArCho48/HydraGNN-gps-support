@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     # Define the search space for hyperparameters
     problem.add_hyperparameter((1, 6), "num_conv_layers")  # discrete parameter
-    problem.add_hyperparameter([4,8,12,16,20,32], "hidden_dim")  # discrete parameter
+    #problem.add_hyperparameter([4,8,12,16,24,32], "hidden_dim")  # discrete parameter
     problem.add_hyperparameter((1, 2), "num_headlayers")  # discrete parameter
     problem.add_hyperparameter([32, 64], "dim_headlayers")  # discrete parameter
 
@@ -142,8 +142,10 @@ if __name__ == "__main__":
     # Include "global_attn_heads" to list of hyperparameters if global attention engine is used
     if config["NeuralNetwork"]["Architecture"]["global_attn_engine"]:
         problem.add_hyperparameter([2, 4], "global_attn_heads")  # discrete parameter
+        problem.add_hyperparameter([4,8,12,16,24,32], "hidden_dim")  # discrete parameter
     else:
         problem.add_hyperparameter([0], "global_attn_heads")  # discrete parameter
+        problem.add_hyperparameter((2,32), "hidden_dim")  # discrete parameter
     problem.add_hyperparameter(["EGNN", "PNA", "SchNet", "DimeNet"], "mpnn_type")  # categorical parameter
 
     # Create the node queue

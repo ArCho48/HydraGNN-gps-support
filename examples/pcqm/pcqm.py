@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from rdkit import Chem
-#from mpi4py import MPI
+from mpi4py import MPI
 from sklearn.model_selection import train_test_split
 
 import pyarrow as pa
@@ -20,8 +20,8 @@ from ogb.utils.features import atom_to_feature_vector, bond_to_feature_vector
 
 import random
 import torch
-torch.cuda.init()
-from mpi4py import MPI
+# torch.cuda.init()
+# from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -552,7 +552,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
-
+    pdb.set_trace()
     if ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
         os.environ["HYDRAGNN_USE_ddstore"] = "1"
