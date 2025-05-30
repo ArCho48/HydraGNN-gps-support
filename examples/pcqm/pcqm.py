@@ -8,6 +8,7 @@ import requests
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from multiprocessing import Pool, cpu_count
 from rdkit import Chem
 from mpi4py import MPI
 from sklearn.model_selection import train_test_split
@@ -28,6 +29,7 @@ torch.manual_seed(random_state)
 import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.transforms import AddLaplacianEigenvectorPE
+from torch_geometric.utils import degree
 
 # deprecated in torch_geometric 2.0
 try:
@@ -38,6 +40,7 @@ except ImportError:
 import hydragnn
 from hydragnn.utils.profiling_and_tracing.time_utils import Timer
 from hydragnn.utils.model import print_model
+from hydragnn.utils.descriptors_and_embeddings.topologicaldescriptors import compute_topo_features
 from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
     atomicdescriptors,
 )
@@ -67,39 +70,17 @@ def reverse_dict(input_dict):
     """Reverses a dictionary, swapping keys and values."""
     return {value: key for key, value in input_dict.items()}
 
-# atomicdescriptor = atomicdescriptors(
-#     embeddingfilename="./embedding.json",
-#     overwritten=True,
-#     element_types=generate_ogb_elements(),
-#     one_hot=False,
-# )
-
-# def add_atomic_descriptors(data):
-#     descriptor_tensor = torch.empty((data.x.shape[0], 18))
-#     for atom_id in range(data.x.shape[0]):
-#         atomic_string = periodic_table[int(data.x[atom_id, 0].item())]
-#         descriptor_tensor[atom_id, :] = atomicdescriptor.get_atom_features(
-#             atomic_string
-#         )
-#         data.x = torch.cat([data.x, descriptor_tensor], dim=1)
-#     return data
-
+def has_isolated_nodes(data: Data) -> bool:
+    # compute degree of each node
+    deg = degree(data.edge_index[0], num_nodes=data.num_nodes)
+    # if any degree == 0, there's an isolated node
+    return bool((deg == 0).any())
 
 periodic_table = generate_dictionary_elements()
 
-# Update each sample prior to loading.
-def pcqm_pre_transform(data, transform):
-    # LPE
-    data = transform(data)
-    # gps requires relative edge features, introduced rel_lapPe as edge encodings
-    source_pe = data.pe[data.edge_index[0]]
-    target_pe = data.pe[data.edge_index[1]]
-    data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
-    return data
-
 class pcqm(AbstractBaseDataset):
     def __init__(
-        self, datadir, pe_dim
+        self, datadir, num_laplacian_eigs
     ):
         super().__init__()
 
@@ -121,12 +102,12 @@ class pcqm(AbstractBaseDataset):
 
         # LPE
         transform = AddLaplacianEigenvectorPE(
-            k=pe_dim,
+            k=num_laplacian_eigs,
             attr_name="pe",
             is_undirected=True,
         )
 
-        pbar = tqdm(total=records.shape[0])
+        pbar = tqdm(total=records.shape[0],desc="Pre-processing data")
         for idx, row in records.iterrows():
            # Create the PyTorch Geometric Data object
             data = Data()
@@ -137,18 +118,30 @@ class pcqm(AbstractBaseDataset):
             data.edge_attr = torch.from_numpy(row['edge_features']).reshape([-1,3]).to(torch.float32)
             data.y = torch.Tensor([row['target']]).to(torch.float32)
             
-            # Pre-transform
-            try:
-                data = pcqm_pre_transform(data, transform)
-                # data = add_atomic_descriptors(data)
-
-                self.dataset.append(data)
-            except:
-                print(idx)
+            if not has_isolated_nodes(data):
+                # Pre-transform
+                try:
+                    data = transform(data)
+                    self.dataset.append(data)
+                except:
+                    print("Laplacian_eigs do not converge for graph {} ".format(idx))
+            else:
+                print("Graph {} has one or more isolated nodes".format(idx))
             pbar.update(1)
         pbar.close()
 
+        self.get_topo_encodings()
+
         random.shuffle(self.dataset)
+
+    def get_topo_encodings(self):
+        n_procs = min(cpu_count(), len(self.dataset))
+        chunksize = max(1, len(self.dataset) // (n_procs * 4))  # tune this
+
+        with Pool(processes=n_procs) as pool:
+            iterator = pool.imap(compute_topo_features, self.dataset, chunksize)
+            self.dataset = list(tqdm(iterator, total=len(self.dataset), desc="Adding topological encodings"))
+            # self.dataset = pool.map(compute_topo_features, self.dataset, chunksize)
 
     def len(self):
         return len(self.dataset)
@@ -433,7 +426,7 @@ def main(preonly=False, format='pickle', ddstore=False,
     if preonly:
         ## local data
         dataset = pcqm(
-            'dataset/raw/', config["NeuralNetwork"]["Architecture"]["pe_dim"],
+            'dataset/raw/', config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
         )
         ## This is a local split
         trainset, valset, testset = split_dataset(
@@ -552,7 +545,12 @@ def main(preonly=False, format='pickle', ddstore=False,
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
-    pdb.set_trace()
+    
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
+    
     if ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
         os.environ["HYDRAGNN_USE_ddstore"] = "1"
@@ -604,7 +602,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         config["NeuralNetwork"],
         log_name,
         verbosity,
-        create_plots=False
+        create_plots=True
     )
 
 if __name__ == "__main__":

@@ -7,14 +7,14 @@
         "Architecture": {
             "global_attn_engine": "GPS",
             "global_attn_type": "multihead",
-            "mpnn_type": "PNA",
+            "mpnn_type": "PAINN",
             "radius": 7,
             "max_neighbours": 5,
             "periodic_boundary_conditions": false,
-            "pe_dim": 6,
+            "num_laplacian_eigs": 6,
             "global_attn_heads": 4,
             "hidden_dim": 32,
-            "num_conv_layers": 2,
+            "num_conv_layers": 3,
             "int_emb_size": 32,
             "out_emb_size": 16,
             "basis_emb_size": 8,
@@ -29,8 +29,8 @@
             "num_spherical": 2,
             "output_heads": {
                 "node": {
-                    "num_headlayers": 3,
-                    "dim_headlayers": [50,50,25],
+                    "num_headlayers": 1,
+                    "dim_headlayers": [32],
                     "type": "mlp"
                 }
             },
@@ -46,11 +46,13 @@
             "denormalize_output": false
         },
         "Training": {
-            "num_epoch": 30,
+            "num_epoch": 100,
             "perc_train": 0.8,
             "loss_function_type": "mse",
-            "batch_size": 8,
+            "batch_size": 32,
             "continue": 0,
+            "EarlyStopping": false,
+            "Checkpoint": true,
             "startfrom": "existing_model",
             "Optimizer": {
                 "type": "AdamW",

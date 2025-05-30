@@ -1,0 +1,332 @@
+[W512 20:54:49.139733592 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W512 20:54:49.139720838 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W512 20:54:49.139785430 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W512 20:54:49.139839352 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W512 20:54:49.141300218 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W512 20:54:49.141259481 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W512 20:54:49.141271233 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W512 20:54:49.154191663 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier02800.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+0: Command: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/qm9_hpo/qm9_deephyper_parallel_trial.py --mpnn_type=DimeNet --hidden_dim=21 --num_conv_layers=1 --num_headlayers=2 --dim_headlayers=32 --global_attn_heads=0 --num_epoch=30 --log=qm9_hpo_trials_0.156
+
+INFO (rank 7): trainset,valset,testset size: 91581 19625 19625
+INFO (rank 5): trainset,valset,testset size: 91581 19625 19625
+INFO (rank 1): trainset,valset,testset size: 91581 19625 19625
+INFO (rank 2): trainset,valset,testset size: 91581 19625 19625
+INFO (rank 6): trainset,valset,testset size: 91581 19625 19625
+INFO (rank 3): trainset,valset,testset size: 91581 19625 19625
+INFO (rank 4): trainset,valset,testset size: 91581 19625 19625
+INFO (rank 0): trainset,valset,testset size: 91581 19625 19625
+0: Using GPU
+0: Using GPU
+0:               module.graph_convs.0.module_0.weight	             [21, 1]	        21
+0:                 module.graph_convs.0.module_0.bias	                [21]	        21
+0:       module.graph_convs.0.module_1.lin_rbf.weight	             [21, 5]	       105
+0:         module.graph_convs.0.module_1.lin_rbf.bias	                [21]	        21
+0:           module.graph_convs.0.module_1.lin.weight	            [21, 63]	      1323
+0:             module.graph_convs.0.module_1.lin.bias	                [21]	        21
+0:      module.graph_convs.0.module_2.lin_rbf1.weight	              [8, 5]	        40
+0:      module.graph_convs.0.module_2.lin_rbf2.weight	             [21, 8]	       168
+0:      module.graph_convs.0.module_2.lin_sbf1.weight	             [8, 10]	        80
+0:      module.graph_convs.0.module_2.lin_sbf2.weight	             [32, 8]	       256
+0:        module.graph_convs.0.module_2.lin_kj.weight	            [21, 21]	       441
+0:          module.graph_convs.0.module_2.lin_kj.bias	                [21]	        21
+0:        module.graph_convs.0.module_2.lin_ji.weight	            [21, 21]	       441
+0:          module.graph_convs.0.module_2.lin_ji.bias	                [21]	        21
+0:      module.graph_convs.0.module_2.lin_down.weight	            [32, 21]	       672
+0:        module.graph_convs.0.module_2.lin_up.weight	            [21, 32]	       672
+0: module.graph_convs.0.module_2.layers_before_skip.0.lin1.weight	            [21, 21]	       441
+0: module.graph_convs.0.module_2.layers_before_skip.0.lin1.bias	                [21]	        21
+0: module.graph_convs.0.module_2.layers_before_skip.0.lin2.weight	            [21, 21]	       441
+0: module.graph_convs.0.module_2.layers_before_skip.0.lin2.bias	                [21]	        21
+0:           module.graph_convs.0.module_2.lin.weight	            [21, 21]	       441
+0:             module.graph_convs.0.module_2.lin.bias	                [21]	        21
+0: module.graph_convs.0.module_2.layers_after_skip.0.lin1.weight	            [21, 21]	       441
+0: module.graph_convs.0.module_2.layers_after_skip.0.lin1.bias	                [21]	        21
+0: module.graph_convs.0.module_2.layers_after_skip.0.lin2.weight	            [21, 21]	       441
+0: module.graph_convs.0.module_2.layers_after_skip.0.lin2.bias	                [21]	        21
+0:       module.graph_convs.0.module_3.lin_rbf.weight	             [21, 5]	       105
+0:        module.graph_convs.0.module_3.lin_up.weight	            [16, 21]	       336
+0:        module.graph_convs.0.module_3.lins.0.weight	            [16, 16]	       256
+0:          module.graph_convs.0.module_3.lins.0.bias	                [16]	        16
+0:           module.graph_convs.0.module_3.lin.weight	            [21, 16]	       336
+0:                         module.heads_NN.0.0.weight	             [32, 5]	       160
+0:                           module.heads_NN.0.0.bias	                [32]	        32
+0:                         module.heads_NN.0.2.weight	            [32, 32]	      1024
+0:                           module.heads_NN.0.2.bias	                [32]	        32
+0:                         module.heads_NN.0.4.weight	             [1, 32]	        32
+0:                           module.heads_NN.0.4.bias	                 [1]	         1
+0:                       module.graph_shared.0.weight	             [5, 21]	       105
+0:                         module.graph_shared.0.bias	                 [5]	         5
+0:                       module.graph_shared.2.weight	              [5, 5]	        25
+0:                         module.graph_shared.2.bias	                 [5]	         5
+0:                                    module.rbf.freq	                 [5]	         5
+0: --------------------------------------------------
+0:                                              Total	                    	      9109
+0: All (total, MB): 9109 0.0347481
+Train:   0%|          | 0/100 [00:00<?, ?it/s]/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
+  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+Train:   1%|          | 1/100 [00:23<38:08, 23.12s/it]Train:   9%|▉         | 9/100 [00:23<02:50,  1.87s/it]Train:  18%|█▊        | 18/100 [00:23<01:02,  1.31it/s]Train:  27%|██▋       | 27/100 [00:23<00:30,  2.40it/s]Train:  36%|███▌      | 36/100 [00:23<00:16,  3.90it/s]Train:  45%|████▌     | 45/100 [00:23<00:09,  5.95it/s]Train:  54%|█████▍    | 54/100 [00:23<00:05,  8.70it/s]Train:  63%|██████▎   | 63/100 [00:23<00:03, 12.31it/s]Train:  72%|███████▏  | 72/100 [00:23<00:01, 16.92it/s]Train:  81%|████████  | 81/100 [00:24<00:00, 22.55it/s]Train:  90%|█████████ | 90/100 [00:24<00:00, 29.17it/s]Train:  99%|█████████▉| 99/100 [00:24<00:00, 36.45it/s]Train: 100%|██████████| 100/100 [00:24<00:00,  4.11it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.10it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 169.85it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.18it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.33it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.49it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.96it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.58it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.22it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.39it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.42it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.41it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.99it/s]
+0: Epoch: 00, Train Loss: 192090.46875000, Val Loss: 26513.99023438, Test Loss: 25351.25000000
+0: Tasks Train Loss: [192090.46875]
+0: Tasks Val Loss: [26513.990234375]
+0: Tasks Test Loss: [25351.25]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.38it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.35it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 84.40it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.08it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.38it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.54it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.48it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.51it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.34it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.01it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.26it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.03it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 168.98it/s]Validate:  34%|███▍      | 34/100 [00:00<00:00, 169.34it/s]Validate:  51%|█████     | 51/100 [00:00<00:00, 169.63it/s]Validate:  68%|██████▊   | 68/100 [00:00<00:00, 169.76it/s]Validate:  85%|████████▌ | 85/100 [00:00<00:00, 169.83it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.40it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.40it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 169.85it/s]Test:  52%|█████▏    | 52/100 [00:00<00:00, 169.86it/s]Test:  70%|███████   | 70/100 [00:00<00:00, 170.03it/s]Test:  88%|████████▊ | 88/100 [00:00<00:00, 170.12it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.67it/s]
+0: Epoch: 01, Train Loss: 19699.94726562, Val Loss: 6424.55175781, Test Loss: 7131.66308594
+0: Tasks Train Loss: [19699.947265625]
+0: Tasks Val Loss: [6424.5517578125]
+0: Tasks Test Loss: [7131.6630859375]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.13it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.28it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 84.98it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 84.94it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.12it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.14it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.35it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.39it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.39it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.49it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.62it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.11it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.47it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 169.80it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.02it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.14it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.26it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.80it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.58it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.03it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.22it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.28it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.21it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.81it/s]
+0: Epoch: 02, Train Loss: 5104.20214844, Val Loss: 4370.04638672, Test Loss: 4420.80664062
+0: Tasks Train Loss: [5104.2021484375]
+0: Tasks Val Loss: [4370.04638671875]
+0: Tasks Test Loss: [4420.806640625]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.80it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.89it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.09it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.58it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.71it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.74it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.60it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.73it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.59it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.66it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.52it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.35it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.34it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 169.90it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.18it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.24it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.30it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.85it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.45it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 169.85it/s]Test:  52%|█████▏    | 52/100 [00:00<00:00, 169.84it/s]Test:  70%|███████   | 70/100 [00:00<00:00, 170.12it/s]Test:  88%|████████▊ | 88/100 [00:00<00:00, 170.24it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.71it/s]
+0: Epoch: 03, Train Loss: 4471.41406250, Val Loss: 3825.53710938, Test Loss: 3723.52978516
+0: Tasks Train Loss: [4471.4140625]
+0: Tasks Val Loss: [3825.537109375]
+0: Tasks Test Loss: [3723.52978515625]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.67it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.30it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.57it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.53it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.74it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.70it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.66it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.63it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.57it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.45it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.41it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.39it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.05it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 169.65it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.10it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.25it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.26it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.73it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.41it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 169.86it/s]Test:  52%|█████▏    | 52/100 [00:00<00:00, 169.91it/s]Test:  70%|███████   | 70/100 [00:00<00:00, 170.01it/s]Test:  88%|████████▊ | 88/100 [00:00<00:00, 169.95it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.52it/s]
+0: Epoch: 04, Train Loss: 3406.38671875, Val Loss: 2519.65771484, Test Loss: 2603.23779297
+0: Tasks Train Loss: [3406.38671875]
+0: Tasks Val Loss: [2519.65771484375]
+0: Tasks Test Loss: [2603.23779296875]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.39it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.93it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.53it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.87it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.78it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.74it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.58it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.63it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.65it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.70it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.81it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.52it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.49it/s]Validate:  34%|███▍      | 34/100 [00:00<00:00, 169.75it/s]Validate:  52%|█████▏    | 52/100 [00:00<00:00, 170.16it/s]Validate:  70%|███████   | 70/100 [00:00<00:00, 170.40it/s]Validate:  88%|████████▊ | 88/100 [00:00<00:00, 170.45it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.93it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.41it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 169.85it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 169.96it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.12it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.13it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.72it/s]
+0: Epoch: 05, Train Loss: 2217.77441406, Val Loss: 993.57714844, Test Loss: 982.38378906
+0: Tasks Train Loss: [2217.7744140625]
+0: Tasks Val Loss: [993.5771484375]
+0: Tasks Test Loss: [982.3837890625]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.19it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.98it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.46it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.01it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.23it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.56it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.73it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.66it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.68it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.47it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.58it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.33it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.66it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.02it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.25it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.37it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.44it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.01it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.72it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 169.93it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.19it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.20it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.25it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.79it/s]
+0: Epoch: 06, Train Loss: 834.07336426, Val Loss: 708.53271484, Test Loss: 679.84008789
+0: Tasks Train Loss: [834.0733642578125]
+0: Tasks Val Loss: [708.53271484375]
+0: Tasks Test Loss: [679.840087890625]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.68it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.99it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.69it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.90it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 86.06it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.94it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.81it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.74it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.58it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.60it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.56it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.49it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.87it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.32it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.45it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.49it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.57it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.13it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.68it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.30it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.31it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.33it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.32it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.91it/s]
+0: Epoch: 07, Train Loss: 503.94601440, Val Loss: 651.85174561, Test Loss: 553.67675781
+0: Tasks Train Loss: [503.9460144042969]
+0: Tasks Val Loss: [651.8517456054688]
+0: Tasks Test Loss: [553.6767578125]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.91it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.27it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.73it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.88it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.92it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.85it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.79it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.74it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.57it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.60it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.63it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.51it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.73it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.15it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.25it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.34it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.38it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.95it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.85it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.21it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.18it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.09it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.19it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.83it/s]
+0: Epoch: 08, Train Loss: 607.77539062, Val Loss: 479.33718872, Test Loss: 465.03527832
+0: Tasks Train Loss: [607.775390625]
+0: Tasks Val Loss: [479.3371887207031]
+0: Tasks Test Loss: [465.0352783203125]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.84it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.96it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.68it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.96it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.87it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.92it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.72it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.70it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.55it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.53it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.41it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.41it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.69it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.11it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.39it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.54it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.59it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.11it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.76it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 169.99it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.23it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.17it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.24it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.83it/s]
+0: Epoch: 09, Train Loss: 430.63925171, Val Loss: 351.81115723, Test Loss: 352.66891479
+0: Tasks Train Loss: [430.6392517089844]
+0: Tasks Val Loss: [351.8111572265625]
+0: Tasks Test Loss: [352.6689147949219]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.46it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.16it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.72it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.94it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 86.05it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.84it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.76it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.77it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.72it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.73it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.66it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.56it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.72it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.18it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.26it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.49it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.62it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.11it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.94it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.27it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.40it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.26it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.37it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.01it/s]
+0: Epoch: 10, Train Loss: 409.54663086, Val Loss: 351.95843506, Test Loss: 346.52966309
+0: Tasks Train Loss: [409.546630859375]
+0: Tasks Val Loss: [351.95843505859375]
+0: Tasks Test Loss: [346.5296630859375]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.68it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.66it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.16it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.56it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.91it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.60it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.82it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 86.02it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 86.05it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 86.20it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 86.20it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.69it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.87it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.30it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.58it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.71it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.75it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.29it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.76it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.35it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.42it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.35it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.53it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.09it/s]
+0: Epoch: 11, Train Loss: 541.24005127, Val Loss: 330.71951294, Test Loss: 291.31045532
+0: Tasks Train Loss: [541.2400512695312]
+0: Tasks Val Loss: [330.7195129394531]
+0: Tasks Test Loss: [291.3104553222656]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.35it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.35it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.57it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.54it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.73it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.81it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.88it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.86it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.93it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.90it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.80it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.58it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.87it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.60it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.82it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.75it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.77it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.34it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.80it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.25it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.55it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.47it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.51it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.07it/s]
+0: Epoch: 12, Train Loss: 395.99301147, Val Loss: 296.08776855, Test Loss: 304.94259644
+0: Tasks Train Loss: [395.9930114746094]
+0: Tasks Val Loss: [296.0877685546875]
+0: Tasks Test Loss: [304.9425964355469]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.85it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.98it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.84it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.89it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.73it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.77it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.90it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 86.03it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.96it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 86.01it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.90it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.63it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  18%|█▊        | 18/100 [00:00<00:00, 170.21it/s]Validate:  36%|███▌      | 36/100 [00:00<00:00, 170.67it/s]Validate:  54%|█████▍    | 54/100 [00:00<00:00, 170.89it/s]Validate:  72%|███████▏  | 72/100 [00:00<00:00, 170.96it/s]Validate:  90%|█████████ | 90/100 [00:00<00:00, 171.02it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.52it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  18%|█▊        | 18/100 [00:00<00:00, 170.13it/s]Test:  36%|███▌      | 36/100 [00:00<00:00, 170.45it/s]Test:  54%|█████▍    | 54/100 [00:00<00:00, 170.74it/s]Test:  72%|███████▏  | 72/100 [00:00<00:00, 170.64it/s]Test:  90%|█████████ | 90/100 [00:00<00:00, 170.75it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.29it/s]
+0: Epoch: 13, Train Loss: 344.90289307, Val Loss: 330.90682983, Test Loss: 341.24920654
+0: Tasks Train Loss: [344.90289306640625]
+0: Tasks Val Loss: [330.9068298339844]
+0: Tasks Test Loss: [341.24920654296875]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.17it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.44it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.93it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 86.05it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 86.14it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 86.14it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.89it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.87it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.87it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.84it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.69it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.66it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.74it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.42it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.63it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.69it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.80it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.31it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.77it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.42it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.50it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.51it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.51it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.13it/s]
+0: Epoch: 14, Train Loss: 434.04602051, Val Loss: 292.61190796, Test Loss: 273.32339478
+0: Tasks Train Loss: [434.0460205078125]
+0: Tasks Val Loss: [292.6119079589844]
+0: Tasks Test Loss: [273.3233947753906]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.04it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.38it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.70it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.92it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 86.04it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 86.01it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.92it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.74it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.73it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.76it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.74it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.62it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.78it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.25it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.39it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.48it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.60it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.10it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.98it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.39it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.65it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.60it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.61it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.19it/s]
+0: Epoch: 15, Train Loss: 266.54693604, Val Loss: 243.70552063, Test Loss: 253.97708130
+0: Tasks Train Loss: [266.54693603515625]
+0: Tasks Val Loss: [243.7055206298828]
+0: Tasks Test Loss: [253.97708129882812]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.39it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.14it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.90it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.81it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.74it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.80it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.75it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 84.67it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.26it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.67it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.75it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.41it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.69it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.32it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.49it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.65it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.71it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.24it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.82it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.55it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.86it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.71it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.75it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.30it/s]
+0: Epoch: 16, Train Loss: 336.43469238, Val Loss: 251.65209961, Test Loss: 274.34796143
+0: Tasks Train Loss: [336.4346923828125]
+0: Tasks Val Loss: [251.652099609375]
+0: Tasks Test Loss: [274.34796142578125]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.35it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.46it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.83it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 86.10it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.87it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.89it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.82it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.74it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.70it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.74it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.75it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.60it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  18%|█▊        | 18/100 [00:00<00:00, 170.30it/s]Validate:  36%|███▌      | 36/100 [00:00<00:00, 170.56it/s]Validate:  54%|█████▍    | 54/100 [00:00<00:00, 170.74it/s]Validate:  72%|███████▏  | 72/100 [00:00<00:00, 170.91it/s]Validate:  90%|█████████ | 90/100 [00:00<00:00, 170.97it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.50it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.71it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.05it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.43it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.37it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.58it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.10it/s]
+0: Epoch: 17, Train Loss: 271.20434570, Val Loss: 280.56509399, Test Loss: 302.88903809
+0: Tasks Train Loss: [271.204345703125]
+0: Tasks Val Loss: [280.5650939941406]
+0: Tasks Test Loss: [302.8890380859375]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.48it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.56it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.87it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 86.06it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.85it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.73it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.66it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.63it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.59it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.60it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.62it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.52it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  18%|█▊        | 18/100 [00:00<00:00, 170.24it/s]Validate:  36%|███▌      | 36/100 [00:00<00:00, 170.75it/s]Validate:  54%|█████▍    | 54/100 [00:00<00:00, 171.00it/s]Validate:  72%|███████▏  | 72/100 [00:00<00:00, 171.03it/s]Validate:  90%|█████████ | 90/100 [00:00<00:00, 171.11it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.63it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  18%|█▊        | 18/100 [00:00<00:00, 170.11it/s]Test:  36%|███▌      | 36/100 [00:00<00:00, 170.65it/s]Test:  54%|█████▍    | 54/100 [00:00<00:00, 170.81it/s]Test:  72%|███████▏  | 72/100 [00:00<00:00, 170.72it/s]Test:  90%|█████████ | 90/100 [00:00<00:00, 170.89it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.43it/s]
+0: Epoch: 18, Train Loss: 236.67593384, Val Loss: 318.95043945, Test Loss: 315.28796387
+0: Tasks Train Loss: [236.67593383789062]
+0: Tasks Val Loss: [318.950439453125]
+0: Tasks Test Loss: [315.2879638671875]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.82it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.29it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.63it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.89it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 86.00it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.93it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.80it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.78it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.71it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.66it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.63it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.52it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  18%|█▊        | 18/100 [00:00<00:00, 170.31it/s]Validate:  36%|███▌      | 36/100 [00:00<00:00, 170.78it/s]Validate:  54%|█████▍    | 54/100 [00:00<00:00, 170.87it/s]Validate:  72%|███████▏  | 72/100 [00:00<00:00, 170.96it/s]Validate:  90%|█████████ | 90/100 [00:00<00:00, 171.00it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.54it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  18%|█▊        | 18/100 [00:00<00:00, 170.21it/s]Test:  36%|███▌      | 36/100 [00:00<00:00, 170.54it/s]Test:  54%|█████▍    | 54/100 [00:00<00:00, 170.70it/s]Test:  72%|███████▏  | 72/100 [00:00<00:00, 170.56it/s]Test:  90%|█████████ | 90/100 [00:00<00:00, 170.71it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.31it/s]
+0: Epoch: 19, Train Loss: 248.29258728, Val Loss: 180.49920654, Test Loss: 187.17144775
+0: Tasks Train Loss: [248.29258728027344]
+0: Tasks Val Loss: [180.49920654296875]
+0: Tasks Test Loss: [187.17144775390625]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.85it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.00it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.59it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.88it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.78it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.82it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.89it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.87it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.84it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.75it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.71it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.55it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  18%|█▊        | 18/100 [00:00<00:00, 170.07it/s]Validate:  36%|███▌      | 36/100 [00:00<00:00, 170.36it/s]Validate:  54%|█████▍    | 54/100 [00:00<00:00, 170.54it/s]Validate:  72%|███████▏  | 72/100 [00:00<00:00, 170.61it/s]Validate:  90%|█████████ | 90/100 [00:00<00:00, 170.65it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.22it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.83it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.45it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.51it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.40it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.62it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.19it/s]
+0: Epoch: 20, Train Loss: 240.74075317, Val Loss: 183.52505493, Test Loss: 167.29336548
+0: Tasks Train Loss: [240.74075317382812]
+0: Tasks Val Loss: [183.52505493164062]
+0: Tasks Test Loss: [167.29336547851562]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.81it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.35it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.83it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.98it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.60it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.60it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.61it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.62it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.66it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.63it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 84.59it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.12it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.79it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.26it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.52it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.64it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.71it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.23it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.92it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.40it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.49it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.40it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.40it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.02it/s]
+0: Epoch: 21, Train Loss: 246.07989502, Val Loss: 184.79510498, Test Loss: 186.18075562
+0: Tasks Train Loss: [246.07989501953125]
+0: Tasks Val Loss: [184.79510498046875]
+0: Tasks Test Loss: [186.18075561523438]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.82it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.04it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.38it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.50it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.48it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.58it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.72it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.83it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.93it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.95it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.85it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.50it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.47it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 169.99it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.17it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.27it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.45it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.94it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.72it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.23it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.41it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.37it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.37it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.97it/s]
+0: Epoch: 22, Train Loss: 214.14466858, Val Loss: 223.39520264, Test Loss: 228.33071899
+0: Tasks Train Loss: [214.14466857910156]
+0: Tasks Val Loss: [223.39520263671875]
+0: Tasks Test Loss: [228.33071899414062]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.77it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.32it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.74it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.81it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.83it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.73it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.67it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.69it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.69it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.62it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.60it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.46it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.75it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.28it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.46it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.56it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.67it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.20it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.90it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.40it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.58it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.60it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.53it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.13it/s]
+0: Epoch: 23, Train Loss: 222.29876709, Val Loss: 210.43841553, Test Loss: 195.77586365
+0: Tasks Train Loss: [222.29876708984375]
+0: Tasks Val Loss: [210.43841552734375]
+0: Tasks Test Loss: [195.77586364746094]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.63it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.82it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.34it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.49it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.61it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.64it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.86it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.83it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.76it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.69it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.65it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.43it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.68it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.04it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.20it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.16it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.31it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.89it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.60it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.11it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.20it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.16it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.16it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.76it/s]
+0: Epoch: 24, Train Loss: 159.14854431, Val Loss: 154.46798706, Test Loss: 157.19175720
+0: Tasks Train Loss: [159.14854431152344]
+0: Tasks Val Loss: [154.46798706054688]
+0: Tasks Test Loss: [157.19175720214844]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.55it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.89it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.84it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.81it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.90it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.89it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.89it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.71it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.64it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.63it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.56it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.45it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.86it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.40it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.55it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.77it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.79it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 170.33it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  18%|█▊        | 18/100 [00:00<00:00, 170.13it/s]Test:  36%|███▌      | 36/100 [00:00<00:00, 170.56it/s]Test:  54%|█████▍    | 54/100 [00:00<00:00, 170.82it/s]Test:  72%|███████▏  | 72/100 [00:00<00:00, 170.70it/s]Test:  90%|█████████ | 90/100 [00:00<00:00, 170.67it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 170.29it/s]
+0: Epoch: 25, Train Loss: 166.36662292, Val Loss: 160.38491821, Test Loss: 160.36973572
+0: Tasks Train Loss: [166.3666229248047]
+0: Tasks Val Loss: [160.38491821289062]
+0: Tasks Test Loss: [160.36973571777344]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.18it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.13it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.58it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.78it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.69it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.70it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.69it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.59it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.59it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.44it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.38it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.34it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.38it/s]Validate:  34%|███▍      | 34/100 [00:00<00:00, 169.68it/s]Validate:  52%|█████▏    | 52/100 [00:00<00:00, 169.89it/s]Validate:  70%|███████   | 70/100 [00:00<00:00, 170.08it/s]Validate:  88%|████████▊ | 88/100 [00:00<00:00, 170.29it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.75it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.54it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.02it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.29it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.28it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.24it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.80it/s]
+0: Epoch: 26, Train Loss: 205.99874878, Val Loss: 437.16256714, Test Loss: 444.66229248
+0: Tasks Train Loss: [205.99874877929688]
+0: Tasks Val Loss: [437.1625671386719]
+0: Tasks Test Loss: [444.66229248046875]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.53it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.67it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.29it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.39it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.52it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.56it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.71it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.87it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.83it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.81it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.84it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.44it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.30it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 169.77it/s]Validate:  52%|█████▏    | 52/100 [00:00<00:00, 169.84it/s]Validate:  70%|███████   | 70/100 [00:00<00:00, 170.04it/s]Validate:  88%|████████▊ | 88/100 [00:00<00:00, 170.09it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.64it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.12it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 169.71it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.05it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.18it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.23it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.73it/s]
+0: Epoch: 27, Train Loss: 175.86273193, Val Loss: 103.02914429, Test Loss: 115.14031982
+0: Tasks Train Loss: [175.86273193359375]
+0: Tasks Val Loss: [103.02914428710938]
+0: Tasks Test Loss: [115.14031982421875]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 82.69it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 85.05it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.84it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 86.16it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 86.21it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.91it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.85it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.82it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.78it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.73it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.66it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.57it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.12it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 169.81it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 169.99it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.09it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.23it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.71it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.56it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.04it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.34it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.31it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.31it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.88it/s]
+0: Epoch: 28, Train Loss: 157.98031616, Val Loss: 151.82888794, Test Loss: 158.53710938
+0: Tasks Train Loss: [157.98031616210938]
+0: Tasks Val Loss: [151.82888793945312]
+0: Tasks Test Loss: [158.537109375]
+Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   9%|▉         | 9/100 [00:00<00:01, 83.05it/s]Train:  18%|█▊        | 18/100 [00:00<00:00, 84.85it/s]Train:  27%|██▋       | 27/100 [00:00<00:00, 85.41it/s]Train:  36%|███▌      | 36/100 [00:00<00:00, 85.73it/s]Train:  45%|████▌     | 45/100 [00:00<00:00, 85.88it/s]Train:  54%|█████▍    | 54/100 [00:00<00:00, 85.74it/s]Train:  63%|██████▎   | 63/100 [00:00<00:00, 85.70it/s]Train:  72%|███████▏  | 72/100 [00:00<00:00, 85.74it/s]Train:  81%|████████  | 81/100 [00:00<00:00, 85.69it/s]Train:  90%|█████████ | 90/100 [00:01<00:00, 85.63it/s]Train:  99%|█████████▉| 99/100 [00:01<00:00, 85.71it/s]Train: 100%|██████████| 100/100 [00:01<00:00, 85.45it/s]
+Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:  17%|█▋        | 17/100 [00:00<00:00, 169.42it/s]Validate:  35%|███▌      | 35/100 [00:00<00:00, 170.11it/s]Validate:  53%|█████▎    | 53/100 [00:00<00:00, 170.25it/s]Validate:  71%|███████   | 71/100 [00:00<00:00, 170.34it/s]Validate:  89%|████████▉ | 89/100 [00:00<00:00, 170.40it/s]Validate: 100%|██████████| 100/100 [00:00<00:00, 169.95it/s]
+Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:  17%|█▋        | 17/100 [00:00<00:00, 169.85it/s]Test:  35%|███▌      | 35/100 [00:00<00:00, 170.41it/s]Test:  53%|█████▎    | 53/100 [00:00<00:00, 170.44it/s]Test:  71%|███████   | 71/100 [00:00<00:00, 170.41it/s]Test:  89%|████████▉ | 89/100 [00:00<00:00, 170.38it/s]Test: 100%|██████████| 100/100 [00:00<00:00, 169.99it/s]
+0: Epoch: 29, Train Loss: 157.88726807, Val Loss: 228.99722290, Test Loss: 220.57308960
+0: Tasks Train Loss: [157.88726806640625]
+0: Tasks Val Loss: [228.99722290039062]
+0: Tasks Test Loss: [220.57308959960938]
+0: Process 0 - Local timer:  train_validate_test  :  93.79
+0: Process 0 - Local timer:  load_data  :  20.48
+0: Process 0 - Local timer:  create_model  :  1.81
+0: Minimum timers: 
+0: train_validate_test  :  93.79
+0: load_data  :  20.48
+0: create_model  :  1.81
+0: Maximum timers: 
+0: train_validate_test  :  93.8
+0: load_data  :  20.88
+0: create_model  :  1.82
+0: Average timers: 
+0: train_validate_test  :  93.8
+0: load_data  :  20.67
+0: create_model  :  1.81
+0: Number of calls to timers: 
+0: {'load_data': 1, 'create_model': 1, 'train_validate_test': 1}
+[rank4]:[W512 20:56:48.932561176 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank2]:[W512 20:56:48.932628704 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank6]:[W512 20:56:48.932955963 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank3]:[W512 20:56:48.933257093 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank7]:[W512 20:56:48.934180200 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank1]:[W512 20:56:48.935107135 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank5]:[W512 20:56:48.941659258 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+[rank0]:[W512 20:56:48.026900613 ProcessGroupNCCL.cpp:1496] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())

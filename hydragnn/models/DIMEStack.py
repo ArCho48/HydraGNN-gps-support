@@ -183,7 +183,7 @@ class DIMEStack(Base):
             pos_kj + pos_ji
         )  # It's important to calculate the vectors separately and then add in case of periodic boundary conditions
         a = (pos_ji * pos_ki).sum(dim=-1)
-        b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
+        b = torch.linalg.cross(pos_ji, pos_ki).norm(dim=-1)
         angle = torch.atan2(b, a)
 
         rbf = self.rbf(edge_dist.squeeze())

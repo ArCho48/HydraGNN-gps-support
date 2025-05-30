@@ -1,0 +1,486 @@
+[W511 15:56:47.535785865 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 15:56:47.535895936 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 15:56:47.535931695 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 15:56:47.535959177 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 15:56:47.537380043 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 15:56:47.537455899 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 15:56:47.537462121 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 15:56:47.558994003 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03697.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+INFO (rank 3): Adios load
+INFO (rank 5): Adios load
+INFO (rank 2): Adios load
+INFO (rank 4): Adios load
+INFO (rank 1): Adios load
+INFO (rank 7): Adios load
+INFO (rank 6): Adios load
+0: Command: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/pcqm_deephyper_parallel_trial.py --mpnn_type=DimeNet --hidden_dim=8 --num_conv_layers=6 --num_headlayers=1 --dim_headlayers=64 --global_attn_heads=4 --adios --ddstore --num_epoch=50 --log=pcqm_hpo_trials_0.169
+
+INFO (rank 0): Adios load
+0: ddstore_comm_rank,ddstore_comm_size 0 8
+0: Adios reading: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/./dataset/pcqm.bp
+0: Read attr time (sec):  0.0018985271453857422
+0: read and bcast: trainset/x/variable_count 0.09285736083984375
+0: read and bcast: trainset/x/variable_offset 0.18246245384216309
+0: read and bcast: trainset/x/variable_dim 0.18279409408569336
+0: DDStore add: ('trainset/x', [0, 0], [4771463, 9], 0, dtype('float32'), (4771463, 9), 82073080.0)
+0: read and bcast: trainset/y/variable_count 0.5445544719696045
+0: read and bcast: trainset/y/variable_offset 0.6296367645263672
+0: read and bcast: trainset/y/variable_dim 0.6299500465393066
+0: DDStore add: ('trainset/y', [0], [337571], 0, dtype('float32'), (337571,), 1920433.8)
+0: read and bcast: trainset/edge_attr/variable_count 0.8606045246124268
+0: read and bcast: trainset/edge_attr/variable_offset 0.9443845748901367
+0: read and bcast: trainset/edge_attr/variable_dim 0.9447128772735596
+0: DDStore add: ('trainset/edge_attr', [0, 0], [9822346, 3], 0, dtype('float32'), (9822346, 3), 14186480.0)
+0: read and bcast: trainset/pos/variable_count 1.267552375793457
+0: read and bcast: trainset/pos/variable_offset 1.35237717628479
+0: read and bcast: trainset/pos/variable_dim 1.352684736251831
+0: DDStore add: ('trainset/pos', [0, 0], [4771463, 3], 0, dtype('float32'), (4771463, 3), 16339380.0)
+0: read and bcast: trainset/rel_pe/variable_count 1.6276881694793701
+0: read and bcast: trainset/rel_pe/variable_offset 1.710688829421997
+0: read and bcast: trainset/rel_pe/variable_dim 1.7110190391540527
+0: DDStore add: ('trainset/rel_pe', [0, 0], [9822346, 4], 0, dtype('float32'), (9822346, 4), 6235733.5)
+0: read and bcast: trainset/edge_index/variable_count 2.066866874694824
+0: read and bcast: trainset/edge_index/variable_offset 2.1519200801849365
+0: read and bcast: trainset/edge_index/variable_dim 2.1522226333618164
+0: DDStore add: ('trainset/edge_index', [0, 0], [2, 9822346], 1, dtype('int64'), (9822346, 2), 140918836)
+0: read and bcast: trainset/pe/variable_count 2.8484480381011963
+0: read and bcast: trainset/pe/variable_offset 2.9325850009918213
+0: read and bcast: trainset/pe/variable_dim 2.9328832626342773
+0: DDStore add: ('trainset/pe', [0, 0], [4771463, 4], 0, dtype('float32'), (4771463, 4), 23.288635)
+0: Overall time (sec):  3.1383652687072754
+0: DDStore adding time (sec):  0.8039138317108154
+0: DDStore total (GB): 0.6881609000265598
+0: Data loading time (sec):  3.1527111530303955
+0: ddstore_comm_rank,ddstore_comm_size 0 8
+0: Adios reading: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/./dataset/pcqm.bp
+0: Read attr time (sec):  0.00043320655822753906
+0: read and bcast: valset/x/variable_count 0.010679960250854492
+0: read and bcast: valset/x/variable_offset 0.01710033416748047
+0: read and bcast: valset/x/variable_dim 0.01722574234008789
+0: DDStore add: ('valset/x', [0, 0], [596558, 9], 0, dtype('float32'), (596558, 9), 10258777.0)
+0: read and bcast: valset/y/variable_count 0.05287313461303711
+0: read and bcast: valset/y/variable_offset 0.059050798416137695
+0: read and bcast: valset/y/variable_dim 0.059185028076171875
+0: DDStore add: ('valset/y', [0], [42197], 0, dtype('float32'), (42197,), 239677.94)
+0: read and bcast: valset/edge_attr/variable_count 0.08430886268615723
+0: read and bcast: valset/edge_attr/variable_offset 0.09084534645080566
+0: read and bcast: valset/edge_attr/variable_dim 0.09098124504089355
+0: DDStore add: ('valset/edge_attr', [0, 0], [1227872, 3], 0, dtype('float32'), (1227872, 3), 1783110.0)
+0: read and bcast: valset/pos/variable_count 0.12183308601379395
+0: read and bcast: valset/pos/variable_offset 0.12839937210083008
+0: read and bcast: valset/pos/variable_dim 0.12853527069091797
+0: DDStore add: ('valset/pos', [0, 0], [596558, 3], 0, dtype('float32'), (596558, 3), 2031695.5)
+0: read and bcast: valset/rel_pe/variable_count 0.15815281867980957
+0: read and bcast: valset/rel_pe/variable_offset 0.16492366790771484
+0: read and bcast: valset/rel_pe/variable_dim 0.16507863998413086
+0: DDStore add: ('valset/rel_pe', [0, 0], [1227872, 4], 0, dtype('float32'), (1227872, 4), 779213.1)
+0: read and bcast: valset/edge_index/variable_count 0.202056884765625
+0: read and bcast: valset/edge_index/variable_offset 0.2082688808441162
+0: read and bcast: valset/edge_index/variable_dim 0.2084202766418457
+0: DDStore add: ('valset/edge_index', [0, 0], [2, 1227872], 1, dtype('int64'), (1227872, 2), 17614732)
+0: read and bcast: valset/pe/variable_count 0.28705596923828125
+0: read and bcast: valset/pe/variable_offset 0.29302215576171875
+0: read and bcast: valset/pe/variable_dim 0.29315781593322754
+0: DDStore add: ('valset/pe', [0, 0], [596558, 4], 0, dtype('float32'), (596558, 4), -50.6057)
+0: Overall time (sec):  0.31612563133239746
+0: DDStore adding time (sec):  0.10956168174743652
+0: DDStore total (GB): 0.08603079989552498
+0: Data loading time (sec):  0.3171427249908447
+0: ddstore_comm_rank,ddstore_comm_size 0 8
+0: Adios reading: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/./dataset/pcqm.bp
+0: Read attr time (sec):  0.00037741661071777344
+0: read and bcast: testset/x/variable_count 0.007025003433227539
+0: read and bcast: testset/x/variable_offset 0.013745307922363281
+0: read and bcast: testset/x/variable_dim 0.013883113861083984
+0: DDStore add: ('testset/x', [0, 0], [595936, 9], 0, dtype('float32'), (595936, 9), 10254917.0)
+0: read and bcast: testset/y/variable_count 0.051985979080200195
+0: read and bcast: testset/y/variable_offset 0.05803871154785156
+0: read and bcast: testset/y/variable_dim 0.0581660270690918
+0: DDStore add: ('testset/y', [0], [42197], 0, dtype('float32'), (42197,), 240385.61)
+0: read and bcast: testset/edge_attr/variable_count 0.08266997337341309
+0: read and bcast: testset/edge_attr/variable_offset 0.08923959732055664
+0: read and bcast: testset/edge_attr/variable_dim 0.08936738967895508
+0: DDStore add: ('testset/edge_attr', [0, 0], [1226312, 3], 0, dtype('float32'), (1226312, 3), 1766972.0)
+0: read and bcast: testset/pos/variable_count 0.12180161476135254
+0: read and bcast: testset/pos/variable_offset 0.12817978858947754
+0: read and bcast: testset/pos/variable_dim 0.12831330299377441
+0: DDStore add: ('testset/pos', [0, 0], [595936, 3], 0, dtype('float32'), (595936, 3), 2036549.9)
+0: read and bcast: testset/rel_pe/variable_count 0.15739893913269043
+0: read and bcast: testset/rel_pe/variable_offset 0.16385293006896973
+0: read and bcast: testset/rel_pe/variable_dim 0.16397309303283691
+0: DDStore add: ('testset/rel_pe', [0, 0], [1226312, 4], 0, dtype('float32'), (1226312, 4), 779243.25)
+0: read and bcast: testset/edge_index/variable_count 0.20054101943969727
+0: read and bcast: testset/edge_index/variable_offset 0.20652008056640625
+0: read and bcast: testset/edge_index/variable_dim 0.2066636085510254
+0: DDStore add: ('testset/edge_index', [0, 0], [2, 1226312], 1, dtype('int64'), (1226312, 2), 17596110)
+0: read and bcast: testset/pe/variable_count 0.2860136032104492
+0: read and bcast: testset/pe/variable_offset 0.2920491695404053
+0: read and bcast: testset/pe/variable_dim 0.2921724319458008
+0: DDStore add: ('testset/pe', [0, 0], [595936, 4], 0, dtype('float32'), (595936, 4), -23.289808)
+0: Overall time (sec):  0.3157055377960205
+0: DDStore adding time (sec):  0.11500144004821777
+0: DDStore total (GB): 0.08592979982495308
+0: Data loading time (sec):  0.3166043758392334
+INFO (rank 0): trainset,valset,testset size: 2700561 337570 337571
+INFO (rank 2): trainset,valset,testset size: 2700561 337570 337571
+INFO (rank 1): trainset,valset,testset size: 2700561 337570 337571
+INFO (rank 3): trainset,valset,testset size: 2700561 337570 337571
+INFO (rank 4): trainset,valset,testset size: 2700561 337570 337571
+INFO (rank 5): trainset,valset,testset size: 2700561 337570 337571
+INFO (rank 6): trainset,valset,testset size: 2700561 337570 337571
+INFO (rank 7): trainset,valset,testset size: 2700561 337570 337571
+0: Using GPU
+0: Using GPU
+0:          module.graph_convs.0.conv.module_0.weight	              [8, 8]	        64
+0:            module.graph_convs.0.conv.module_0.bias	                 [8]	         8
+0:  module.graph_convs.0.conv.module_1.lin_rbf.weight	              [8, 5]	        40
+0:    module.graph_convs.0.conv.module_1.lin_rbf.bias	                 [8]	         8
+0: module.graph_convs.0.conv.module_1.edge_lin.weight	              [8, 8]	        64
+0:   module.graph_convs.0.conv.module_1.edge_lin.bias	                 [8]	         8
+0:      module.graph_convs.0.conv.module_1.lin.weight	             [8, 32]	       256
+0:        module.graph_convs.0.conv.module_1.lin.bias	                 [8]	         8
+0: module.graph_convs.0.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
+0: module.graph_convs.0.conv.module_2.lin_rbf2.weight	              [8, 8]	        64
+0: module.graph_convs.0.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
+0: module.graph_convs.0.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
+0:   module.graph_convs.0.conv.module_2.lin_kj.weight	              [8, 8]	        64
+0:     module.graph_convs.0.conv.module_2.lin_kj.bias	                 [8]	         8
+0:   module.graph_convs.0.conv.module_2.lin_ji.weight	              [8, 8]	        64
+0:     module.graph_convs.0.conv.module_2.lin_ji.bias	                 [8]	         8
+0: module.graph_convs.0.conv.module_2.lin_down.weight	             [32, 8]	       256
+0:   module.graph_convs.0.conv.module_2.lin_up.weight	             [8, 32]	       256
+0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin2.bias	                 [8]	         8
+0:      module.graph_convs.0.conv.module_2.lin.weight	              [8, 8]	        64
+0:        module.graph_convs.0.conv.module_2.lin.bias	                 [8]	         8
+0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin2.bias	                 [8]	         8
+0:  module.graph_convs.0.conv.module_3.lin_rbf.weight	              [8, 5]	        40
+0:   module.graph_convs.0.conv.module_3.lin_up.weight	             [16, 8]	       128
+0:   module.graph_convs.0.conv.module_3.lins.0.weight	            [16, 16]	       256
+0:     module.graph_convs.0.conv.module_3.lins.0.bias	                [16]	        16
+0:      module.graph_convs.0.conv.module_3.lin.weight	             [8, 16]	       128
+0:           module.graph_convs.0.attn.in_proj_weight	             [24, 8]	       192
+0:             module.graph_convs.0.attn.in_proj_bias	                [24]	        24
+0:          module.graph_convs.0.attn.out_proj.weight	              [8, 8]	        64
+0:            module.graph_convs.0.attn.out_proj.bias	                 [8]	         8
+0:                  module.graph_convs.0.mlp.0.weight	             [16, 8]	       128
+0:                    module.graph_convs.0.mlp.0.bias	                [16]	        16
+0:                  module.graph_convs.0.mlp.3.weight	             [8, 16]	       128
+0:                    module.graph_convs.0.mlp.3.bias	                 [8]	         8
+0:           module.graph_convs.0.norm1.module.weight	                 [8]	         8
+0:             module.graph_convs.0.norm1.module.bias	                 [8]	         8
+0:     module.graph_convs.0.norm1.module.running_mean	                 [8]	         8
+0:      module.graph_convs.0.norm1.module.running_var	                 [8]	         8
+0: module.graph_convs.0.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.0.norm2.module.weight	                 [8]	         8
+0:             module.graph_convs.0.norm2.module.bias	                 [8]	         8
+0:     module.graph_convs.0.norm2.module.running_mean	                 [8]	         8
+0:      module.graph_convs.0.norm2.module.running_var	                 [8]	         8
+0: module.graph_convs.0.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.0.norm3.module.weight	                 [8]	         8
+0:             module.graph_convs.0.norm3.module.bias	                 [8]	         8
+0:     module.graph_convs.0.norm3.module.running_mean	                 [8]	         8
+0:      module.graph_convs.0.norm3.module.running_var	                 [8]	         8
+0: module.graph_convs.0.norm3.module.num_batches_tracked	                  []	         1
+0:          module.graph_convs.1.conv.module_0.weight	              [8, 8]	        64
+0:            module.graph_convs.1.conv.module_0.bias	                 [8]	         8
+0:  module.graph_convs.1.conv.module_1.lin_rbf.weight	              [8, 5]	        40
+0:    module.graph_convs.1.conv.module_1.lin_rbf.bias	                 [8]	         8
+0: module.graph_convs.1.conv.module_1.edge_lin.weight	              [8, 8]	        64
+0:   module.graph_convs.1.conv.module_1.edge_lin.bias	                 [8]	         8
+0:      module.graph_convs.1.conv.module_1.lin.weight	             [8, 32]	       256
+0:        module.graph_convs.1.conv.module_1.lin.bias	                 [8]	         8
+0: module.graph_convs.1.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
+0: module.graph_convs.1.conv.module_2.lin_rbf2.weight	              [8, 8]	        64
+0: module.graph_convs.1.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
+0: module.graph_convs.1.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
+0:   module.graph_convs.1.conv.module_2.lin_kj.weight	              [8, 8]	        64
+0:     module.graph_convs.1.conv.module_2.lin_kj.bias	                 [8]	         8
+0:   module.graph_convs.1.conv.module_2.lin_ji.weight	              [8, 8]	        64
+0:     module.graph_convs.1.conv.module_2.lin_ji.bias	                 [8]	         8
+0: module.graph_convs.1.conv.module_2.lin_down.weight	             [32, 8]	       256
+0:   module.graph_convs.1.conv.module_2.lin_up.weight	             [8, 32]	       256
+0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin2.bias	                 [8]	         8
+0:      module.graph_convs.1.conv.module_2.lin.weight	              [8, 8]	        64
+0:        module.graph_convs.1.conv.module_2.lin.bias	                 [8]	         8
+0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin2.bias	                 [8]	         8
+0:  module.graph_convs.1.conv.module_3.lin_rbf.weight	              [8, 5]	        40
+0:   module.graph_convs.1.conv.module_3.lin_up.weight	             [16, 8]	       128
+0:   module.graph_convs.1.conv.module_3.lins.0.weight	            [16, 16]	       256
+0:     module.graph_convs.1.conv.module_3.lins.0.bias	                [16]	        16
+0:      module.graph_convs.1.conv.module_3.lin.weight	             [8, 16]	       128
+0:           module.graph_convs.1.attn.in_proj_weight	             [24, 8]	       192
+0:             module.graph_convs.1.attn.in_proj_bias	                [24]	        24
+0:          module.graph_convs.1.attn.out_proj.weight	              [8, 8]	        64
+0:            module.graph_convs.1.attn.out_proj.bias	                 [8]	         8
+0:                  module.graph_convs.1.mlp.0.weight	             [16, 8]	       128
+0:                    module.graph_convs.1.mlp.0.bias	                [16]	        16
+0:                  module.graph_convs.1.mlp.3.weight	             [8, 16]	       128
+0:                    module.graph_convs.1.mlp.3.bias	                 [8]	         8
+0:           module.graph_convs.1.norm1.module.weight	                 [8]	         8
+0:             module.graph_convs.1.norm1.module.bias	                 [8]	         8
+0:     module.graph_convs.1.norm1.module.running_mean	                 [8]	         8
+0:      module.graph_convs.1.norm1.module.running_var	                 [8]	         8
+0: module.graph_convs.1.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.1.norm2.module.weight	                 [8]	         8
+0:             module.graph_convs.1.norm2.module.bias	                 [8]	         8
+0:     module.graph_convs.1.norm2.module.running_mean	                 [8]	         8
+0:      module.graph_convs.1.norm2.module.running_var	                 [8]	         8
+0: module.graph_convs.1.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.1.norm3.module.weight	                 [8]	         8
+0:             module.graph_convs.1.norm3.module.bias	                 [8]	         8
+0:     module.graph_convs.1.norm3.module.running_mean	                 [8]	         8
+0:      module.graph_convs.1.norm3.module.running_var	                 [8]	         8
+0: module.graph_convs.1.norm3.module.num_batches_tracked	                  []	         1
+0:          module.graph_convs.2.conv.module_0.weight	              [8, 8]	        64
+0:            module.graph_convs.2.conv.module_0.bias	                 [8]	         8
+0:  module.graph_convs.2.conv.module_1.lin_rbf.weight	              [8, 5]	        40
+0:    module.graph_convs.2.conv.module_1.lin_rbf.bias	                 [8]	         8
+0: module.graph_convs.2.conv.module_1.edge_lin.weight	              [8, 8]	        64
+0:   module.graph_convs.2.conv.module_1.edge_lin.bias	                 [8]	         8
+0:      module.graph_convs.2.conv.module_1.lin.weight	             [8, 32]	       256
+0:        module.graph_convs.2.conv.module_1.lin.bias	                 [8]	         8
+0: module.graph_convs.2.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
+0: module.graph_convs.2.conv.module_2.lin_rbf2.weight	              [8, 8]	        64
+0: module.graph_convs.2.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
+0: module.graph_convs.2.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
+0:   module.graph_convs.2.conv.module_2.lin_kj.weight	              [8, 8]	        64
+0:     module.graph_convs.2.conv.module_2.lin_kj.bias	                 [8]	         8
+0:   module.graph_convs.2.conv.module_2.lin_ji.weight	              [8, 8]	        64
+0:     module.graph_convs.2.conv.module_2.lin_ji.bias	                 [8]	         8
+0: module.graph_convs.2.conv.module_2.lin_down.weight	             [32, 8]	       256
+0:   module.graph_convs.2.conv.module_2.lin_up.weight	             [8, 32]	       256
+0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin2.bias	                 [8]	         8
+0:      module.graph_convs.2.conv.module_2.lin.weight	              [8, 8]	        64
+0:        module.graph_convs.2.conv.module_2.lin.bias	                 [8]	         8
+0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin2.bias	                 [8]	         8
+0:  module.graph_convs.2.conv.module_3.lin_rbf.weight	              [8, 5]	        40
+0:   module.graph_convs.2.conv.module_3.lin_up.weight	             [16, 8]	       128
+0:   module.graph_convs.2.conv.module_3.lins.0.weight	            [16, 16]	       256
+0:     module.graph_convs.2.conv.module_3.lins.0.bias	                [16]	        16
+0:      module.graph_convs.2.conv.module_3.lin.weight	             [8, 16]	       128
+0:           module.graph_convs.2.attn.in_proj_weight	             [24, 8]	       192
+0:             module.graph_convs.2.attn.in_proj_bias	                [24]	        24
+0:          module.graph_convs.2.attn.out_proj.weight	              [8, 8]	        64
+0:            module.graph_convs.2.attn.out_proj.bias	                 [8]	         8
+0:                  module.graph_convs.2.mlp.0.weight	             [16, 8]	       128
+0:                    module.graph_convs.2.mlp.0.bias	                [16]	        16
+0:                  module.graph_convs.2.mlp.3.weight	             [8, 16]	       128
+0:                    module.graph_convs.2.mlp.3.bias	                 [8]	         8
+0:           module.graph_convs.2.norm1.module.weight	                 [8]	         8
+0:             module.graph_convs.2.norm1.module.bias	                 [8]	         8
+0:     module.graph_convs.2.norm1.module.running_mean	                 [8]	         8
+0:      module.graph_convs.2.norm1.module.running_var	                 [8]	         8
+0: module.graph_convs.2.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.2.norm2.module.weight	                 [8]	         8
+0:             module.graph_convs.2.norm2.module.bias	                 [8]	         8
+0:     module.graph_convs.2.norm2.module.running_mean	                 [8]	         8
+0:      module.graph_convs.2.norm2.module.running_var	                 [8]	         8
+0: module.graph_convs.2.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.2.norm3.module.weight	                 [8]	         8
+0:             module.graph_convs.2.norm3.module.bias	                 [8]	         8
+0:     module.graph_convs.2.norm3.module.running_mean	                 [8]	         8
+0:      module.graph_convs.2.norm3.module.running_var	                 [8]	         8
+0: module.graph_convs.2.norm3.module.num_batches_tracked	                  []	         1
+0:          module.graph_convs.3.conv.module_0.weight	              [8, 8]	        64
+0:            module.graph_convs.3.conv.module_0.bias	                 [8]	         8
+0:  module.graph_convs.3.conv.module_1.lin_rbf.weight	              [8, 5]	        40
+0:    module.graph_convs.3.conv.module_1.lin_rbf.bias	                 [8]	         8
+0: module.graph_convs.3.conv.module_1.edge_lin.weight	              [8, 8]	        64
+0:   module.graph_convs.3.conv.module_1.edge_lin.bias	                 [8]	         8
+0:      module.graph_convs.3.conv.module_1.lin.weight	             [8, 32]	       256
+0:        module.graph_convs.3.conv.module_1.lin.bias	                 [8]	         8
+0: module.graph_convs.3.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
+0: module.graph_convs.3.conv.module_2.lin_rbf2.weight	              [8, 8]	        64
+0: module.graph_convs.3.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
+0: module.graph_convs.3.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
+0:   module.graph_convs.3.conv.module_2.lin_kj.weight	              [8, 8]	        64
+0:     module.graph_convs.3.conv.module_2.lin_kj.bias	                 [8]	         8
+0:   module.graph_convs.3.conv.module_2.lin_ji.weight	              [8, 8]	        64
+0:     module.graph_convs.3.conv.module_2.lin_ji.bias	                 [8]	         8
+0: module.graph_convs.3.conv.module_2.lin_down.weight	             [32, 8]	       256
+0:   module.graph_convs.3.conv.module_2.lin_up.weight	             [8, 32]	       256
+0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin2.bias	                 [8]	         8
+0:      module.graph_convs.3.conv.module_2.lin.weight	              [8, 8]	        64
+0:        module.graph_convs.3.conv.module_2.lin.bias	                 [8]	         8
+0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin2.bias	                 [8]	         8
+0:  module.graph_convs.3.conv.module_3.lin_rbf.weight	              [8, 5]	        40
+0:   module.graph_convs.3.conv.module_3.lin_up.weight	             [16, 8]	       128
+0:   module.graph_convs.3.conv.module_3.lins.0.weight	            [16, 16]	       256
+0:     module.graph_convs.3.conv.module_3.lins.0.bias	                [16]	        16
+0:      module.graph_convs.3.conv.module_3.lin.weight	             [8, 16]	       128
+0:           module.graph_convs.3.attn.in_proj_weight	             [24, 8]	       192
+0:             module.graph_convs.3.attn.in_proj_bias	                [24]	        24
+0:          module.graph_convs.3.attn.out_proj.weight	              [8, 8]	        64
+0:            module.graph_convs.3.attn.out_proj.bias	                 [8]	         8
+0:                  module.graph_convs.3.mlp.0.weight	             [16, 8]	       128
+0:                    module.graph_convs.3.mlp.0.bias	                [16]	        16
+0:                  module.graph_convs.3.mlp.3.weight	             [8, 16]	       128
+0:                    module.graph_convs.3.mlp.3.bias	                 [8]	         8
+0:           module.graph_convs.3.norm1.module.weight	                 [8]	         8
+0:             module.graph_convs.3.norm1.module.bias	                 [8]	         8
+0:     module.graph_convs.3.norm1.module.running_mean	                 [8]	         8
+0:      module.graph_convs.3.norm1.module.running_var	                 [8]	         8
+0: module.graph_convs.3.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.3.norm2.module.weight	                 [8]	         8
+0:             module.graph_convs.3.norm2.module.bias	                 [8]	         8
+0:     module.graph_convs.3.norm2.module.running_mean	                 [8]	         8
+0:      module.graph_convs.3.norm2.module.running_var	                 [8]	         8
+0: module.graph_convs.3.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.3.norm3.module.weight	                 [8]	         8
+0:             module.graph_convs.3.norm3.module.bias	                 [8]	         8
+0:     module.graph_convs.3.norm3.module.running_mean	                 [8]	         8
+0:      module.graph_convs.3.norm3.module.running_var	                 [8]	         8
+0: module.graph_convs.3.norm3.module.num_batches_tracked	                  []	         1
+0:          module.graph_convs.4.conv.module_0.weight	              [8, 8]	        64
+0:            module.graph_convs.4.conv.module_0.bias	                 [8]	         8
+0:  module.graph_convs.4.conv.module_1.lin_rbf.weight	              [8, 5]	        40
+0:    module.graph_convs.4.conv.module_1.lin_rbf.bias	                 [8]	         8
+0: module.graph_convs.4.conv.module_1.edge_lin.weight	              [8, 8]	        64
+0:   module.graph_convs.4.conv.module_1.edge_lin.bias	                 [8]	         8
+0:      module.graph_convs.4.conv.module_1.lin.weight	             [8, 32]	       256
+0:        module.graph_convs.4.conv.module_1.lin.bias	                 [8]	         8
+0: module.graph_convs.4.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
+0: module.graph_convs.4.conv.module_2.lin_rbf2.weight	              [8, 8]	        64
+0: module.graph_convs.4.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
+0: module.graph_convs.4.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
+0:   module.graph_convs.4.conv.module_2.lin_kj.weight	              [8, 8]	        64
+0:     module.graph_convs.4.conv.module_2.lin_kj.bias	                 [8]	         8
+0:   module.graph_convs.4.conv.module_2.lin_ji.weight	              [8, 8]	        64
+0:     module.graph_convs.4.conv.module_2.lin_ji.bias	                 [8]	         8
+0: module.graph_convs.4.conv.module_2.lin_down.weight	             [32, 8]	       256
+0:   module.graph_convs.4.conv.module_2.lin_up.weight	             [8, 32]	       256
+0: module.graph_convs.4.conv.module_2.layers_before_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.4.conv.module_2.layers_before_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.4.conv.module_2.layers_before_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.4.conv.module_2.layers_before_skip.0.lin2.bias	                 [8]	         8
+0:      module.graph_convs.4.conv.module_2.lin.weight	              [8, 8]	        64
+0:        module.graph_convs.4.conv.module_2.lin.bias	                 [8]	         8
+0: module.graph_convs.4.conv.module_2.layers_after_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.4.conv.module_2.layers_after_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.4.conv.module_2.layers_after_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.4.conv.module_2.layers_after_skip.0.lin2.bias	                 [8]	         8
+0:  module.graph_convs.4.conv.module_3.lin_rbf.weight	              [8, 5]	        40
+0:   module.graph_convs.4.conv.module_3.lin_up.weight	             [16, 8]	       128
+0:   module.graph_convs.4.conv.module_3.lins.0.weight	            [16, 16]	       256
+0:     module.graph_convs.4.conv.module_3.lins.0.bias	                [16]	        16
+0:      module.graph_convs.4.conv.module_3.lin.weight	             [8, 16]	       128
+0:           module.graph_convs.4.attn.in_proj_weight	             [24, 8]	       192
+0:             module.graph_convs.4.attn.in_proj_bias	                [24]	        24
+0:          module.graph_convs.4.attn.out_proj.weight	              [8, 8]	        64
+0:            module.graph_convs.4.attn.out_proj.bias	                 [8]	         8
+0:                  module.graph_convs.4.mlp.0.weight	             [16, 8]	       128
+0:                    module.graph_convs.4.mlp.0.bias	                [16]	        16
+0:                  module.graph_convs.4.mlp.3.weight	             [8, 16]	       128
+0:                    module.graph_convs.4.mlp.3.bias	                 [8]	         8
+0:           module.graph_convs.4.norm1.module.weight	                 [8]	         8
+0:             module.graph_convs.4.norm1.module.bias	                 [8]	         8
+0:     module.graph_convs.4.norm1.module.running_mean	                 [8]	         8
+0:      module.graph_convs.4.norm1.module.running_var	                 [8]	         8
+0: module.graph_convs.4.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.4.norm2.module.weight	                 [8]	         8
+0:             module.graph_convs.4.norm2.module.bias	                 [8]	         8
+0:     module.graph_convs.4.norm2.module.running_mean	                 [8]	         8
+0:      module.graph_convs.4.norm2.module.running_var	                 [8]	         8
+0: module.graph_convs.4.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.4.norm3.module.weight	                 [8]	         8
+0:             module.graph_convs.4.norm3.module.bias	                 [8]	         8
+0:     module.graph_convs.4.norm3.module.running_mean	                 [8]	         8
+0:      module.graph_convs.4.norm3.module.running_var	                 [8]	         8
+0: module.graph_convs.4.norm3.module.num_batches_tracked	                  []	         1
+0:          module.graph_convs.5.conv.module_0.weight	              [8, 8]	        64
+0:            module.graph_convs.5.conv.module_0.bias	                 [8]	         8
+0:  module.graph_convs.5.conv.module_1.lin_rbf.weight	              [8, 5]	        40
+0:    module.graph_convs.5.conv.module_1.lin_rbf.bias	                 [8]	         8
+0: module.graph_convs.5.conv.module_1.edge_lin.weight	              [8, 8]	        64
+0:   module.graph_convs.5.conv.module_1.edge_lin.bias	                 [8]	         8
+0:      module.graph_convs.5.conv.module_1.lin.weight	             [8, 32]	       256
+0:        module.graph_convs.5.conv.module_1.lin.bias	                 [8]	         8
+0: module.graph_convs.5.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
+0: module.graph_convs.5.conv.module_2.lin_rbf2.weight	              [8, 8]	        64
+0: module.graph_convs.5.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
+0: module.graph_convs.5.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
+0:   module.graph_convs.5.conv.module_2.lin_kj.weight	              [8, 8]	        64
+0:     module.graph_convs.5.conv.module_2.lin_kj.bias	                 [8]	         8
+0:   module.graph_convs.5.conv.module_2.lin_ji.weight	              [8, 8]	        64
+0:     module.graph_convs.5.conv.module_2.lin_ji.bias	                 [8]	         8
+0: module.graph_convs.5.conv.module_2.lin_down.weight	             [32, 8]	       256
+0:   module.graph_convs.5.conv.module_2.lin_up.weight	             [8, 32]	       256
+0: module.graph_convs.5.conv.module_2.layers_before_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.5.conv.module_2.layers_before_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.5.conv.module_2.layers_before_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.5.conv.module_2.layers_before_skip.0.lin2.bias	                 [8]	         8
+0:      module.graph_convs.5.conv.module_2.lin.weight	              [8, 8]	        64
+0:        module.graph_convs.5.conv.module_2.lin.bias	                 [8]	         8
+0: module.graph_convs.5.conv.module_2.layers_after_skip.0.lin1.weight	              [8, 8]	        64
+0: module.graph_convs.5.conv.module_2.layers_after_skip.0.lin1.bias	                 [8]	         8
+0: module.graph_convs.5.conv.module_2.layers_after_skip.0.lin2.weight	              [8, 8]	        64
+0: module.graph_convs.5.conv.module_2.layers_after_skip.0.lin2.bias	                 [8]	         8
+0:  module.graph_convs.5.conv.module_3.lin_rbf.weight	              [8, 5]	        40
+0:   module.graph_convs.5.conv.module_3.lin_up.weight	             [16, 8]	       128
+0:   module.graph_convs.5.conv.module_3.lins.0.weight	            [16, 16]	       256
+0:     module.graph_convs.5.conv.module_3.lins.0.bias	                [16]	        16
+0:      module.graph_convs.5.conv.module_3.lin.weight	             [8, 16]	       128
+0:           module.graph_convs.5.attn.in_proj_weight	             [24, 8]	       192
+0:             module.graph_convs.5.attn.in_proj_bias	                [24]	        24
+0:          module.graph_convs.5.attn.out_proj.weight	              [8, 8]	        64
+0:            module.graph_convs.5.attn.out_proj.bias	                 [8]	         8
+0:                  module.graph_convs.5.mlp.0.weight	             [16, 8]	       128
+0:                    module.graph_convs.5.mlp.0.bias	                [16]	        16
+0:                  module.graph_convs.5.mlp.3.weight	             [8, 16]	       128
+0:                    module.graph_convs.5.mlp.3.bias	                 [8]	         8
+0:           module.graph_convs.5.norm1.module.weight	                 [8]	         8
+0:             module.graph_convs.5.norm1.module.bias	                 [8]	         8
+0:     module.graph_convs.5.norm1.module.running_mean	                 [8]	         8
+0:      module.graph_convs.5.norm1.module.running_var	                 [8]	         8
+0: module.graph_convs.5.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.5.norm2.module.weight	                 [8]	         8
+0:             module.graph_convs.5.norm2.module.bias	                 [8]	         8
+0:     module.graph_convs.5.norm2.module.running_mean	                 [8]	         8
+0:      module.graph_convs.5.norm2.module.running_var	                 [8]	         8
+0: module.graph_convs.5.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.5.norm3.module.weight	                 [8]	         8
+0:             module.graph_convs.5.norm3.module.bias	                 [8]	         8
+0:     module.graph_convs.5.norm3.module.running_mean	                 [8]	         8
+0:      module.graph_convs.5.norm3.module.running_var	                 [8]	         8
+0: module.graph_convs.5.norm3.module.num_batches_tracked	                  []	         1
+0:                         module.heads_NN.0.0.weight	             [64, 5]	       320
+0:                           module.heads_NN.0.0.bias	                [64]	        64
+0:                         module.heads_NN.0.2.weight	             [1, 64]	        64
+0:                           module.heads_NN.0.2.bias	                 [1]	         1
+0:                              module.pos_emb.weight	              [8, 4]	        32
+0:                             module.node_emb.weight	              [8, 9]	        72
+0:                             module.node_lin.weight	             [8, 16]	       128
+0:                          module.rel_pos_emb.weight	              [8, 4]	        32
+0:                       module.graph_shared.0.weight	              [5, 8]	        40
+0:                         module.graph_shared.0.bias	                 [5]	         5
+0:                       module.graph_shared.2.weight	              [5, 5]	        25
+0:                         module.graph_shared.2.bias	                 [5]	         5
+0:                                    module.rbf.freq	                 [5]	         5
+0: --------------------------------------------------
+0:                                              Total	                    	     19675
+0: All (total, MB): 19675 0.0750542
+Train:   0%|          | 0/100 [00:00<?, ?it/s]slurmstepd: error: *** STEP 3429473.170 ON frontier03697 CANCELLED AT 2025-05-11T15:57:05 DUE TO TIME LIMIT ***

@@ -1,0 +1,159 @@
+[W511 10:40:01.318827829 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:40:01.318961979 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:40:01.318997638 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:40:01.318969073 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:40:01.319099365 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:40:01.320305820 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:40:01.320452644 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:40:01.339110510 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier09225.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+0: Command: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/md17/md17_deephyper_parallel_trial.py --mpnn_type=SchNet --hidden_dim=4 --num_conv_layers=4 --num_headlayers=2 --dim_headlayers=64 --global_attn_heads=4 --num_epoch=50 --log=md17_hpo_trials_0.41
+
+INFO (rank 4): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 5): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 6): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 1): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 7): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 0): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 2): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 3): trainset,valset,testset size: 93639 20065 20066
+0: Using GPU
+0: Using GPU
+0:     module.graph_convs.0.conv.module_0.lin1.weight	              [8, 4]	        32
+0:     module.graph_convs.0.conv.module_0.lin2.weight	              [4, 8]	        32
+0:       module.graph_convs.0.conv.module_0.lin2.bias	                 [4]	         4
+0:     module.graph_convs.0.conv.module_0.nn.0.weight	             [8, 14]	       112
+0:       module.graph_convs.0.conv.module_0.nn.0.bias	                 [8]	         8
+0:     module.graph_convs.0.conv.module_0.nn.2.weight	              [8, 8]	        64
+0:       module.graph_convs.0.conv.module_0.nn.2.bias	                 [8]	         8
+0:           module.graph_convs.0.attn.in_proj_weight	             [12, 4]	        48
+0:             module.graph_convs.0.attn.in_proj_bias	                [12]	        12
+0:          module.graph_convs.0.attn.out_proj.weight	              [4, 4]	        16
+0:            module.graph_convs.0.attn.out_proj.bias	                 [4]	         4
+0:                  module.graph_convs.0.mlp.0.weight	              [8, 4]	        32
+0:                    module.graph_convs.0.mlp.0.bias	                 [8]	         8
+0:                  module.graph_convs.0.mlp.3.weight	              [4, 8]	        32
+0:                    module.graph_convs.0.mlp.3.bias	                 [4]	         4
+0:           module.graph_convs.0.norm1.module.weight	                 [4]	         4
+0:             module.graph_convs.0.norm1.module.bias	                 [4]	         4
+0:     module.graph_convs.0.norm1.module.running_mean	                 [4]	         4
+0:      module.graph_convs.0.norm1.module.running_var	                 [4]	         4
+0: module.graph_convs.0.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.0.norm2.module.weight	                 [4]	         4
+0:             module.graph_convs.0.norm2.module.bias	                 [4]	         4
+0:     module.graph_convs.0.norm2.module.running_mean	                 [4]	         4
+0:      module.graph_convs.0.norm2.module.running_var	                 [4]	         4
+0: module.graph_convs.0.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.0.norm3.module.weight	                 [4]	         4
+0:             module.graph_convs.0.norm3.module.bias	                 [4]	         4
+0:     module.graph_convs.0.norm3.module.running_mean	                 [4]	         4
+0:      module.graph_convs.0.norm3.module.running_var	                 [4]	         4
+0: module.graph_convs.0.norm3.module.num_batches_tracked	                  []	         1
+0:     module.graph_convs.1.conv.module_0.lin1.weight	              [8, 4]	        32
+0:     module.graph_convs.1.conv.module_0.lin2.weight	              [4, 8]	        32
+0:       module.graph_convs.1.conv.module_0.lin2.bias	                 [4]	         4
+0:     module.graph_convs.1.conv.module_0.nn.0.weight	             [8, 14]	       112
+0:       module.graph_convs.1.conv.module_0.nn.0.bias	                 [8]	         8
+0:     module.graph_convs.1.conv.module_0.nn.2.weight	              [8, 8]	        64
+0:       module.graph_convs.1.conv.module_0.nn.2.bias	                 [8]	         8
+0:           module.graph_convs.1.attn.in_proj_weight	             [12, 4]	        48
+0:             module.graph_convs.1.attn.in_proj_bias	                [12]	        12
+0:          module.graph_convs.1.attn.out_proj.weight	              [4, 4]	        16
+0:            module.graph_convs.1.attn.out_proj.bias	                 [4]	         4
+0:                  module.graph_convs.1.mlp.0.weight	              [8, 4]	        32
+0:                    module.graph_convs.1.mlp.0.bias	                 [8]	         8
+0:                  module.graph_convs.1.mlp.3.weight	              [4, 8]	        32
+0:                    module.graph_convs.1.mlp.3.bias	                 [4]	         4
+0:           module.graph_convs.1.norm1.module.weight	                 [4]	         4
+0:             module.graph_convs.1.norm1.module.bias	                 [4]	         4
+0:     module.graph_convs.1.norm1.module.running_mean	                 [4]	         4
+0:      module.graph_convs.1.norm1.module.running_var	                 [4]	         4
+0: module.graph_convs.1.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.1.norm2.module.weight	                 [4]	         4
+0:             module.graph_convs.1.norm2.module.bias	                 [4]	         4
+0:     module.graph_convs.1.norm2.module.running_mean	                 [4]	         4
+0:      module.graph_convs.1.norm2.module.running_var	                 [4]	         4
+0: module.graph_convs.1.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.1.norm3.module.weight	                 [4]	         4
+0:             module.graph_convs.1.norm3.module.bias	                 [4]	         4
+0:     module.graph_convs.1.norm3.module.running_mean	                 [4]	         4
+0:      module.graph_convs.1.norm3.module.running_var	                 [4]	         4
+0: module.graph_convs.1.norm3.module.num_batches_tracked	                  []	         1
+0:     module.graph_convs.2.conv.module_0.lin1.weight	              [8, 4]	        32
+0:     module.graph_convs.2.conv.module_0.lin2.weight	              [4, 8]	        32
+0:       module.graph_convs.2.conv.module_0.lin2.bias	                 [4]	         4
+0:     module.graph_convs.2.conv.module_0.nn.0.weight	             [8, 14]	       112
+0:       module.graph_convs.2.conv.module_0.nn.0.bias	                 [8]	         8
+0:     module.graph_convs.2.conv.module_0.nn.2.weight	              [8, 8]	        64
+0:       module.graph_convs.2.conv.module_0.nn.2.bias	                 [8]	         8
+0:           module.graph_convs.2.attn.in_proj_weight	             [12, 4]	        48
+0:             module.graph_convs.2.attn.in_proj_bias	                [12]	        12
+0:          module.graph_convs.2.attn.out_proj.weight	              [4, 4]	        16
+0:            module.graph_convs.2.attn.out_proj.bias	                 [4]	         4
+0:                  module.graph_convs.2.mlp.0.weight	              [8, 4]	        32
+0:                    module.graph_convs.2.mlp.0.bias	                 [8]	         8
+0:                  module.graph_convs.2.mlp.3.weight	              [4, 8]	        32
+0:                    module.graph_convs.2.mlp.3.bias	                 [4]	         4
+0:           module.graph_convs.2.norm1.module.weight	                 [4]	         4
+0:             module.graph_convs.2.norm1.module.bias	                 [4]	         4
+0:     module.graph_convs.2.norm1.module.running_mean	                 [4]	         4
+0:      module.graph_convs.2.norm1.module.running_var	                 [4]	         4
+0: module.graph_convs.2.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.2.norm2.module.weight	                 [4]	         4
+0:             module.graph_convs.2.norm2.module.bias	                 [4]	         4
+0:     module.graph_convs.2.norm2.module.running_mean	                 [4]	         4
+0:      module.graph_convs.2.norm2.module.running_var	                 [4]	         4
+0: module.graph_convs.2.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.2.norm3.module.weight	                 [4]	         4
+0:             module.graph_convs.2.norm3.module.bias	                 [4]	         4
+0:     module.graph_convs.2.norm3.module.running_mean	                 [4]	         4
+0:      module.graph_convs.2.norm3.module.running_var	                 [4]	         4
+0: module.graph_convs.2.norm3.module.num_batches_tracked	                  []	         1
+0:     module.graph_convs.3.conv.module_0.lin1.weight	              [8, 4]	        32
+0:     module.graph_convs.3.conv.module_0.lin2.weight	              [4, 8]	        32
+0:       module.graph_convs.3.conv.module_0.lin2.bias	                 [4]	         4
+0:     module.graph_convs.3.conv.module_0.nn.0.weight	             [8, 14]	       112
+0:       module.graph_convs.3.conv.module_0.nn.0.bias	                 [8]	         8
+0:     module.graph_convs.3.conv.module_0.nn.2.weight	              [8, 8]	        64
+0:       module.graph_convs.3.conv.module_0.nn.2.bias	                 [8]	         8
+0:           module.graph_convs.3.attn.in_proj_weight	             [12, 4]	        48
+0:             module.graph_convs.3.attn.in_proj_bias	                [12]	        12
+0:          module.graph_convs.3.attn.out_proj.weight	              [4, 4]	        16
+0:            module.graph_convs.3.attn.out_proj.bias	                 [4]	         4
+0:                  module.graph_convs.3.mlp.0.weight	              [8, 4]	        32
+0:                    module.graph_convs.3.mlp.0.bias	                 [8]	         8
+0:                  module.graph_convs.3.mlp.3.weight	              [4, 8]	        32
+0:                    module.graph_convs.3.mlp.3.bias	                 [4]	         4
+0:           module.graph_convs.3.norm1.module.weight	                 [4]	         4
+0:             module.graph_convs.3.norm1.module.bias	                 [4]	         4
+0:     module.graph_convs.3.norm1.module.running_mean	                 [4]	         4
+0:      module.graph_convs.3.norm1.module.running_var	                 [4]	         4
+0: module.graph_convs.3.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.3.norm2.module.weight	                 [4]	         4
+0:             module.graph_convs.3.norm2.module.bias	                 [4]	         4
+0:     module.graph_convs.3.norm2.module.running_mean	                 [4]	         4
+0:      module.graph_convs.3.norm2.module.running_var	                 [4]	         4
+0: module.graph_convs.3.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.3.norm3.module.weight	                 [4]	         4
+0:             module.graph_convs.3.norm3.module.bias	                 [4]	         4
+0:     module.graph_convs.3.norm3.module.running_mean	                 [4]	         4
+0:      module.graph_convs.3.norm3.module.running_var	                 [4]	         4
+0: module.graph_convs.3.norm3.module.num_batches_tracked	                  []	         1
+0:                         module.heads_NN.0.0.weight	            [64, 50]	      3200
+0:                           module.heads_NN.0.0.bias	                [64]	        64
+0:                         module.heads_NN.0.2.weight	            [64, 64]	      4096
+0:                           module.heads_NN.0.2.bias	                [64]	        64
+0:                         module.heads_NN.0.4.weight	             [1, 64]	        64
+0:                           module.heads_NN.0.4.bias	                 [1]	         1
+0:                              module.pos_emb.weight	              [4, 6]	        24
+0:                             module.node_emb.weight	              [4, 1]	         4
+0:                             module.node_lin.weight	              [4, 8]	        32
+0:                          module.rel_pos_emb.weight	              [4, 6]	        24
+0:                   module.distance_expansion.offset	                [10]	        10
+0:                       module.graph_shared.0.weight	             [50, 4]	       200
+0:                         module.graph_shared.0.bias	                [50]	        50
+0:                       module.graph_shared.2.weight	            [50, 50]	      2500
+0:                         module.graph_shared.2.bias	                [50]	        50
+0: --------------------------------------------------
+0:                                              Total	                    	     12251
+0: All (total, MB): 12251 0.0467339
+Train:   0%|          | 0/100 [00:00<?, ?it/s]slurmstepd: error: *** STEP 3429471.42 ON frontier09225 CANCELLED AT 2025-05-11T10:40:41 ***

@@ -1,0 +1,47 @@
+calls:
+- max_evals: 200
+  timeout: null
+search:
+  acq_func: UCB
+  acq_optimizer: auto
+  acq_optimizer_freq: 10
+  evaluator:
+    num_workers: 10
+    type: QueuedProcessPoolEvaluator
+  filter_duplicated: true
+  filter_failures: min
+  initial_point_generator: random
+  initial_points: null
+  kappa: 1.96
+  kwargs: {}
+  log_dir: md17_hpo_trials
+  max_failures: 100
+  moo_lower_bounds: null
+  moo_scalarization_strategy: Chebyshev
+  moo_scalarization_weight: null
+  multi_point_strategy: cl_min
+  n_initial_points: 10
+  n_jobs: 4
+  n_points: 10000
+  objective_scaler: auto
+  problem: '{"name": null, "hyperparameters": [{"type": "ordinal", "name": "dim_headlayers",
+    "sequence": [32, 64], "default_value": 32, "meta": null}, {"type": "ordinal",
+    "name": "global_attn_heads", "sequence": [2, 4], "default_value": 2, "meta": null},
+    {"type": "ordinal", "name": "hidden_dim", "sequence": [4, 8, 12, 16, 24, 32],
+    "default_value": 4, "meta": null}, {"type": "categorical", "name": "mpnn_type",
+    "choices": ["EGNN", "PNA", "SchNet", "DimeNet"], "weights": null, "default_value":
+    "EGNN", "meta": null}, {"type": "uniform_int", "name": "num_conv_layers", "lower":
+    1, "upper": 6, "default_value": 4, "log": false, "meta": null}, {"type": "uniform_int",
+    "name": "num_headlayers", "lower": 1, "upper": 2, "default_value": 2, "log": false,
+    "meta": null}], "conditions": [], "forbiddens": [], "python_module_version": "1.2.0",
+    "format_version": 0.4}'
+  random_state: 42
+  scheduler: null
+  stopper: null
+  surrogate_model: ET
+  surrogate_model_kwargs: null
+  type: CBO
+  update_prior: false
+  update_prior_quantile: 0.1
+  verbose: 0
+  xi: 0.001

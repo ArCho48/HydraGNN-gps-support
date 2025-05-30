@@ -1,90 +1,79 @@
 import pdb
-import networkx as nx
-import numpy as np
+import torch
 from torch_geometric.utils import to_networkx
+import igraph as ig
+import numpy as np
+from torch_geometric.data import Data
+from scipy.sparse import coo_matrix
 from scipy.sparse.linalg import eigsh
-from networkx.algorithms.centrality import harmonic_centrality
-from networkx.algorithms.efficiency_measures import local_efficiency
+from sklearn.preprocessing import StandardScaler
 
-def normalize_features(X, eps=1e-10):
-    mean = np.mean(X, axis=0)
-    std = np.std(X, axis=0)
-    return (X - mean) / (std + eps)
+def compute_topo_features(data: Data):
+    """
+    Node Features
+        1. degree
+        2. closeness
+        3. betweenness
+        4. eigenvector
+        5. pagerank
+        6. clustering coefficient
+        7. k-core
+        8. harmonic
+        9. eccentricity
+    Edge Features
+        1. betweeneness
+        2. jaccard
+        3. adamic-adar
+        4. preferential attachment
+    """
+    edge_index = data.edge_index.numpy()
 
-def compute_topo_features(data, k_laplacian_eigenvecs=5):
-    pdb.set_trace()
-    G = to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"])
+    G = to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"], to_undirected=True)
+    g = ig.Graph.from_networkx(G)
 
-    node_list = list(G.nodes())
-    node_idx_map = {n: i for i, n in enumerate(node_list)}
-    N = len(node_list)
-
-    # Node Features
+    # ----- Node Features -----
     node_features = []
 
-    def to_array(d):
-        return np.array([d[n] for n in node_list])
+    degree_arr = np.array(g.degree())
+    node_features.append(degree_arr)                                     
+    node_features.append(np.array(g.closeness()))                        
+    node_features.append(np.array(g.betweenness()))                      
+    node_features.append(np.array(g.eigenvector_centrality()))          
+    node_features.append(np.array(g.pagerank()))                        
+    node_features.append(np.array(g.transitivity_local_undirected(mode="zero")))  
+    node_features.append(np.array(g.coreness()))                         
+    node_features.append(np.array(g.harmonic_centrality()))             
+    node_features.append(np.array(g.eccentricity()))                    
 
-    node_features.append(to_array(dict(G.degree())))
-    node_features.append(to_array(nx.clustering(G)))
-    node_features.append(to_array(nx.betweenness_centrality(G)))
-    node_features.append(to_array(nx.closeness_centrality(G)))
-    node_features.append(to_array(nx.pagerank(G)))
-    node_features.append(to_array(nx.eigenvector_centrality_numpy(G)))
-    node_features.append(to_array(nx.core_number(G)))
-    node_features.append(to_array(nx.eccentricity(G)))
-    node_features.append(to_array(harmonic_centrality(G)))
-    node_features.append(np.array([
-        local_efficiency(G.subgraph(G.neighbors(v)).copy()) if len(list(G.neighbors(v))) > 1 else 0.0
-        for v in node_list
-    ]))
+    # Stack & normalize node features
+    X_nodes = np.vstack(node_features).T  # shape: (num_nodes, num_features)
+    X_nodes = StandardScaler().fit_transform(X_nodes)
+    # pdb.set_trace()
+    data.pe = torch.cat([data.pe,torch.Tensor(X_nodes)],axis=-1)#X_nodes
 
-    # Laplacian Eigenvectors
-    L = nx.laplacian_matrix(G).astype(float)
-    num_eigen = min(k_laplacian_eigenvecs, N - 2)
-    vecs = np.zeros((N, 0))  # fallback if eigsh fails
-    if num_eigen > 0:
-        _, vecs = eigsh(L, k=num_eigen, which='SM')
-
-    node_features.append(vecs.T)
-
-    # Stack and normalize
-    node_features = np.vstack(node_features[:-1])
-    if vecs.size > 0:
-        node_features = np.vstack([node_features, vecs.T])
-    node_features = node_features.T  # (N, num_features)
-    node_features = normalize_features(node_features)
-
-    # Edge Features
-    edge_list = [tuple(sorted(e)) for e in G.edges()]
-    edge_idx_map = {e: i for i, e in enumerate(edge_list)}
+    # ----- Edge Features -----
+    edge_list = [tuple(e) for e in edge_index.T]
     E = len(edge_list)
-    edge_features = np.zeros((E, 5))  # [betweenness, jaccard, adamic-adar, PA, common neighbors]
+    X_edges = np.zeros((E, 4)) 
 
-    betweenness = nx.edge_betweenness_centrality(G)
-    for e in edge_list:
-        edge_features[edge_idx_map[e], 0] = betweenness.get(e, 0.0)
+    edge_btw = g.edge_betweenness()
+    for i, val in enumerate(edge_btw):
+        X_edges[i, 0] = val
 
-    for u, v, score in nx.jaccard_coefficient(G):
-        e = tuple(sorted((u, v)))
-        if e in edge_idx_map:
-            edge_features[edge_idx_map[e], 1] = score
+    for i, (u, v) in enumerate(edge_list):
+        nu = set(g.neighbors(u))
+        nv = set(g.neighbors(v))
+        intersection = nu & nv
+        union = nu | nv
+        jaccard = len(intersection) / len(union) if union else 0
+        aa = sum(1 / np.log(g.degree(w)) for w in intersection if g.degree(w) > 1)
+        pa = g.degree(u) * g.degree(v)
+        X_edges[i, 1] = jaccard
+        X_edges[i, 2] = aa
+        X_edges[i, 3] = pa
 
-    for u, v, score in nx.adamic_adar_index(G):
-        e = tuple(sorted((u, v)))
-        if e in edge_idx_map:
-            edge_features[edge_idx_map[e], 2] = score
+    X_edges = StandardScaler().fit_transform(X_edges)
+    
+    data.rel_pe = torch.Tensor(X_edges)
 
-    for u, v, score in nx.preferential_attachment(G):
-        e = tuple(sorted((u, v)))
-        if e in edge_idx_map:
-            edge_features[edge_idx_map[e], 3] = score
-
-    for u, v in edge_list:
-        cn = len(list(nx.common_neighbors(G, u, v)))
-        edge_features[edge_idx_map[(u, v)], 4] = cn
-
-    edge_features = normalize_features(edge_features)
-
-    return node_features, edge_features, node_list, edge_list
-
+    return data

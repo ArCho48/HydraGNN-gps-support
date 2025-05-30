@@ -1,0 +1,69 @@
+[W511 10:58:58.025136871 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:58:58.025453103 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:58:58.025477720 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:58:58.025625887 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:58:58.025640966 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:58:58.025649813 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:58:58.026831511 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+[W511 10:58:58.052233707 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier08436.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
+0: Command: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/md17/md17_deephyper_parallel_trial.py --mpnn_type=EGNN --hidden_dim=12 --num_conv_layers=1 --num_headlayers=2 --dim_headlayers=32 --global_attn_heads=4 --num_epoch=50 --log=md17_hpo_trials_0.98
+
+INFO (rank 1): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 4): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 2): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 5): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 7): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 3): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 0): trainset,valset,testset size: 93639 20065 20066
+INFO (rank 6): trainset,valset,testset size: 93639 20065 20066
+0: Using GPU
+0: Using GPU
+0: module.graph_convs.0.conv.module_0.edge_mlp.0.weight	            [12, 37]	       444
+0: module.graph_convs.0.conv.module_0.edge_mlp.0.bias	                [12]	        12
+0: module.graph_convs.0.conv.module_0.edge_mlp.2.weight	            [12, 12]	       144
+0: module.graph_convs.0.conv.module_0.edge_mlp.2.bias	                [12]	        12
+0: module.graph_convs.0.conv.module_0.node_mlp.0.weight	            [12, 24]	       288
+0: module.graph_convs.0.conv.module_0.node_mlp.0.bias	                [12]	        12
+0: module.graph_convs.0.conv.module_0.node_mlp.2.weight	            [12, 12]	       144
+0: module.graph_convs.0.conv.module_0.node_mlp.2.bias	                [12]	        12
+0:           module.graph_convs.0.attn.in_proj_weight	            [36, 12]	       432
+0:             module.graph_convs.0.attn.in_proj_bias	                [36]	        36
+0:          module.graph_convs.0.attn.out_proj.weight	            [12, 12]	       144
+0:            module.graph_convs.0.attn.out_proj.bias	                [12]	        12
+0:                  module.graph_convs.0.mlp.0.weight	            [24, 12]	       288
+0:                    module.graph_convs.0.mlp.0.bias	                [24]	        24
+0:                  module.graph_convs.0.mlp.3.weight	            [12, 24]	       288
+0:                    module.graph_convs.0.mlp.3.bias	                [12]	        12
+0:           module.graph_convs.0.norm1.module.weight	                [12]	        12
+0:             module.graph_convs.0.norm1.module.bias	                [12]	        12
+0:     module.graph_convs.0.norm1.module.running_mean	                [12]	        12
+0:      module.graph_convs.0.norm1.module.running_var	                [12]	        12
+0: module.graph_convs.0.norm1.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.0.norm2.module.weight	                [12]	        12
+0:             module.graph_convs.0.norm2.module.bias	                [12]	        12
+0:     module.graph_convs.0.norm2.module.running_mean	                [12]	        12
+0:      module.graph_convs.0.norm2.module.running_var	                [12]	        12
+0: module.graph_convs.0.norm2.module.num_batches_tracked	                  []	         1
+0:           module.graph_convs.0.norm3.module.weight	                [12]	        12
+0:             module.graph_convs.0.norm3.module.bias	                [12]	        12
+0:     module.graph_convs.0.norm3.module.running_mean	                [12]	        12
+0:      module.graph_convs.0.norm3.module.running_var	                [12]	        12
+0: module.graph_convs.0.norm3.module.num_batches_tracked	                  []	         1
+0:                         module.heads_NN.0.0.weight	            [32, 50]	      1600
+0:                           module.heads_NN.0.0.bias	                [32]	        32
+0:                         module.heads_NN.0.2.weight	            [32, 32]	      1024
+0:                           module.heads_NN.0.2.bias	                [32]	        32
+0:                         module.heads_NN.0.4.weight	             [1, 32]	        32
+0:                           module.heads_NN.0.4.bias	                 [1]	         1
+0:                              module.pos_emb.weight	             [12, 6]	        72
+0:                             module.node_emb.weight	             [12, 1]	        12
+0:                             module.node_lin.weight	            [12, 24]	       288
+0:                          module.rel_pos_emb.weight	             [12, 6]	        72
+0:                       module.graph_shared.0.weight	            [50, 12]	       600
+0:                         module.graph_shared.0.bias	                [50]	        50
+0:                       module.graph_shared.2.weight	            [50, 50]	      2500
+0:                         module.graph_shared.2.bias	                [50]	        50
+0: --------------------------------------------------
+0:                                              Total	                    	      8816
+0: All (total, MB): 8816 0.0336304
+Train:   0%|          | 0/100 [00:00<?, ?it/s]slurmstepd: error: *** STEP 3429471.99 ON frontier08436 CANCELLED AT 2025-05-11T10:59:29 ***

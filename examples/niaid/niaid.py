@@ -6,7 +6,7 @@ import numpy as np
 from mpi4py import MPI
 import pandas as pd
 from tqdm import tqdm
-
+from multiprocessing import Pool, cpu_count
 import numpy as np
 
 import random
@@ -16,7 +16,6 @@ import torch
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
-
 from torch_geometric.data import Data
 from torch_geometric.transforms import RadiusGraph, Distance, AddLaplacianEigenvectorPE
 
@@ -24,9 +23,11 @@ import hydragnn
 from hydragnn.utils.profiling_and_tracing.time_utils import Timer
 from hydragnn.utils.model import print_model
 from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
-    atomicdescriptors,
+    atomicdescriptors
 )
+from hydragnn.utils.descriptors_and_embeddings.chemicaldescriptors import ChemicalFeatureEncoder
 from hydragnn.utils.descriptors_and_embeddings.topologicaldescriptors import compute_topo_features
+from hydragnn.utils.descriptors_and_embeddings.topologicaldescriptors import *
 from hydragnn.utils.datasets.abstractbasedataset import AbstractBaseDataset
 from hydragnn.utils.datasets.distdataset import DistDataset
 from hydragnn.utils.datasets.pickledataset import (
@@ -57,57 +58,42 @@ def reverse_dict(input_dict):
 create_graph_fromXYZ = RadiusGraph(r=5.0)  # radius cutoff in angstrom
 compute_edge_lengths = Distance(norm=False, cat=True)
 
-# atomicdescriptor = atomicdescriptors(
-#     embeddingfilename="./embedding.json",
-#     overwritten=True,
-#     element_types=None,
-#     one_hot=False,
-# )
-
 periodic_table = generate_dictionary_elements()
 reverse_pt = reverse_dict(periodic_table)
 
 def get_atomic_number(symbol):
     return reverse_pt.get(symbol)
 
-# Update each sample prior to loading.
-def niaid_pre_transform(data, transform):
-    # LPE
-    data = transform(data)
+# # Update each sample prior to loading.
+# def niaid_pre_transform(data, transform):
+#     # LPE
+#     data = transform(data)
 
-    # gps requires relative edge features, introduced rel_lapPe as edge encodings
-    source_pe = data.pe[data.edge_index[0]]
-    target_pe = data.pe[data.edge_index[1]]
-    data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
-    return data
-
-# def add_atomic_descriptors(data):
-#     descriptor_tensor = torch.empty((data.x.shape[0], 18))
-#     for atom_id in range(data.x.shape[0]):
-#         atomic_string = periodic_table[int(data.x[atom_id, 0].item())]
-#         descriptor_tensor[atom_id, :] = atomicdescriptor.get_atom_features(
-#             atomic_string
-#         )
-#         data.x = torch.cat([data.x, descriptor_tensor], dim=1)
-
+#     # gps requires relative edge features, introduced rel_lapPe as edge encodings
+#     source_pe = data.pe[data.edge_index[0]]
+#     target_pe = data.pe[data.edge_index[1]]
+#     data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
 #     return data
 
 class niaid(AbstractBaseDataset):
     def __init__(
-        self, datadir, pe_dim
+        self, datadir, num_laplacian_eigs
     ):
         super().__init__()
 
         df = pd.read_parquet(datadir+'niaid.parquet.gzip')
 
-         # LPE
+        # Chemical encoder
+        ChemEncoder = ChemicalFeatureEncoder()
+
+        # LPE
         transform = AddLaplacianEigenvectorPE(
-                k=pe_dim,
+                k=num_laplacian_eigs,
                 attr_name="pe",
                 is_undirected=True,
             )
 
-        pbar = tqdm(total=df.shape[0])
+        pbar = tqdm(total=df.shape[0],desc="Pre-processing data and adding chemical encodings")
         for _, row in df.iterrows():
             # Get coordinates
             a, b, c, alpha, beta, gamma = float(row['_cell_length_a'].squeeze()), float(row['_cell_length_b'].squeeze()), float(row['_cell_length_c'].squeeze()), float(row['_cell_angle_alpha'].squeeze()), float(row['_cell_angle_beta'].squeeze()), float(row['_cell_angle_gamma'].squeeze())
@@ -140,9 +126,10 @@ class niaid(AbstractBaseDataset):
 
             # Pre-transform
             try:
+                data = transform(data) #lapPE
                 # data = niaid_pre_transform(data, transform)
-                # data = add_atomic_descriptors(data)
-                data = compute_topo_features(data,pe_dim)
+                data = ChemEncoder.compute_chem_features(data)
+                # data = compute_topo_features(data)
 
                 self.dataset.append(data)
             except:
@@ -150,7 +137,18 @@ class niaid(AbstractBaseDataset):
             pbar.update(1)
         pbar.close()
 
+        self.get_topo_encodings()
+
         random.shuffle(self.dataset)
+
+    def get_topo_encodings(self):
+        n_procs = min(cpu_count(), len(self.dataset))
+        chunksize = max(1, len(self.dataset) // (n_procs * 4))  # tune this
+
+        with Pool(processes=n_procs) as pool:
+            iterator = pool.imap(compute_topo_features, self.dataset, chunksize)
+            self.dataset = list(tqdm(iterator, total=len(self.dataset), desc="Adding topological encodings"))
+            # self.dataset = pool.map(compute_topo_features, self.dataset, chunksize)
 
     def transformation_matrix(self, a, b, c, alpha, beta, gamma):
         # Convert angles to radians
@@ -215,7 +213,7 @@ def main(preonly=False, format='pickle', ddstore=False,
     if preonly:
         ## local data
         dataset = niaid(
-            'dataset/raw/', config["NeuralNetwork"]["Architecture"]["pe_dim"],
+            'dataset/raw/', config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
         )
         ## This is a local split
         trainset, valset, testset = split_dataset(
@@ -335,6 +333,11 @@ def main(preonly=False, format='pickle', ddstore=False,
         % (len(trainset), len(valset), len(testset))
     )
 
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
+
     if ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
         os.environ["HYDRAGNN_USE_ddstore"] = "1"
@@ -342,6 +345,7 @@ def main(preonly=False, format='pickle', ddstore=False,
     (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
         trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
     )
+
     ## Good to sync with everyone right after DDStore setup
     comm.Barrier()
 
@@ -385,7 +389,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         config["NeuralNetwork"],
         log_name,
         verbosity,
-        create_plots=False
+        create_plots=True
     )
 
 if __name__ == "__main__":
