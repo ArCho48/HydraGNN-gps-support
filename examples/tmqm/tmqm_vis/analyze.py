@@ -13,7 +13,7 @@ with open(filename, "r") as f:
 
 var_config = config["NeuralNetwork"]["Variables_of_interest"]
 
-dataset = SimplePickleDataset(basedir='../dataset/tmqm.pickle', label="testset", var_config=var_config)
+dataset = SimplePickleDataset(basedir='../dataset/non-encoder/tmqm.pickle', label="testset", var_config=var_config)
 dataset = [data for data in dataset]
 # nx_graphs = [to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"]) for data in dataset]
 nx_graphs_sorted = sorted(dataset, key=lambda data: data.x.shape[0])
@@ -51,7 +51,7 @@ for graph in top50:
      plt.ylabel("Frequency",fontsize=15)
      plt.savefig("degrees/degree_"+str(graph.number_of_nodes())+".png", format="PNG")
 
-def draw(G, pos, measures, measure_name, folder):
+def draw(G, pos, measures, measure_name, folder, indx):
     plt.figure(figsize=(8, 6))
     nodes = nx.draw_networkx_nodes(G, pos, node_size=75, cmap=plt.cm.plasma, 
                                    node_color=list(measures.values()),
@@ -61,12 +61,12 @@ def draw(G, pos, measures, measure_name, folder):
     plt.title(measure_name)
     plt.colorbar(nodes)
     plt.axis('off')
-    plt.savefig(folder+'/'+folder.rstrip()+'_'+str(G.number_of_nodes())+'.png',format='PNG')
+    plt.savefig(folder+'/'+folder.rstrip()+'_'+str(indx)+'_'+str(G.number_of_nodes())+'.png',format='PNG')
 
-if not os.path.exists('eigens'):
-    os.makedirs('eigens')
-for G in top50: draw(G, nx.spring_layout(G, seed=675), nx.eigenvector_centrality(G,max_iter=500), 'Eigenvector Centrality', 'eigens')
+if not os.path.exists('eigen_centrality'):
+    os.makedirs('eigen_centrality')
+for indx,G in enumerate(top50): draw(G, nx.spring_layout(G, seed=675), nx.eigenvector_centrality(G,max_iter=500), 'Eigenvector Centrality', 'eigen_centrality', indx)
 
-if not os.path.exists('comms'):
-    os.makedirs('comms')
-for G in top50: draw(G, nx.spring_layout(G, seed=675), nx.communicability_betweenness_centrality(G), 'Communicability Centrality', 'comms')
+if not os.path.exists('comm_centrality'):
+    os.makedirs('comm_centrality')
+for indx,G in enumerate(top50): draw(G, nx.spring_layout(G, seed=675), nx.communicability_betweenness_centrality(G), 'Communicability Centrality', 'comm_centrality', indx)
