@@ -35,8 +35,10 @@ def compute_topo_features(data: Data):
     node_features = []
 
     degree_arr = np.array(g.degree())
-    node_features.append(degree_arr)                                     
-    node_features.append(np.array(g.closeness()))                        
+    node_features.append(degree_arr)
+    closeness = np.array(g.closeness())
+    closeness = np.nan_to_num(closeness, nan=0.0)                                     
+    node_features.append(closeness)                        
     node_features.append(np.array(g.betweenness()))                      
     node_features.append(np.array(g.eigenvector_centrality()))          
     node_features.append(np.array(g.pagerank()))                        
@@ -47,9 +49,10 @@ def compute_topo_features(data: Data):
 
     # Stack & normalize node features
     X_nodes = np.vstack(node_features).T  # shape: (num_nodes, num_features)
+    X_nodes = np.concatenate((data.pe,torch.Tensor(X_nodes)),axis=-1)#X_nodes
     X_nodes = StandardScaler().fit_transform(X_nodes)
+    data.pe = torch.Tensor(X_nodes) 
     # pdb.set_trace()
-    data.pe = torch.cat([data.pe,torch.Tensor(X_nodes)],axis=-1)#X_nodes
 
     # ----- Edge Features -----
     edge_list = [tuple(e) for e in edge_index.T]

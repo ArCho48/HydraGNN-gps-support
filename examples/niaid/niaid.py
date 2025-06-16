@@ -129,7 +129,11 @@ class niaid(AbstractBaseDataset):
                 data = transform(data) #lapPE
                 # data = niaid_pre_transform(data, transform)
                 data = ChemEncoder.compute_chem_features(data)
-                # data = compute_topo_features(data)
+                data = compute_topo_features(data)
+
+                has_nan = torch.isnan(data.pe).any()
+                if has_nan:
+                    raise ValueError("NaN persists")
 
                 self.dataset.append(data)
             except:
@@ -137,7 +141,7 @@ class niaid(AbstractBaseDataset):
             pbar.update(1)
         pbar.close()
 
-        self.get_topo_encodings()
+        # self.get_topo_encodings()
 
         random.shuffle(self.dataset)
 

@@ -122,6 +122,11 @@ class pcqm(AbstractBaseDataset):
                 # Pre-transform
                 try:
                     data = transform(data)
+                    data = compute_topo_features(data)
+
+                    has_nan = torch.isnan(data.pe).any()
+                    if has_nan:
+                        raise ValueError("NaN persists")
                     self.dataset.append(data)
                 except:
                     print("Laplacian_eigs do not converge for graph {} ".format(idx))
@@ -130,7 +135,7 @@ class pcqm(AbstractBaseDataset):
             pbar.update(1)
         pbar.close()
 
-        self.get_topo_encodings()
+        # self.get_topo_encodings()
 
         random.shuffle(self.dataset)
 
