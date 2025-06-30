@@ -1,429 +1,0 @@
-[W511 15:56:00.064244046 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-[W511 15:56:00.064273652 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-[W511 15:56:00.064337563 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-[W511 15:56:00.064473591 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-[W511 15:56:00.064533334 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-[W511 15:56:00.064724085 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-[W511 15:56:00.065278065 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-[W511 15:56:00.094773973 socket.cpp:759] [c10d] The client socket cannot be initialized to connect to [frontier03446.frontier.olcf.ornl.gov]:8889 (errno: 97 - Address family not supported by protocol).
-INFO (rank 1): Adios load
-INFO (rank 2): Adios load
-INFO (rank 5): Adios load
-INFO (rank 6): Adios load
-INFO (rank 3): Adios load
-INFO (rank 7): Adios load
-INFO (rank 4): Adios load
-0: Command: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/pcqm_deephyper_parallel_trial.py --mpnn_type=DimeNet --hidden_dim=24 --num_conv_layers=4 --num_headlayers=2 --dim_headlayers=64 --global_attn_heads=4 --adios --ddstore --num_epoch=50 --log=pcqm_hpo_trials_0.167
-
-INFO (rank 0): Adios load
-0: ddstore_comm_rank,ddstore_comm_size 0 8
-0: Adios reading: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/./dataset/pcqm.bp
-0: Read attr time (sec):  0.0020079612731933594
-0: read and bcast: trainset/x/variable_count 0.09399700164794922
-0: read and bcast: trainset/x/variable_offset 0.1816716194152832
-0: read and bcast: trainset/x/variable_dim 0.1820061206817627
-0: DDStore add: ('trainset/x', [0, 0], [4771463, 9], 0, dtype('float32'), (4771463, 9), 82073080.0)
-0: read and bcast: trainset/y/variable_count 0.5555119514465332
-0: read and bcast: trainset/y/variable_offset 0.6419546604156494
-0: read and bcast: trainset/y/variable_dim 0.6422746181488037
-0: DDStore add: ('trainset/y', [0], [337571], 0, dtype('float32'), (337571,), 1920433.8)
-0: read and bcast: trainset/edge_attr/variable_count 0.8770825862884521
-0: read and bcast: trainset/edge_attr/variable_offset 0.962810754776001
-0: read and bcast: trainset/edge_attr/variable_dim 0.9631102085113525
-0: DDStore add: ('trainset/edge_attr', [0, 0], [9822346, 3], 0, dtype('float32'), (9822346, 3), 14186480.0)
-0: read and bcast: trainset/pos/variable_count 1.2942259311676025
-0: read and bcast: trainset/pos/variable_offset 1.3813490867614746
-0: read and bcast: trainset/pos/variable_dim 1.3816654682159424
-0: DDStore add: ('trainset/pos', [0, 0], [4771463, 3], 0, dtype('float32'), (4771463, 3), 16339380.0)
-0: read and bcast: trainset/rel_pe/variable_count 1.6614503860473633
-0: read and bcast: trainset/rel_pe/variable_offset 1.7473549842834473
-0: read and bcast: trainset/rel_pe/variable_dim 1.7477197647094727
-0: DDStore add: ('trainset/rel_pe', [0, 0], [9822346, 4], 0, dtype('float32'), (9822346, 4), 6235733.5)
-0: read and bcast: trainset/edge_index/variable_count 2.1105494499206543
-0: read and bcast: trainset/edge_index/variable_offset 2.1979546546936035
-0: read and bcast: trainset/edge_index/variable_dim 2.1983048915863037
-0: DDStore add: ('trainset/edge_index', [0, 0], [2, 9822346], 1, dtype('int64'), (9822346, 2), 140918836)
-0: read and bcast: trainset/pe/variable_count 2.9028501510620117
-0: read and bcast: trainset/pe/variable_offset 2.98895263671875
-0: read and bcast: trainset/pe/variable_dim 2.9892914295196533
-0: DDStore add: ('trainset/pe', [0, 0], [4771463, 4], 0, dtype('float32'), (4771463, 4), 23.288635)
-0: Overall time (sec):  3.200338363647461
-0: DDStore adding time (sec):  0.8246161937713623
-0: DDStore total (GB): 0.6881609000265598
-0: Data loading time (sec):  3.2112433910369873
-0: ddstore_comm_rank,ddstore_comm_size 0 8
-0: Adios reading: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/./dataset/pcqm.bp
-0: Read attr time (sec):  0.0004191398620605469
-0: read and bcast: valset/x/variable_count 0.010336160659790039
-0: read and bcast: valset/x/variable_offset 0.017087936401367188
-0: read and bcast: valset/x/variable_dim 0.017212629318237305
-0: DDStore add: ('valset/x', [0, 0], [596558, 9], 0, dtype('float32'), (596558, 9), 10258777.0)
-0: read and bcast: valset/y/variable_count 0.05314183235168457
-0: read and bcast: valset/y/variable_offset 0.0591273307800293
-0: read and bcast: valset/y/variable_dim 0.05925416946411133
-0: DDStore add: ('valset/y', [0], [42197], 0, dtype('float32'), (42197,), 239677.94)
-0: read and bcast: valset/edge_attr/variable_count 0.08424949645996094
-0: read and bcast: valset/edge_attr/variable_offset 0.09094619750976562
-0: read and bcast: valset/edge_attr/variable_dim 0.09108662605285645
-0: DDStore add: ('valset/edge_attr', [0, 0], [1227872, 3], 0, dtype('float32'), (1227872, 3), 1783110.0)
-0: read and bcast: valset/pos/variable_count 0.12294125556945801
-0: read and bcast: valset/pos/variable_offset 0.12975215911865234
-0: read and bcast: valset/pos/variable_dim 0.12989258766174316
-0: DDStore add: ('valset/pos', [0, 0], [596558, 3], 0, dtype('float32'), (596558, 3), 2031695.5)
-0: read and bcast: valset/rel_pe/variable_count 0.15928983688354492
-0: read and bcast: valset/rel_pe/variable_offset 0.16586756706237793
-0: read and bcast: valset/rel_pe/variable_dim 0.1659862995147705
-0: DDStore add: ('valset/rel_pe', [0, 0], [1227872, 4], 0, dtype('float32'), (1227872, 4), 779213.1)
-0: read and bcast: valset/edge_index/variable_count 0.20532679557800293
-0: read and bcast: valset/edge_index/variable_offset 0.21164274215698242
-0: read and bcast: valset/edge_index/variable_dim 0.21177053451538086
-0: DDStore add: ('valset/edge_index', [0, 0], [2, 1227872], 1, dtype('int64'), (1227872, 2), 17614732)
-0: read and bcast: valset/pe/variable_count 0.29198217391967773
-0: read and bcast: valset/pe/variable_offset 0.29808688163757324
-0: read and bcast: valset/pe/variable_dim 0.29822564125061035
-0: DDStore add: ('valset/pe', [0, 0], [596558, 4], 0, dtype('float32'), (596558, 4), -50.6057)
-0: Overall time (sec):  0.321657657623291
-0: DDStore adding time (sec):  0.10903668403625488
-0: DDStore total (GB): 0.08603079989552498
-0: Data loading time (sec):  0.32267260551452637
-0: ddstore_comm_rank,ddstore_comm_size 0 8
-0: Adios reading: /lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/examples/pcqm/./dataset/pcqm.bp
-0: Read attr time (sec):  0.00038313865661621094
-0: read and bcast: testset/x/variable_count 0.007152557373046875
-0: read and bcast: testset/x/variable_offset 0.013760566711425781
-0: read and bcast: testset/x/variable_dim 0.01388239860534668
-0: DDStore add: ('testset/x', [0, 0], [595936, 9], 0, dtype('float32'), (595936, 9), 10254917.0)
-0: read and bcast: testset/y/variable_count 0.05336332321166992
-0: read and bcast: testset/y/variable_offset 0.05965614318847656
-0: read and bcast: testset/y/variable_dim 0.059804439544677734
-0: DDStore add: ('testset/y', [0], [42197], 0, dtype('float32'), (42197,), 240385.61)
-0: read and bcast: testset/edge_attr/variable_count 0.08478689193725586
-0: read and bcast: testset/edge_attr/variable_offset 0.09152531623840332
-0: read and bcast: testset/edge_attr/variable_dim 0.0916752815246582
-0: DDStore add: ('testset/edge_attr', [0, 0], [1226312, 3], 0, dtype('float32'), (1226312, 3), 1766972.0)
-0: read and bcast: testset/pos/variable_count 0.12469959259033203
-0: read and bcast: testset/pos/variable_offset 0.13141584396362305
-0: read and bcast: testset/pos/variable_dim 0.13155269622802734
-0: DDStore add: ('testset/pos', [0, 0], [595936, 3], 0, dtype('float32'), (595936, 3), 2036549.9)
-0: read and bcast: testset/rel_pe/variable_count 0.16102981567382812
-0: read and bcast: testset/rel_pe/variable_offset 0.16758441925048828
-0: read and bcast: testset/rel_pe/variable_dim 0.16770482063293457
-0: DDStore add: ('testset/rel_pe', [0, 0], [1226312, 4], 0, dtype('float32'), (1226312, 4), 779243.25)
-0: read and bcast: testset/edge_index/variable_count 0.20575809478759766
-0: read and bcast: testset/edge_index/variable_offset 0.21180057525634766
-0: read and bcast: testset/edge_index/variable_dim 0.2119448184967041
-0: DDStore add: ('testset/edge_index', [0, 0], [2, 1226312], 1, dtype('int64'), (1226312, 2), 17596110)
-0: read and bcast: testset/pe/variable_count 0.29161858558654785
-0: read and bcast: testset/pe/variable_offset 0.2975585460662842
-0: read and bcast: testset/pe/variable_dim 0.29767608642578125
-0: DDStore add: ('testset/pe', [0, 0], [595936, 4], 0, dtype('float32'), (595936, 4), -23.289808)
-0: Overall time (sec):  0.3217494487762451
-0: DDStore adding time (sec):  0.11877202987670898
-0: DDStore total (GB): 0.08592979982495308
-0: Data loading time (sec):  0.3226454257965088
-INFO (rank 0): trainset,valset,testset size: 2700561 337570 337571
-INFO (rank 1): trainset,valset,testset size: 2700561 337570 337571
-INFO (rank 2): trainset,valset,testset size: 2700561 337570 337571
-INFO (rank 3): trainset,valset,testset size: 2700561 337570 337571
-INFO (rank 4): trainset,valset,testset size: 2700561 337570 337571
-INFO (rank 5): trainset,valset,testset size: 2700561 337570 337571
-INFO (rank 7): trainset,valset,testset size: 2700561 337570 337571
-INFO (rank 6): trainset,valset,testset size: 2700561 337570 337571
-0: Using GPU
-0: Using GPU
-0:          module.graph_convs.0.conv.module_0.weight	            [24, 24]	       576
-0:            module.graph_convs.0.conv.module_0.bias	                [24]	        24
-0:  module.graph_convs.0.conv.module_1.lin_rbf.weight	             [24, 5]	       120
-0:    module.graph_convs.0.conv.module_1.lin_rbf.bias	                [24]	        24
-0: module.graph_convs.0.conv.module_1.edge_lin.weight	            [24, 24]	       576
-0:   module.graph_convs.0.conv.module_1.edge_lin.bias	                [24]	        24
-0:      module.graph_convs.0.conv.module_1.lin.weight	            [24, 96]	      2304
-0:        module.graph_convs.0.conv.module_1.lin.bias	                [24]	        24
-0: module.graph_convs.0.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
-0: module.graph_convs.0.conv.module_2.lin_rbf2.weight	             [24, 8]	       192
-0: module.graph_convs.0.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
-0: module.graph_convs.0.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
-0:   module.graph_convs.0.conv.module_2.lin_kj.weight	            [24, 24]	       576
-0:     module.graph_convs.0.conv.module_2.lin_kj.bias	                [24]	        24
-0:   module.graph_convs.0.conv.module_2.lin_ji.weight	            [24, 24]	       576
-0:     module.graph_convs.0.conv.module_2.lin_ji.bias	                [24]	        24
-0: module.graph_convs.0.conv.module_2.lin_down.weight	            [32, 24]	       768
-0:   module.graph_convs.0.conv.module_2.lin_up.weight	            [24, 32]	       768
-0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.0.conv.module_2.layers_before_skip.0.lin2.bias	                [24]	        24
-0:      module.graph_convs.0.conv.module_2.lin.weight	            [24, 24]	       576
-0:        module.graph_convs.0.conv.module_2.lin.bias	                [24]	        24
-0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.0.conv.module_2.layers_after_skip.0.lin2.bias	                [24]	        24
-0:  module.graph_convs.0.conv.module_3.lin_rbf.weight	             [24, 5]	       120
-0:   module.graph_convs.0.conv.module_3.lin_up.weight	            [16, 24]	       384
-0:   module.graph_convs.0.conv.module_3.lins.0.weight	            [16, 16]	       256
-0:     module.graph_convs.0.conv.module_3.lins.0.bias	                [16]	        16
-0:      module.graph_convs.0.conv.module_3.lin.weight	            [24, 16]	       384
-0:           module.graph_convs.0.attn.in_proj_weight	            [72, 24]	      1728
-0:             module.graph_convs.0.attn.in_proj_bias	                [72]	        72
-0:          module.graph_convs.0.attn.out_proj.weight	            [24, 24]	       576
-0:            module.graph_convs.0.attn.out_proj.bias	                [24]	        24
-0:                  module.graph_convs.0.mlp.0.weight	            [48, 24]	      1152
-0:                    module.graph_convs.0.mlp.0.bias	                [48]	        48
-0:                  module.graph_convs.0.mlp.3.weight	            [24, 48]	      1152
-0:                    module.graph_convs.0.mlp.3.bias	                [24]	        24
-0:           module.graph_convs.0.norm1.module.weight	                [24]	        24
-0:             module.graph_convs.0.norm1.module.bias	                [24]	        24
-0:     module.graph_convs.0.norm1.module.running_mean	                [24]	        24
-0:      module.graph_convs.0.norm1.module.running_var	                [24]	        24
-0: module.graph_convs.0.norm1.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.0.norm2.module.weight	                [24]	        24
-0:             module.graph_convs.0.norm2.module.bias	                [24]	        24
-0:     module.graph_convs.0.norm2.module.running_mean	                [24]	        24
-0:      module.graph_convs.0.norm2.module.running_var	                [24]	        24
-0: module.graph_convs.0.norm2.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.0.norm3.module.weight	                [24]	        24
-0:             module.graph_convs.0.norm3.module.bias	                [24]	        24
-0:     module.graph_convs.0.norm3.module.running_mean	                [24]	        24
-0:      module.graph_convs.0.norm3.module.running_var	                [24]	        24
-0: module.graph_convs.0.norm3.module.num_batches_tracked	                  []	         1
-0:          module.graph_convs.1.conv.module_0.weight	            [24, 24]	       576
-0:            module.graph_convs.1.conv.module_0.bias	                [24]	        24
-0:  module.graph_convs.1.conv.module_1.lin_rbf.weight	             [24, 5]	       120
-0:    module.graph_convs.1.conv.module_1.lin_rbf.bias	                [24]	        24
-0: module.graph_convs.1.conv.module_1.edge_lin.weight	            [24, 24]	       576
-0:   module.graph_convs.1.conv.module_1.edge_lin.bias	                [24]	        24
-0:      module.graph_convs.1.conv.module_1.lin.weight	            [24, 96]	      2304
-0:        module.graph_convs.1.conv.module_1.lin.bias	                [24]	        24
-0: module.graph_convs.1.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
-0: module.graph_convs.1.conv.module_2.lin_rbf2.weight	             [24, 8]	       192
-0: module.graph_convs.1.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
-0: module.graph_convs.1.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
-0:   module.graph_convs.1.conv.module_2.lin_kj.weight	            [24, 24]	       576
-0:     module.graph_convs.1.conv.module_2.lin_kj.bias	                [24]	        24
-0:   module.graph_convs.1.conv.module_2.lin_ji.weight	            [24, 24]	       576
-0:     module.graph_convs.1.conv.module_2.lin_ji.bias	                [24]	        24
-0: module.graph_convs.1.conv.module_2.lin_down.weight	            [32, 24]	       768
-0:   module.graph_convs.1.conv.module_2.lin_up.weight	            [24, 32]	       768
-0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.1.conv.module_2.layers_before_skip.0.lin2.bias	                [24]	        24
-0:      module.graph_convs.1.conv.module_2.lin.weight	            [24, 24]	       576
-0:        module.graph_convs.1.conv.module_2.lin.bias	                [24]	        24
-0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.1.conv.module_2.layers_after_skip.0.lin2.bias	                [24]	        24
-0:  module.graph_convs.1.conv.module_3.lin_rbf.weight	             [24, 5]	       120
-0:   module.graph_convs.1.conv.module_3.lin_up.weight	            [16, 24]	       384
-0:   module.graph_convs.1.conv.module_3.lins.0.weight	            [16, 16]	       256
-0:     module.graph_convs.1.conv.module_3.lins.0.bias	                [16]	        16
-0:      module.graph_convs.1.conv.module_3.lin.weight	            [24, 16]	       384
-0:           module.graph_convs.1.attn.in_proj_weight	            [72, 24]	      1728
-0:             module.graph_convs.1.attn.in_proj_bias	                [72]	        72
-0:          module.graph_convs.1.attn.out_proj.weight	            [24, 24]	       576
-0:            module.graph_convs.1.attn.out_proj.bias	                [24]	        24
-0:                  module.graph_convs.1.mlp.0.weight	            [48, 24]	      1152
-0:                    module.graph_convs.1.mlp.0.bias	                [48]	        48
-0:                  module.graph_convs.1.mlp.3.weight	            [24, 48]	      1152
-0:                    module.graph_convs.1.mlp.3.bias	                [24]	        24
-0:           module.graph_convs.1.norm1.module.weight	                [24]	        24
-0:             module.graph_convs.1.norm1.module.bias	                [24]	        24
-0:     module.graph_convs.1.norm1.module.running_mean	                [24]	        24
-0:      module.graph_convs.1.norm1.module.running_var	                [24]	        24
-0: module.graph_convs.1.norm1.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.1.norm2.module.weight	                [24]	        24
-0:             module.graph_convs.1.norm2.module.bias	                [24]	        24
-0:     module.graph_convs.1.norm2.module.running_mean	                [24]	        24
-0:      module.graph_convs.1.norm2.module.running_var	                [24]	        24
-0: module.graph_convs.1.norm2.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.1.norm3.module.weight	                [24]	        24
-0:             module.graph_convs.1.norm3.module.bias	                [24]	        24
-0:     module.graph_convs.1.norm3.module.running_mean	                [24]	        24
-0:      module.graph_convs.1.norm3.module.running_var	                [24]	        24
-0: module.graph_convs.1.norm3.module.num_batches_tracked	                  []	         1
-0:          module.graph_convs.2.conv.module_0.weight	            [24, 24]	       576
-0:            module.graph_convs.2.conv.module_0.bias	                [24]	        24
-0:  module.graph_convs.2.conv.module_1.lin_rbf.weight	             [24, 5]	       120
-0:    module.graph_convs.2.conv.module_1.lin_rbf.bias	                [24]	        24
-0: module.graph_convs.2.conv.module_1.edge_lin.weight	            [24, 24]	       576
-0:   module.graph_convs.2.conv.module_1.edge_lin.bias	                [24]	        24
-0:      module.graph_convs.2.conv.module_1.lin.weight	            [24, 96]	      2304
-0:        module.graph_convs.2.conv.module_1.lin.bias	                [24]	        24
-0: module.graph_convs.2.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
-0: module.graph_convs.2.conv.module_2.lin_rbf2.weight	             [24, 8]	       192
-0: module.graph_convs.2.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
-0: module.graph_convs.2.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
-0:   module.graph_convs.2.conv.module_2.lin_kj.weight	            [24, 24]	       576
-0:     module.graph_convs.2.conv.module_2.lin_kj.bias	                [24]	        24
-0:   module.graph_convs.2.conv.module_2.lin_ji.weight	            [24, 24]	       576
-0:     module.graph_convs.2.conv.module_2.lin_ji.bias	                [24]	        24
-0: module.graph_convs.2.conv.module_2.lin_down.weight	            [32, 24]	       768
-0:   module.graph_convs.2.conv.module_2.lin_up.weight	            [24, 32]	       768
-0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.2.conv.module_2.layers_before_skip.0.lin2.bias	                [24]	        24
-0:      module.graph_convs.2.conv.module_2.lin.weight	            [24, 24]	       576
-0:        module.graph_convs.2.conv.module_2.lin.bias	                [24]	        24
-0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.2.conv.module_2.layers_after_skip.0.lin2.bias	                [24]	        24
-0:  module.graph_convs.2.conv.module_3.lin_rbf.weight	             [24, 5]	       120
-0:   module.graph_convs.2.conv.module_3.lin_up.weight	            [16, 24]	       384
-0:   module.graph_convs.2.conv.module_3.lins.0.weight	            [16, 16]	       256
-0:     module.graph_convs.2.conv.module_3.lins.0.bias	                [16]	        16
-0:      module.graph_convs.2.conv.module_3.lin.weight	            [24, 16]	       384
-0:           module.graph_convs.2.attn.in_proj_weight	            [72, 24]	      1728
-0:             module.graph_convs.2.attn.in_proj_bias	                [72]	        72
-0:          module.graph_convs.2.attn.out_proj.weight	            [24, 24]	       576
-0:            module.graph_convs.2.attn.out_proj.bias	                [24]	        24
-0:                  module.graph_convs.2.mlp.0.weight	            [48, 24]	      1152
-0:                    module.graph_convs.2.mlp.0.bias	                [48]	        48
-0:                  module.graph_convs.2.mlp.3.weight	            [24, 48]	      1152
-0:                    module.graph_convs.2.mlp.3.bias	                [24]	        24
-0:           module.graph_convs.2.norm1.module.weight	                [24]	        24
-0:             module.graph_convs.2.norm1.module.bias	                [24]	        24
-0:     module.graph_convs.2.norm1.module.running_mean	                [24]	        24
-0:      module.graph_convs.2.norm1.module.running_var	                [24]	        24
-0: module.graph_convs.2.norm1.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.2.norm2.module.weight	                [24]	        24
-0:             module.graph_convs.2.norm2.module.bias	                [24]	        24
-0:     module.graph_convs.2.norm2.module.running_mean	                [24]	        24
-0:      module.graph_convs.2.norm2.module.running_var	                [24]	        24
-0: module.graph_convs.2.norm2.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.2.norm3.module.weight	                [24]	        24
-0:             module.graph_convs.2.norm3.module.bias	                [24]	        24
-0:     module.graph_convs.2.norm3.module.running_mean	                [24]	        24
-0:      module.graph_convs.2.norm3.module.running_var	                [24]	        24
-0: module.graph_convs.2.norm3.module.num_batches_tracked	                  []	         1
-0:          module.graph_convs.3.conv.module_0.weight	            [24, 24]	       576
-0:            module.graph_convs.3.conv.module_0.bias	                [24]	        24
-0:  module.graph_convs.3.conv.module_1.lin_rbf.weight	             [24, 5]	       120
-0:    module.graph_convs.3.conv.module_1.lin_rbf.bias	                [24]	        24
-0: module.graph_convs.3.conv.module_1.edge_lin.weight	            [24, 24]	       576
-0:   module.graph_convs.3.conv.module_1.edge_lin.bias	                [24]	        24
-0:      module.graph_convs.3.conv.module_1.lin.weight	            [24, 96]	      2304
-0:        module.graph_convs.3.conv.module_1.lin.bias	                [24]	        24
-0: module.graph_convs.3.conv.module_2.lin_rbf1.weight	              [8, 5]	        40
-0: module.graph_convs.3.conv.module_2.lin_rbf2.weight	             [24, 8]	       192
-0: module.graph_convs.3.conv.module_2.lin_sbf1.weight	             [8, 10]	        80
-0: module.graph_convs.3.conv.module_2.lin_sbf2.weight	             [32, 8]	       256
-0:   module.graph_convs.3.conv.module_2.lin_kj.weight	            [24, 24]	       576
-0:     module.graph_convs.3.conv.module_2.lin_kj.bias	                [24]	        24
-0:   module.graph_convs.3.conv.module_2.lin_ji.weight	            [24, 24]	       576
-0:     module.graph_convs.3.conv.module_2.lin_ji.bias	                [24]	        24
-0: module.graph_convs.3.conv.module_2.lin_down.weight	            [32, 24]	       768
-0:   module.graph_convs.3.conv.module_2.lin_up.weight	            [24, 32]	       768
-0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.3.conv.module_2.layers_before_skip.0.lin2.bias	                [24]	        24
-0:      module.graph_convs.3.conv.module_2.lin.weight	            [24, 24]	       576
-0:        module.graph_convs.3.conv.module_2.lin.bias	                [24]	        24
-0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin1.weight	            [24, 24]	       576
-0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin1.bias	                [24]	        24
-0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin2.weight	            [24, 24]	       576
-0: module.graph_convs.3.conv.module_2.layers_after_skip.0.lin2.bias	                [24]	        24
-0:  module.graph_convs.3.conv.module_3.lin_rbf.weight	             [24, 5]	       120
-0:   module.graph_convs.3.conv.module_3.lin_up.weight	            [16, 24]	       384
-0:   module.graph_convs.3.conv.module_3.lins.0.weight	            [16, 16]	       256
-0:     module.graph_convs.3.conv.module_3.lins.0.bias	                [16]	        16
-0:      module.graph_convs.3.conv.module_3.lin.weight	            [24, 16]	       384
-0:           module.graph_convs.3.attn.in_proj_weight	            [72, 24]	      1728
-0:             module.graph_convs.3.attn.in_proj_bias	                [72]	        72
-0:          module.graph_convs.3.attn.out_proj.weight	            [24, 24]	       576
-0:            module.graph_convs.3.attn.out_proj.bias	                [24]	        24
-0:                  module.graph_convs.3.mlp.0.weight	            [48, 24]	      1152
-0:                    module.graph_convs.3.mlp.0.bias	                [48]	        48
-0:                  module.graph_convs.3.mlp.3.weight	            [24, 48]	      1152
-0:                    module.graph_convs.3.mlp.3.bias	                [24]	        24
-0:           module.graph_convs.3.norm1.module.weight	                [24]	        24
-0:             module.graph_convs.3.norm1.module.bias	                [24]	        24
-0:     module.graph_convs.3.norm1.module.running_mean	                [24]	        24
-0:      module.graph_convs.3.norm1.module.running_var	                [24]	        24
-0: module.graph_convs.3.norm1.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.3.norm2.module.weight	                [24]	        24
-0:             module.graph_convs.3.norm2.module.bias	                [24]	        24
-0:     module.graph_convs.3.norm2.module.running_mean	                [24]	        24
-0:      module.graph_convs.3.norm2.module.running_var	                [24]	        24
-0: module.graph_convs.3.norm2.module.num_batches_tracked	                  []	         1
-0:           module.graph_convs.3.norm3.module.weight	                [24]	        24
-0:             module.graph_convs.3.norm3.module.bias	                [24]	        24
-0:     module.graph_convs.3.norm3.module.running_mean	                [24]	        24
-0:      module.graph_convs.3.norm3.module.running_var	                [24]	        24
-0: module.graph_convs.3.norm3.module.num_batches_tracked	                  []	         1
-0:                         module.heads_NN.0.0.weight	             [64, 5]	       320
-0:                           module.heads_NN.0.0.bias	                [64]	        64
-0:                         module.heads_NN.0.2.weight	            [64, 64]	      4096
-0:                           module.heads_NN.0.2.bias	                [64]	        64
-0:                         module.heads_NN.0.4.weight	             [1, 64]	        64
-0:                           module.heads_NN.0.4.bias	                 [1]	         1
-0:                              module.pos_emb.weight	             [24, 4]	        96
-0:                             module.node_emb.weight	             [24, 9]	       216
-0:                             module.node_lin.weight	            [24, 48]	      1152
-0:                          module.rel_pos_emb.weight	             [24, 4]	        96
-0:                       module.graph_shared.0.weight	             [5, 24]	       120
-0:                         module.graph_shared.0.bias	                 [5]	         5
-0:                       module.graph_shared.2.weight	              [5, 5]	        25
-0:                         module.graph_shared.2.bias	                 [5]	         5
-0:                                    module.rbf.freq	                 [5]	         5
-0: --------------------------------------------------
-0:                                              Total	                    	     71141
-0: All (total, MB): 71141 0.271381
-Train:   0%|          | 0/100 [00:00<?, ?it/s]/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-/lustre/orion/lrn070/world-shared/arindam/HydraGNN-gps-support/hydragnn/models/DIMEStack.py:186: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
-Please either pass the dim explicitly or simply use torch.linalg.cross.
-The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /pytorch/aten/src/ATen/native/Cross.cpp:62.)
-  b = torch.cross(pos_ji, pos_ki).norm(dim=-1)
-Train:   1%|          | 1/100 [00:24<40:14, 24.39s/it]Train:   2%|▏         | 2/100 [00:24<16:34, 10.15s/it]Train:   4%|▍         | 4/100 [00:24<06:06,  3.82s/it]Train:   6%|▌         | 6/100 [00:24<03:11,  2.04s/it]Train:   8%|▊         | 8/100 [00:24<01:53,  1.24s/it]Train:  10%|█         | 10/100 [00:24<01:12,  1.24it/s]Train:  12%|█▏        | 12/100 [00:25<00:48,  1.83it/s]Train:  14%|█▍        | 14/100 [00:25<00:32,  2.61it/s]Train:  17%|█▋        | 17/100 [00:25<00:20,  4.07it/s]Train:  19%|█▉        | 19/100 [00:25<00:15,  5.25it/s]Train:  22%|██▏       | 22/100 [00:25<00:10,  7.26it/s]Train:  24%|██▍       | 24/100 [00:25<00:08,  8.72it/s]Train:  26%|██▌       | 26/100 [00:25<00:07, 10.30it/s]Train:  28%|██▊       | 28/100 [00:25<00:06, 11.93it/s]Train:  31%|███       | 31/100 [00:26<00:04, 14.06it/s]Train:  33%|███▎      | 33/100 [00:26<00:04, 15.19it/s]Train:  35%|███▌      | 35/100 [00:26<00:04, 16.22it/s]Train:  38%|███▊      | 38/100 [00:26<00:03, 17.45it/s]Train:  40%|████      | 40/100 [00:26<00:03, 18.02it/s]Train:  42%|████▏     | 42/100 [00:26<00:03, 18.41it/s]Train:  45%|████▌     | 45/100 [00:26<00:02, 18.85it/s]Train:  47%|████▋     | 47/100 [00:26<00:02, 19.10it/s]Train:  50%|█████     | 50/100 [00:26<00:02, 19.48it/s]Train:  53%|█████▎    | 53/100 [00:27<00:02, 19.68it/s]Train:  56%|█████▌    | 56/100 [00:27<00:02, 19.84it/s]Train:  59%|█████▉    | 59/100 [00:27<00:02, 19.93it/s]Train:  62%|██████▏   | 62/100 [00:27<00:01, 20.02it/s]Train:  65%|██████▌   | 65/100 [00:27<00:01, 19.95it/s]Train:  68%|██████▊   | 68/100 [00:27<00:01, 19.74it/s]Train:  71%|███████   | 71/100 [00:28<00:01, 19.91it/s]Train:  74%|███████▍  | 74/100 [00:28<00:01, 19.93it/s]Train:  76%|███████▌  | 76/100 [00:28<00:01, 19.94it/s]Train:  79%|███████▉  | 79/100 [00:28<00:01, 20.00it/s]Train:  82%|████████▏ | 82/100 [00:28<00:00, 20.14it/s]Train:  85%|████████▌ | 85/100 [00:28<00:00, 19.93it/s]Train:  88%|████████▊ | 88/100 [00:28<00:00, 20.03it/s]Train:  91%|█████████ | 91/100 [00:29<00:00, 20.05it/s]Train:  94%|█████████▍| 94/100 [00:29<00:00, 20.10it/s]Train:  97%|█████████▋| 97/100 [00:29<00:00, 19.91it/s]Train:  99%|█████████▉| 99/100 [00:29<00:00, 19.85it/s]Train: 100%|██████████| 100/100 [00:29<00:00,  3.39it/s]
-Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:   3%|▎         | 3/100 [00:00<00:03, 28.39it/s]Validate:   8%|▊         | 8/100 [00:00<00:02, 37.78it/s]Validate:  13%|█▎        | 13/100 [00:00<00:02, 40.64it/s]Validate:  18%|█▊        | 18/100 [00:00<00:01, 42.16it/s]Validate:  23%|██▎       | 23/100 [00:00<00:01, 42.81it/s]Validate:  28%|██▊       | 28/100 [00:00<00:01, 43.29it/s]Validate:  33%|███▎      | 33/100 [00:00<00:01, 43.44it/s]Validate:  38%|███▊      | 38/100 [00:00<00:01, 43.61it/s]Validate:  43%|████▎     | 43/100 [00:01<00:01, 43.92it/s]Validate:  48%|████▊     | 48/100 [00:01<00:01, 43.99it/s]Validate:  53%|█████▎    | 53/100 [00:01<00:01, 44.35it/s]Validate:  58%|█████▊    | 58/100 [00:01<00:00, 44.57it/s]Validate:  63%|██████▎   | 63/100 [00:01<00:00, 44.71it/s]Validate:  68%|██████▊   | 68/100 [00:01<00:00, 44.72it/s]Validate:  73%|███████▎  | 73/100 [00:01<00:00, 44.41it/s]Validate:  78%|███████▊  | 78/100 [00:01<00:00, 44.65it/s]Validate:  83%|████████▎ | 83/100 [00:01<00:00, 44.48it/s]Validate:  88%|████████▊ | 88/100 [00:02<00:00, 44.63it/s]Validate:  93%|█████████▎| 93/100 [00:02<00:00, 44.69it/s]Validate:  98%|█████████▊| 98/100 [00:02<00:00, 44.55it/s]Validate: 100%|██████████| 100/100 [00:02<00:00, 43.54it/s]
-Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:   4%|▍         | 4/100 [00:00<00:02, 38.74it/s]Test:   9%|▉         | 9/100 [00:00<00:02, 42.25it/s]Test:  14%|█▍        | 14/100 [00:00<00:02, 42.93it/s]Test:  19%|█▉        | 19/100 [00:00<00:01, 43.21it/s]Test:  24%|██▍       | 24/100 [00:00<00:01, 43.61it/s]Test:  29%|██▉       | 29/100 [00:00<00:01, 44.16it/s]Test:  34%|███▍      | 34/100 [00:00<00:01, 44.28it/s]Test:  39%|███▉      | 39/100 [00:00<00:01, 44.44it/s]Test:  44%|████▍     | 44/100 [00:01<00:01, 44.57it/s]Test:  49%|████▉     | 49/100 [00:01<00:01, 44.55it/s]Test:  54%|█████▍    | 54/100 [00:01<00:01, 44.61it/s]Test:  59%|█████▉    | 59/100 [00:01<00:00, 44.62it/s]Test:  64%|██████▍   | 64/100 [00:01<00:00, 44.67it/s]Test:  69%|██████▉   | 69/100 [00:01<00:00, 44.67it/s]Test:  74%|███████▍  | 74/100 [00:01<00:00, 44.68it/s]Test:  79%|███████▉  | 79/100 [00:01<00:00, 44.77it/s]Test:  84%|████████▍ | 84/100 [00:01<00:00, 44.75it/s]Test:  89%|████████▉ | 89/100 [00:02<00:00, 44.89it/s]Test:  94%|█████████▍| 94/100 [00:02<00:00, 44.88it/s]Test:  99%|█████████▉| 99/100 [00:02<00:00, 44.66it/s]Test: 100%|██████████| 100/100 [00:02<00:00, 44.18it/s]
-0: Epoch: 00, Train Loss: 15.45907784, Val Loss: 0.74665594, Test Loss: 0.74262452
-0: Tasks Train Loss: [15.459077835083008]
-0: Tasks Val Loss: [0.7466559410095215]
-0: Tasks Test Loss: [0.7426245212554932]
-Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   1%|          | 1/100 [00:00<00:14,  6.93it/s]Train:   4%|▍         | 4/100 [00:00<00:06, 14.71it/s]Train:   7%|▋         | 7/100 [00:00<00:05, 17.28it/s]Train:  10%|█         | 10/100 [00:00<00:04, 18.42it/s]Train:  13%|█▎        | 13/100 [00:00<00:04, 19.07it/s]Train:  16%|█▌        | 16/100 [00:00<00:04, 19.43it/s]Train:  18%|█▊        | 18/100 [00:00<00:04, 19.55it/s]Train:  20%|██        | 20/100 [00:01<00:04, 19.62it/s]Train:  23%|██▎       | 23/100 [00:01<00:03, 19.85it/s]Train:  25%|██▌       | 25/100 [00:01<00:03, 19.59it/s]Train:  27%|██▋       | 27/100 [00:01<00:03, 19.65it/s]Train:  30%|███       | 30/100 [00:01<00:03, 19.90it/s]Train:  33%|███▎      | 33/100 [00:01<00:03, 19.97it/s]Train:  35%|███▌      | 35/100 [00:01<00:03, 19.95it/s]Train:  38%|███▊      | 38/100 [00:01<00:03, 20.05it/s]Train:  41%|████      | 41/100 [00:02<00:02, 20.07it/s]Train:  44%|████▍     | 44/100 [00:02<00:02, 19.95it/s]Train:  47%|████▋     | 47/100 [00:02<00:02, 19.95it/s]Train:  50%|█████     | 50/100 [00:02<00:02, 20.08it/s]Train:  53%|█████▎    | 53/100 [00:02<00:02, 20.16it/s]Train:  56%|█████▌    | 56/100 [00:02<00:02, 20.23it/s]Train:  59%|█████▉    | 59/100 [00:03<00:02, 20.19it/s]Train:  62%|██████▏   | 62/100 [00:03<00:01, 20.20it/s]Train:  65%|██████▌   | 65/100 [00:03<00:01, 20.17it/s]Train:  68%|██████▊   | 68/100 [00:03<00:01, 20.19it/s]Train:  71%|███████   | 71/100 [00:03<00:01, 20.29it/s]Train:  74%|███████▍  | 74/100 [00:03<00:01, 20.31it/s]Train:  77%|███████▋  | 77/100 [00:03<00:01, 20.33it/s]Train:  80%|████████  | 80/100 [00:04<00:00, 20.34it/s]Train:  83%|████████▎ | 83/100 [00:04<00:00, 20.30it/s]Train:  86%|████████▌ | 86/100 [00:04<00:00, 20.27it/s]Train:  89%|████████▉ | 89/100 [00:04<00:00, 20.27it/s]Train:  92%|█████████▏| 92/100 [00:04<00:00, 20.30it/s]Train:  95%|█████████▌| 95/100 [00:04<00:00, 20.24it/s]Train:  98%|█████████▊| 98/100 [00:04<00:00, 20.15it/s]Train: 100%|██████████| 100/100 [00:05<00:00, 19.74it/s]
-Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:   4%|▍         | 4/100 [00:00<00:02, 39.50it/s]Validate:   9%|▉         | 9/100 [00:00<00:02, 42.50it/s]Validate:  14%|█▍        | 14/100 [00:00<00:01, 43.31it/s]Validate:  19%|█▉        | 19/100 [00:00<00:01, 43.98it/s]Validate:  24%|██▍       | 24/100 [00:00<00:01, 44.16it/s]Validate:  29%|██▉       | 29/100 [00:00<00:01, 44.21it/s]Validate:  34%|███▍      | 34/100 [00:00<00:01, 44.33it/s]Validate:  39%|███▉      | 39/100 [00:00<00:01, 44.47it/s]Validate:  44%|████▍     | 44/100 [00:01<00:01, 44.36it/s]Validate:  49%|████▉     | 49/100 [00:01<00:01, 44.53it/s]Validate:  54%|█████▍    | 54/100 [00:01<00:01, 44.67it/s]Validate:  59%|█████▉    | 59/100 [00:01<00:00, 44.57it/s]Validate:  64%|██████▍   | 64/100 [00:01<00:00, 44.58it/s]Validate:  69%|██████▉   | 69/100 [00:01<00:00, 44.47it/s]Validate:  74%|███████▍  | 74/100 [00:01<00:00, 44.52it/s]Validate:  79%|███████▉  | 79/100 [00:01<00:00, 44.68it/s]Validate:  84%|████████▍ | 84/100 [00:01<00:00, 44.58it/s]Validate:  89%|████████▉ | 89/100 [00:02<00:00, 44.45it/s]Validate:  94%|█████████▍| 94/100 [00:02<00:00, 44.57it/s]Validate:  99%|█████████▉| 99/100 [00:02<00:00, 44.53it/s]Validate: 100%|██████████| 100/100 [00:02<00:00, 44.18it/s]
-Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:   4%|▍         | 4/100 [00:00<00:02, 38.82it/s]Test:   9%|▉         | 9/100 [00:00<00:02, 41.95it/s]Test:  14%|█▍        | 14/100 [00:00<00:01, 43.41it/s]Test:  19%|█▉        | 19/100 [00:00<00:01, 44.01it/s]Test:  24%|██▍       | 24/100 [00:00<00:01, 44.25it/s]Test:  29%|██▉       | 29/100 [00:00<00:01, 44.34it/s]Test:  34%|███▍      | 34/100 [00:00<00:01, 44.27it/s]Test:  39%|███▉      | 39/100 [00:00<00:01, 44.57it/s]Test:  44%|████▍     | 44/100 [00:00<00:01, 44.72it/s]Test:  49%|████▉     | 49/100 [00:01<00:01, 44.63it/s]Test:  54%|█████▍    | 54/100 [00:01<00:01, 44.42it/s]Test:  59%|█████▉    | 59/100 [00:01<00:00, 44.39it/s]Test:  64%|██████▍   | 64/100 [00:01<00:00, 44.27it/s]Test:  69%|██████▉   | 69/100 [00:01<00:00, 44.43it/s]Test:  74%|███████▍  | 74/100 [00:01<00:00, 44.19it/s]Test:  79%|███████▉  | 79/100 [00:01<00:00, 44.52it/s]Test:  84%|████████▍ | 84/100 [00:01<00:00, 44.70it/s]Test:  89%|████████▉ | 89/100 [00:02<00:00, 44.70it/s]Test:  94%|█████████▍| 94/100 [00:02<00:00, 44.66it/s]Test:  99%|█████████▉| 99/100 [00:02<00:00, 44.70it/s]Test: 100%|██████████| 100/100 [00:02<00:00, 44.19it/s]
-0: Epoch: 01, Train Loss: 0.68498129, Val Loss: 0.76769930, Test Loss: 0.76284689
-0: Tasks Train Loss: [0.6849812865257263]
-0: Tasks Val Loss: [0.7676993012428284]
-0: Tasks Test Loss: [0.7628468871116638]
-Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   1%|          | 1/100 [00:00<00:14,  6.99it/s]Train:   4%|▍         | 4/100 [00:00<00:06, 14.90it/s]Train:   7%|▋         | 7/100 [00:00<00:05, 17.34it/s]Train:   9%|▉         | 9/100 [00:00<00:05, 18.07it/s]Train:  12%|█▏        | 12/100 [00:00<00:04, 18.97it/s]Train:  15%|█▌        | 15/100 [00:00<00:04, 19.47it/s]Train:  18%|█▊        | 18/100 [00:00<00:04, 19.79it/s]Train:  20%|██        | 20/100 [00:01<00:04, 19.48it/s]Train:  23%|██▎       | 23/100 [00:01<00:03, 19.77it/s]Train:  25%|██▌       | 25/100 [00:01<00:03, 19.71it/s]Train:  28%|██▊       | 28/100 [00:01<00:03, 19.94it/s]Train:  31%|███       | 31/100 [00:01<00:03, 20.07it/s]Train:  34%|███▍      | 34/100 [00:01<00:03, 20.12it/s]Train:  37%|███▋      | 37/100 [00:01<00:03, 20.00it/s]Train:  40%|████      | 40/100 [00:02<00:02, 20.10it/s]Train:  43%|████▎     | 43/100 [00:02<00:02, 20.18it/s]Train:  46%|████▌     | 46/100 [00:02<00:02, 20.25it/s]Train:  49%|████▉     | 49/100 [00:02<00:02, 20.24it/s]Train:  52%|█████▏    | 52/100 [00:02<00:02, 20.21it/s]Train:  55%|█████▌    | 55/100 [00:02<00:02, 20.19it/s]Train:  58%|█████▊    | 58/100 [00:02<00:02, 20.21it/s]Train:  61%|██████    | 61/100 [00:03<00:01, 20.22it/s]Train:  64%|██████▍   | 64/100 [00:03<00:01, 20.19it/s]Train:  67%|██████▋   | 67/100 [00:03<00:01, 20.24it/s]Train:  70%|███████   | 70/100 [00:03<00:01, 20.18it/s]Train:  73%|███████▎  | 73/100 [00:03<00:01, 20.12it/s]Train:  76%|███████▌  | 76/100 [00:03<00:01, 19.94it/s]Train:  79%|███████▉  | 79/100 [00:04<00:01, 20.07it/s]Train:  82%|████████▏ | 82/100 [00:04<00:00, 20.14it/s]Train:  85%|████████▌ | 85/100 [00:04<00:00, 20.17it/s]Train:  88%|████████▊ | 88/100 [00:04<00:00, 20.22it/s]Train:  91%|█████████ | 91/100 [00:04<00:00, 20.22it/s]Train:  94%|█████████▍| 94/100 [00:04<00:00, 20.19it/s]Train:  97%|█████████▋| 97/100 [00:04<00:00, 20.24it/s]Train: 100%|██████████| 100/100 [00:05<00:00, 20.29it/s]Train: 100%|██████████| 100/100 [00:05<00:00, 19.76it/s]
-Validate:   0%|          | 0/100 [00:00<?, ?it/s]Validate:   4%|▍         | 4/100 [00:00<00:02, 39.34it/s]Validate:   9%|▉         | 9/100 [00:00<00:02, 42.40it/s]Validate:  14%|█▍        | 14/100 [00:00<00:01, 43.41it/s]Validate:  19%|█▉        | 19/100 [00:00<00:01, 43.62it/s]Validate:  24%|██▍       | 24/100 [00:00<00:01, 44.06it/s]Validate:  29%|██▉       | 29/100 [00:00<00:01, 44.08it/s]Validate:  34%|███▍      | 34/100 [00:00<00:01, 44.34it/s]Validate:  39%|███▉      | 39/100 [00:00<00:01, 44.34it/s]Validate:  44%|████▍     | 44/100 [00:01<00:01, 44.37it/s]Validate:  49%|████▉     | 49/100 [00:01<00:01, 44.34it/s]Validate:  54%|█████▍    | 54/100 [00:01<00:01, 44.60it/s]Validate:  59%|█████▉    | 59/100 [00:01<00:00, 44.51it/s]Validate:  64%|██████▍   | 64/100 [00:01<00:00, 44.57it/s]Validate:  69%|██████▉   | 69/100 [00:01<00:00, 44.78it/s]Validate:  74%|███████▍  | 74/100 [00:01<00:00, 44.53it/s]Validate:  79%|███████▉  | 79/100 [00:01<00:00, 44.52it/s]Validate:  84%|████████▍ | 84/100 [00:01<00:00, 44.45it/s]Validate:  89%|████████▉ | 89/100 [00:02<00:00, 44.45it/s]Validate:  94%|█████████▍| 94/100 [00:02<00:00, 44.58it/s]Validate:  99%|█████████▉| 99/100 [00:02<00:00, 44.66it/s]Validate: 100%|██████████| 100/100 [00:02<00:00, 44.12it/s]
-Test:   0%|          | 0/100 [00:00<?, ?it/s]Test:   4%|▍         | 4/100 [00:00<00:02, 38.57it/s]Test:   9%|▉         | 9/100 [00:00<00:02, 41.53it/s]Test:  14%|█▍        | 14/100 [00:00<00:02, 42.83it/s]Test:  19%|█▉        | 19/100 [00:00<00:01, 43.66it/s]Test:  24%|██▍       | 24/100 [00:00<00:01, 44.05it/s]Test:  29%|██▉       | 29/100 [00:00<00:01, 44.27it/s]Test:  34%|███▍      | 34/100 [00:00<00:01, 44.49it/s]Test:  39%|███▉      | 39/100 [00:00<00:01, 44.58it/s]Test:  44%|████▍     | 44/100 [00:01<00:01, 44.71it/s]Test:  49%|████▉     | 49/100 [00:01<00:01, 44.76it/s]Test:  54%|█████▍    | 54/100 [00:01<00:01, 44.69it/s]Test:  59%|█████▉    | 59/100 [00:01<00:00, 44.64it/s]Test:  64%|██████▍   | 64/100 [00:01<00:00, 44.65it/s]Test:  69%|██████▉   | 69/100 [00:01<00:00, 44.62it/s]Test:  74%|███████▍  | 74/100 [00:01<00:00, 44.66it/s]Test:  79%|███████▉  | 79/100 [00:01<00:00, 44.63it/s]Test:  84%|████████▍ | 84/100 [00:01<00:00, 44.65it/s]Test:  89%|████████▉ | 89/100 [00:02<00:00, 44.58it/s]Test:  94%|█████████▍| 94/100 [00:02<00:00, 44.62it/s]Test:  99%|█████████▉| 99/100 [00:02<00:00, 44.66it/s]Test: 100%|██████████| 100/100 [00:02<00:00, 44.21it/s]
-0: Epoch: 02, Train Loss: 0.54156423, Val Loss: 0.49640450, Test Loss: 0.47227734
-0: Tasks Train Loss: [0.5415642261505127]
-0: Tasks Val Loss: [0.4964044988155365]
-0: Tasks Test Loss: [0.47227734327316284]
-Train:   0%|          | 0/100 [00:00<?, ?it/s]Train:   1%|          | 1/100 [00:00<00:14,  6.78it/s]Train:   4%|▍         | 4/100 [00:00<00:06, 14.70it/s]Train:   7%|▋         | 7/100 [00:00<00:05, 17.26it/s]Train:  10%|█         | 10/100 [00:00<00:04, 18.57it/s]Train:  13%|█▎        | 13/100 [00:00<00:04, 19.25it/s]Train:  16%|█▌        | 16/100 [00:00<00:04, 19.63it/s]Train:  19%|█▉        | 19/100 [00:01<00:04, 19.88it/s]Train:  22%|██▏       | 22/100 [00:01<00:03, 20.02it/s]Train:  25%|██▌       | 25/100 [00:01<00:03, 19.95it/s]Train:  28%|██▊       | 28/100 [00:01<00:03, 20.05it/s]Train:  31%|███       | 31/100 [00:01<00:03, 20.10it/s]Train:  34%|███▍      | 34/100 [00:01<00:03, 20.13it/s]Train:  37%|███▋      | 37/100 [00:01<00:03, 20.21it/s]Train:  40%|████      | 40/100 [00:02<00:02, 20.18it/s]Train:  43%|████▎     | 43/100 [00:02<00:02, 20.23it/s]Train:  46%|████▌     | 46/100 [00:02<00:02, 20.27it/s]Train:  49%|████▉     | 49/100 [00:02<00:02, 20.27it/s]Train:  52%|█████▏    | 52/100 [00:02<00:02, 20.25it/s]Train:  55%|█████▌    | 55/100 [00:02<00:02, 20.22it/s]Train:  58%|█████▊    | 58/100 [00:02<00:02, 20.28it/s]slurmstepd: error: *** STEP 3429473.168 ON frontier03446 CANCELLED AT 2025-05-11T15:57:05 DUE TO TIME LIMIT ***

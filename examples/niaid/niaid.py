@@ -131,7 +131,7 @@ class niaid(AbstractBaseDataset):
                 data = ChemEncoder.compute_chem_features(data)
                 data = compute_topo_features(data)
 
-                has_nan = torch.isnan(data.pe).any()
+                has_nan = torch.isnan(data.pe).any() + torch.isnan(data.rel_pe).any()
                 if has_nan:
                     raise ValueError("NaN persists")
 

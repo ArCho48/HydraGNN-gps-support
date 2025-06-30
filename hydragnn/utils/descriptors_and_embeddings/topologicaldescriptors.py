@@ -28,7 +28,7 @@ def compute_topo_features(data: Data):
     """
     edge_index = data.edge_index.numpy()
 
-    G = to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"], to_undirected=True)
+    G = to_networkx(data, to_undirected=True)
     g = ig.Graph.from_networkx(G)
 
     # ----- Node Features -----
