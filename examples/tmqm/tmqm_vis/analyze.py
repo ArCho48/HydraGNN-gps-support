@@ -1,10 +1,13 @@
-import os, json, pdb
+import os, json, pdb, pickle
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from torch_geometric.utils import to_networkx
 
 from hydragnn.utils.datasets.pickledataset import SimplePickleDataset
+
+degree_list = []
+eigen_list = []
 
 # Configurable run choices (JSON file that accompanies this example script).
 filename = '../tmqm.json'
@@ -43,6 +46,7 @@ if not os.path.exists('degrees'):
 for graph in top50:
  # Assuming you have a NetworkX graph called 'graph'
      degree_counts = nx.degree_histogram(graph)
+     degree_list.append(nx.degree_centrality(graph))
      degrees = range(len(degree_counts))
 
      plt.figure(figsize=(8, 6))
@@ -65,8 +69,13 @@ def draw(G, pos, measures, measure_name, folder, indx):
 
 if not os.path.exists('eigen_centrality'):
     os.makedirs('eigen_centrality')
-for indx,G in enumerate(top50): draw(G, nx.spring_layout(G, seed=675), nx.eigenvector_centrality(G,max_iter=500), 'Eigenvector Centrality', 'eigen_centrality', indx)
+for indx,G in enumerate(top50): 
+    eig_cent = nx.eigenvector_centrality(G,max_iter=500)
+    eigen_list.append(eig_cent)
+    draw(G, nx.spring_layout(G, seed=675), eig_cent, 'Eigenvector Centrality', 'eigen_centrality', indx)
 
 if not os.path.exists('comm_centrality'):
     os.makedirs('comm_centrality')
 for indx,G in enumerate(top50): draw(G, nx.spring_layout(G, seed=675), nx.communicability_betweenness_centrality(G), 'Communicability Centrality', 'comm_centrality', indx)
+
+pickle.dump({'deg':degree_list,'eig':eigen_list},open('degEig.pkl','wb'))
