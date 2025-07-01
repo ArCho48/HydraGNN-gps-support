@@ -15,6 +15,7 @@
             "global_attn_heads": 4,
             "hidden_dim": 32,
             "num_conv_layers": 3,
+	    "edge_features": ["distance"],
             "int_emb_size": 32,
             "out_emb_size": 16,
             "basis_emb_size": 8,
@@ -51,7 +52,7 @@
             "loss_function_type": "mse",
             "batch_size": 32,
             "continue": 0,
-            "EarlyStopping": false,
+            "EarlyStopping": true,
             "Checkpoint": true,
             "startfrom": "existing_model",
             "Optimizer": {

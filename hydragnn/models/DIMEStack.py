@@ -205,12 +205,15 @@ class DIMEStack(Base):
             conv_args.update({"edge_attr": data.edge_attr})
 
         if self.use_global_attn:
-            x = self.pos_emb(data.pe)
+            pe = torch.nan_to_num(data.pe, nan=0.0)
+            x = self.pos_emb(pe) #change pe here after fix
+            # x = self.pos_emb(torch.Tensor(data.pe)) #########CHANGE HERE
+            x = torch.cat((x, self.chem_emb(data.ce)), 1)
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
                 x = self.node_lin(x)
             if self.is_edge_model:
-                e = self.rel_pos_emb(data.rel_pe)
+                e = self.rel_pos_emb(torch.Tensor(data.rel_pe)) #########CHANGE HERE
                 if self.use_edge_attr:
                     e = torch.cat((self.edge_emb(conv_args["edge_attr"]), e), 1)
                     e = self.edge_lin(e)
@@ -218,7 +221,6 @@ class DIMEStack(Base):
             return x, data.pos, conv_args
         else:
             return data.x, data.pos, conv_args
-
 
 """
 PyG Adapted Codes

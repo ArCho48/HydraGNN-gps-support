@@ -37,6 +37,8 @@ class Base(Module):
         hidden_dim: int,
         output_dim: list,
         pe_dim: int,
+        ce_dim: int,
+        rel_pe_dim: int,
         global_attn_engine: str,
         global_attn_type: str,
         global_attn_heads: int,
@@ -62,6 +64,8 @@ class Base(Module):
         self.global_attn_type = global_attn_type
         self.input_dim = input_dim
         self.pe_dim = pe_dim
+        self.ce_dim = ce_dim
+        self.rel_pe_dim = rel_pe_dim
         self.global_attn_heads = global_attn_heads
         self.hidden_dim = hidden_dim
         self.dropout = dropout
@@ -126,6 +130,10 @@ class Base(Module):
             if "edge_attr" not in self.conv_args:
                 self.conv_args += ", edge_attr"
 
+        self.use_encodings = (
+            True if not self.global_attn_engine else False #True#False #   # provision to decouple encodings from globalAtt later
+        )
+
         # Option to only train final property layers.
         self.freeze_conv = freeze_conv
         # Option to set initially large output bias (UQ).
@@ -147,24 +155,25 @@ class Base(Module):
             self.use_global_attn = False
             # ensure that all inputs maintain original dimensionality if gps is turned off
             self.embed_dim = input_dim
-            self.edge_embed_dim = (
+            self.edge_embed_dim = hidden_dim if self.use_encodings else (
                 self.edge_dim
                 if (hasattr(self, "edge_dim") and (self.edge_dim is not None))
                 else None
             )
 
-        self.use_encodings = (
-            False  # provision to decouple encodings from globalAtt later
-        )
-
         # Specify learnable embeddings
         if self.use_global_attn or self.use_encodings:
             self.pos_emb = Linear(self.pe_dim, self.hidden_dim, bias=False)
+            if ce_dim > 0:
+                self.chem_emb = Linear(self.ce_dim, self.hidden_dim, bias=False)
             if self.input_dim:
                 self.node_emb = Linear(self.input_dim, self.hidden_dim, bias=False)
-                self.node_lin = Linear(2 * self.hidden_dim, self.hidden_dim, bias=False)
+                if ce_dim > 0:
+                    self.node_lin = Linear(3 * self.hidden_dim, self.hidden_dim, bias=False)
+                else:
+                    self.node_lin = Linear(2 * self.hidden_dim, self.hidden_dim, bias=False)
             if self.is_edge_model:
-                self.rel_pos_emb = Linear(self.pe_dim, self.hidden_dim, bias=False)
+                self.rel_pos_emb = Linear(self.rel_pe_dim, self.hidden_dim, bias=False)
                 if self.use_edge_attr:
                     self.edge_emb = Linear(self.edge_dim, self.hidden_dim, bias=False)
                     self.edge_lin = Linear(
@@ -226,16 +235,20 @@ class Base(Module):
             ), "Data must have edge attributes if use_edge_attributes is set."
             conv_args.update({"edge_attr": data.edge_attr})
 
-        if self.use_global_attn:
-            # encode node positional embeddings
-            x = self.pos_emb(data.pe)
+        if self.use_global_attn or self.use_encodings:
+            # encode node positional and chemical embeddings
+            pe = torch.nan_to_num(data.pe, nan=0.0)
+            x = self.pos_emb(pe) #change pe here after fix
+            if 'ce' in data:
+                x = torch.cat((x, self.chem_emb(data.ce)), 1)
             # if node features are available, generate mebeddings, concatenate with positional embeddings and map to hidden dim
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
                 x = self.node_lin(x)
             # repeat for edge features and relative edge encodings
+            # pdb.set_trace()
             if self.is_edge_model:
-                e = self.rel_pos_emb(data.rel_pe)
+                e = self.rel_pos_emb(data.rel_pe) 
                 if self.use_edge_attr:
                     e = torch.cat((self.edge_emb(conv_args["edge_attr"]), e), 1)
                     e = self.edge_lin(e)

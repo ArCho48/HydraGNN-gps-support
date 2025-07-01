@@ -15,6 +15,7 @@
             "global_attn_heads": 2,
             "hidden_dim": 12,
             "num_conv_layers": 2,
+	    "edge_features": ["bond_type", "bond_stereo", "is_conjugated"],
             "int_emb_size": 32,
             "out_emb_size": 16,
             "basis_emb_size": 8,

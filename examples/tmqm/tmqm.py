@@ -2,14 +2,14 @@ import os, sys, json, pdb, math
 import logging
 import argparse
 import random
-from mpi4py import MPI
+# from mpi4py import MPI
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -22,8 +22,8 @@ from hydragnn.utils.model import print_model
 # from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
 #     atomicdescriptors,
 # )
-from hydragnn.utils.descriptors_and_embeddings.chemicaldescriptors import ChemicalFeatureEncoder
-from hydragnn.utils.descriptors_and_embeddings.topologicaldescriptors import compute_topo_features
+#from hydragnn.utils.descriptors_and_embeddings.chemicaldescriptors import ChemicalFeatureEncoder
+#from hydragnn.utils.descriptors_and_embeddings.topologicaldescriptors import compute_topo_features
 from hydragnn.utils.datasets.abstractbasedataset import AbstractBaseDataset
 from hydragnn.utils.datasets.distdataset import DistDataset
 from hydragnn.utils.datasets.pickledataset import (
@@ -173,14 +173,14 @@ class tmQM(AbstractBaseDataset):
             # Encoders
             data = ChemEncoder.compute_chem_features(data)
             data = transform(data) #lapPE
-            # data = compute_topo_features(data)
+            data = compute_topo_features(data)
 
             self.dataset.append(data)
             counter += (n_lines + 3)
             pbar.update(1)
         pbar.close()
         
-        self.get_topo_encodings()
+        # self.get_topo_encodings()
 
         random.shuffle(self.dataset)
 
@@ -407,7 +407,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         config["NeuralNetwork"],
         log_name,
         verbosity,
-        create_plots=True
+        create_plots=False
     )
 
 if __name__ == "__main__":

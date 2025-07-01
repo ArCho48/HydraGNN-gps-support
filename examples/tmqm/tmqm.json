@@ -15,6 +15,7 @@
             "global_attn_heads": 2,
             "hidden_dim": 32,
             "num_conv_layers": 2,
+	    "edge_features": ["distance"],
             "int_emb_size": 32,
             "out_emb_size": 16,
             "basis_emb_size": 8,
@@ -32,7 +33,7 @@
                     "num_sharedlayers": 2,
                     "dim_sharedlayers": 50,
                     "num_headlayers": 1,
-                    "dim_headlayers": [64,64]
+                    "dim_headlayers": [64]
                 }
             },
             "task_weights": [1.0]
@@ -52,7 +53,7 @@
             "loss_function_type": "mse",
             "batch_size": 32,
             "continue": 0,
-            "EarlyStopping": false,
+            "EarlyStopping": true,
             "Checkpoint": true,
             "startfrom": "existing_model",
             "Optimizer": {

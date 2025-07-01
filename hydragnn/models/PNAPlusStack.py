@@ -122,6 +122,7 @@ class PNAPlusStack(Base):
         if self.use_global_attn:
             # encode node positional embeddings
             x = self.pos_emb(data.pe)
+            x = torch.cat((x, self.chem_emb(data.ce)), 1)
             # if node features are available, genrate mebeddings, concatenate with positional embeddings and map to hidden dim
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)

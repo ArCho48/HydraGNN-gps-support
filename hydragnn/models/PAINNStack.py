@@ -13,7 +13,7 @@
 # Github: https://github.com/nityasagarjena/PaiNN-model/blob/main/PaiNN/model.py
 # Paper: https://arxiv.org/pdf/2102.03150
 
-
+import pdb
 import torch
 from torch import nn
 from torch_geometric import nn as geom_nn
@@ -169,10 +169,13 @@ class PAINNStack(Base):
                 data.edge_attr is not None
             ), "Data must have edge attributes if use_edge_attributes is set."
             conv_args.update({"edge_attr": data.edge_attr})
-
-        if self.use_global_attn:
+        # pdb.set_trace()
+        if self.use_global_attn or self.use_encodings:
             # encode node positional embeddings
-            x = self.pos_emb(data.pe)
+            pe = torch.nan_to_num(data.pe, nan=0.0)
+            x = self.pos_emb(pe) #change pe here after fix
+            if 'ce' in data:
+                x = torch.cat((x, self.chem_emb(data.ce)), 1)
             # if node features are available, genrate mebeddings, concatenate with positional embeddings and map to hidden dim
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)

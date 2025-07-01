@@ -3,7 +3,7 @@ import logging
 import argparse
 import random
 import numpy as np
-from mpi4py import MPI
+# from mpi4py import MPI
 import pandas as pd
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
@@ -11,8 +11,8 @@ import numpy as np
 
 import random
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -393,7 +393,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         config["NeuralNetwork"],
         log_name,
         verbosity,
-        create_plots=True
+        create_plots=False
     )
 
 if __name__ == "__main__":

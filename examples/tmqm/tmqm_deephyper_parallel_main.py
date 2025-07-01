@@ -81,9 +81,9 @@ def run(trial, dequed=None):
             f"--num_headlayers={trial.parameters['num_headlayers']}",
             f"--dim_headlayers={trial.parameters['dim_headlayers']}",
             f"--global_attn_heads={trial.parameters['global_attn_heads']}",
-            f"--adios",
+            # f"--adios",
             f"--ddstore",
-            f"--num_epoch={30}",
+            f"--num_epoch={5}",
             f"--log={log_name}",
         ]
     )
@@ -141,12 +141,12 @@ if __name__ == "__main__":
 
     # Include "global_attn_heads" to list of hyperparameters if global attention engine is used
     if config["NeuralNetwork"]["Architecture"]["global_attn_engine"]:
-        problem.add_hyperparameter([2, 4], "global_attn_heads")  # discrete parameter
-        problem.add_hyperparameter([4,8,12,16,24,32], "hidden_dim")  # discrete parameter
+        problem.add_hyperparameter([2, 4, 8], "global_attn_heads")  # discrete parameter
+        problem.add_hyperparameter([32,40,48,56,64,96,128], "hidden_dim")  # discrete parameter
     else:
         problem.add_hyperparameter([0], "global_attn_heads")  # discrete parameter
-        problem.add_hyperparameter((2,32), "hidden_dim")  # discrete parameter
-    problem.add_hyperparameter(["EGNN", "PNA", "SchNet", "DimeNet"], "mpnn_type")  # categorical parameter
+        problem.add_hyperparameter((32,128), "hidden_dim")  # discrete parameter
+    problem.add_hyperparameter(["EGNN", "PNA", "SchNet", "DimeNet", "PAINN"], "mpnn_type")  # categorical parameter
 
     # Create the node queue
     queue, _ = read_node_list()
@@ -181,7 +181,7 @@ if __name__ == "__main__":
     )
 
     timeout = None
-    results = search.search(max_evals=150, timeout=timeout)
+    results = search.search(max_evals=6, timeout=timeout)
     print(results)
 
     sys.exit(0)

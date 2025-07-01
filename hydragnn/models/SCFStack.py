@@ -189,7 +189,10 @@ class SCFStack(Base):
             }
 
         if self.use_global_attn:
-            x = self.pos_emb(data.pe)
+            pe = torch.nan_to_num(data.pe, nan=0.0)
+            x = self.pos_emb(pe) #change pe here after fix
+            # x = self.pos_emb(data.pe)
+            x = torch.cat((x, self.chem_emb(data.ce)), 1)
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
                 x = self.node_lin(x)

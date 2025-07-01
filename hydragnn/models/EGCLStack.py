@@ -127,7 +127,10 @@ class EGCLStack(Base):
 
         if self.use_global_attn:
             # encode node positional embeddings
-            x = self.pos_emb(data.pe)
+            pe = torch.nan_to_num(data.pe, nan=0.0)
+            x = self.pos_emb(pe) #change pe here after fix
+            if 'ce' in data:
+                x = torch.cat((x, self.chem_emb(data.ce)), 1)
             # if node features are available, genrate mebeddings, concatenate with positional embeddings and map to hidden dim
             if self.input_dim:
                 x = torch.cat((self.node_emb(data.x.float()), x), 1)
