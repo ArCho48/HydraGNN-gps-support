@@ -15,7 +15,7 @@
             "global_attn_heads": 2,
             "hidden_dim": 32,
             "num_conv_layers": 2,
-	    "edge_features": ["distance"],
+	        "edge_features": ["distance"],
             "int_emb_size": 32,
             "out_emb_size": 16,
             "basis_emb_size": 8,

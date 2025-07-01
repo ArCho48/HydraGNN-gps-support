@@ -154,7 +154,7 @@ class Base(Module):
         else:
             self.use_global_attn = False
             # ensure that all inputs maintain original dimensionality if gps is turned off
-            self.embed_dim = input_dim
+            self.embed_dim = hidden_dim if self.use_encodings else input_dim
             self.edge_embed_dim = hidden_dim if self.use_encodings else (
                 self.edge_dim
                 if (hasattr(self, "edge_dim") and (self.edge_dim is not None))
