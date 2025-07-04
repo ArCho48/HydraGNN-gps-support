@@ -13,6 +13,8 @@ import seaborn as sns
 
 from hydragnn.utils.datasets.pickledataset import SimplePickleDataset
 
+comm_list = []
+
 def normalize_minmax(dist_matrix):
     min_val = dist_matrix.min()
     max_val = dist_matrix.max()
@@ -139,6 +141,8 @@ def draw_comparison_graphs(data, comm_dist, folder, filename, threshold_percent=
     # Plot
     fig, axes = plt.subplots(1, 2, figsize=(18, 9))
 
+    print(filename,len(dotted_existing),len(solid_existing),len(solid_new))
+
     # --- Figure 1: original graph with dotted and solid edges ---
     nx.draw_networkx_nodes(G, pos, node_color='lightblue', edgecolors='black', node_size=40, ax=axes[0])
     nx.draw_networkx_edges(G, pos, edgelist=list(dotted_existing), style='dotted', edge_color='gray', width=1.0, ax=axes[0])
@@ -196,7 +200,7 @@ with open(filename, "r") as f:
 
 var_config = config["NeuralNetwork"]["Variables_of_interest"]
 
-dataset = SimplePickleDataset(basedir='../dataset/non-encoder/niaid.pickle', label="testset", var_config=var_config)
+dataset = SimplePickleDataset(basedir='/Users/67c/Documents/github/Hydragnn-data-res-backup/niaid/non-encoder/niaid.pickle', label="testset", var_config=var_config)
 dataset = [data for data in dataset]
 
 nx_graphs_sorted = sorted(dataset, key=lambda data: data.x.shape[0])
@@ -219,7 +223,22 @@ for indx, G in enumerate(top50):
     # norm_dist = normalize_minmax(c_d)
     # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
     if flag:
+        comm_list.append(c_d)
         draw_comparison_graphs(G,c_d,'comm_graph', str(indx)+'_'+str(G.num_nodes),threshold_percent=2)
     # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
     # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
     # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
+
+# thresh_list = [1,2,5,10,15,25]
+# for thresh in thresh_list: 
+#     c_d, flag = communicability_distance(top50[0])
+#     # norm_dist = normalize_minmax(c_d)
+#     # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
+#     if flag:
+#         # comm_list.append(c_d)
+#         draw_comparison_graphs(top50[0],c_d,'comm_graph', str(49)+'_'+str(top50[0].num_nodes),threshold_percent=thresh)
+#     # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
+#     # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
+#     # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
+import pickle
+pickle.dump(comm_list,open('comm.pkl','wb'))

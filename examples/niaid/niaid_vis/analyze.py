@@ -1,4 +1,4 @@
-import os, json, pdb
+import os, json, pdb, pickle
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
@@ -8,6 +8,9 @@ from torch_geometric.utils import to_networkx
 import numpy as np
 
 from hydragnn.utils.datasets.pickledataset import SimplePickleDataset
+
+degree_list = []
+eigen_list = []
 
 def scipy_eigenvector_centrality(G, 
                                  k: int = 1, 
@@ -86,7 +89,7 @@ with open(filename, "r") as f:
 
 var_config = config["NeuralNetwork"]["Variables_of_interest"]
 
-dataset = SimplePickleDataset(basedir='../dataset/non-encoder/niaid.pickle', label="testset", var_config=var_config)
+dataset = SimplePickleDataset(basedir='/Users/67c/Documents/github/Hydragnn-data-res-backup/niaid/non-encoder/niaid.pickle', label="testset", var_config=var_config)
 dataset = [data for data in dataset]
 # nx_graphs = [to_networkx(data, node_attrs=["x"], edge_attrs=["edge_attr"]) for data in dataset]
 nx_graphs_sorted = sorted(dataset, key=lambda data: data.x.shape[0])
@@ -131,6 +134,7 @@ if not os.path.exists('degrees'):
 for indx, graph in enumerate(top50):
  # Assuming you have a NetworkX graph called 'graph'
      degree_counts = nx.degree_histogram(graph)
+     degree_list.append(nx.degree_centrality(graph))
      degrees = range(len(degree_counts))
 
      plt.figure(figsize=(8, 6))
@@ -153,8 +157,13 @@ def draw(G, pos, measures, measure_name, folder, indx):
 
 if not os.path.exists('eigen_centrality'):
     os.makedirs('eigen_centrality')
-for indx,G in enumerate(top50): draw(G, nx.spring_layout(G, seed=675), scipy_eigenvector_centrality(G,max_iter=1000), 'Eigenvector Centrality', 'eigen_centrality', indx) #nx.eigenvector_centrality
+for indx,G in enumerate(top50): 
+    eig_cent = scipy_eigenvector_centrality(G,max_iter=1000)
+    eigen_list.append(eig_cent)
+    draw(G, nx.spring_layout(G, seed=675), eig_cent, 'Eigenvector Centrality', 'eigen_centrality', indx) #nx.eigenvector_centrality
 
 if not os.path.exists('comm_centrality'):
     os.makedirs('comm_centrality')
 for indx,G in enumerate(top50): draw(G, nx.spring_layout(G, seed=675), nx.communicability_betweenness_centrality(G), 'Communicability Centrality', 'comm_centrality', indx)
+
+pickle.dump({'deg':degree_list,'eig':eigen_list},open('degEig.pkl','wb'))
