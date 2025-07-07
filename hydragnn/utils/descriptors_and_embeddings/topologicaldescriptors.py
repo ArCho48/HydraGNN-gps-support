@@ -50,7 +50,7 @@ def compute_topo_features(data: Data):
     # Stack & normalize node features
     X_nodes = np.vstack(node_features).T  # shape: (num_nodes, num_features)
     X_nodes = np.concatenate((data.pe,torch.Tensor(X_nodes)),axis=-1)#X_nodes
-    # X_nodes = StandardScaler().fit_transform(X_nodes)
+    X_nodes = StandardScaler().fit_transform(X_nodes)
     data.pe = torch.Tensor(X_nodes) 
     # pdb.set_trace()
 
@@ -75,7 +75,7 @@ def compute_topo_features(data: Data):
         X_edges[i, 2] = aa
         X_edges[i, 3] = pa
 
-    # X_edges = StandardScaler().fit_transform(X_edges)
+    X_edges = StandardScaler().fit_transform(X_edges)
     
     data.rel_pe = torch.Tensor(X_edges)
 

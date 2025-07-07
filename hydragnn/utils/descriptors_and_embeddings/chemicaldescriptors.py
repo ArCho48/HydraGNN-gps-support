@@ -50,6 +50,6 @@ class ChemicalFeatureEncoder:
             ]
             features.append(mendeleev_feats)
 
-        # features = self.normalize_features(np.array(features, dtype=np.float32))
+        features = self.normalize_features(np.array(features, dtype=np.float32))
         data.ce = torch.tensor(features, dtype=torch.float32)
         return data
