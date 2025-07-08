@@ -10,6 +10,9 @@ from torch_geometric.utils import to_dense_adj
 from sklearn.manifold import MDS
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+import matplotlib.lines as mlines
 
 from hydragnn.utils.datasets.pickledataset import SimplePickleDataset
 
@@ -46,33 +49,54 @@ def communicability_distance(data):
 
     return dist, True
 
-def draw_communicability_graph(data, comm_dist, folder, filename, threshold_percent=10):
+def communicability(data, alpha=1.0):
+    """
+    Compute communicability matrix for a PyG Data object.
+    
+    Parameters:
+    - data: PyG Data object
+    - alpha: scalar float, user-defined damping factor
+    
+    Returns:
+    - communicability matrix (numpy.ndarray)
+    - is_connected: bool indicating whether the graph was connected
+    """
+    # Convert to NetworkX for connectivity check
+    G_nx = to_networkx(data, to_undirected=True)
+    if not nx.is_connected(G_nx):
+        return None, False
+
+    # Get adjacency matrix as float64
+    adj = to_dense_adj(data.edge_index, max_num_nodes=data.num_nodes)[0].numpy().astype(np.float64)
+    adj = (adj + adj.T) / 2  # Ensure symmetry
+
+    # Compute degree matrix and D^{-1/2}, D^{1/2}
+    degrees = np.sum(adj, axis=1)
+    with np.errstate(divide='ignore'):
+        D_inv_sqrt = np.diag(np.power(degrees, -0.5, where=degrees > 0))
+
+    # Compute normalized adjacency: D^{-1/2} A D^{1/2}
+    norm_adj = D_inv_sqrt @ adj @ D_inv_sqrt
+
+    # Compute communicability
+    comm = np.exp(-alpha) * expm(norm_adj)
+
+    return comm, True
+
+def draw_comparison_graphs(data, comm_dist, folder, filename, threshold_percent=10, use_tsne=False):
     G = to_networkx(data, to_undirected=True)
     num_nodes = data.num_nodes
 
-    # Compute threshold value
-    triu_indices = np.triu_indices(num_nodes, k=1)
-    all_dists = comm_dist[triu_indices]
-    threshold = np.percentile(all_dists, threshold_percent)
+    # --- 3D to 2D Projection (PCA or t-SNE) ---
+    coords_3d = data.pos.cpu().numpy() if hasattr(data.pos, 'cpu') else data.pos.numpy()
+    if use_tsne:
+        reducer = TSNE(n_components=2, perplexity=30, n_iter=1000, random_state=42)
+    else:
+        reducer = PCA(n_components=2)
+    coords_2d = reducer.fit_transform(coords_3d)
+    pos = {i: coords_2d[i] for i in range(num_nodes)}
 
-    existing_edges = set([tuple(sorted((u, v))) for u, v in G.edges()])
-    low_dist_edges = set(
-        (i, j) for i in range(num_nodes) for j in range(i+1, num_nodes)
-        if comm_dist[i, j] <= threshold
-    )
-
-    solid_existing = low_dist_edges & existing_edges
-    solid_new = low_dist_edges - existing_edges
-    dotted_existing = existing_edges - solid_existing
-
-    # Layout
-    pos = nx.spring_layout(G, seed=42)
-
-    # Convert node positions to numpy array for quadrant analysis
-    coords = np.array([pos[n] for n in G.nodes()])
-    xs, ys = coords[:, 0], coords[:, 1]
-
-    # Define quadrants
+    xs, ys = coords_2d[:, 0], coords_2d[:, 1]
     x_med, y_med = np.median(xs), np.median(ys)
     quadrants = {
         'upper right': ((xs > x_med) & (ys > y_med)).sum(),
@@ -80,86 +104,67 @@ def draw_communicability_graph(data, comm_dist, folder, filename, threshold_perc
         'lower left': ((xs < x_med) & (ys < y_med)).sum(),
         'lower right': ((xs > x_med) & (ys < y_med)).sum(),
     }
-
-    # Choose the quadrant with the fewest nodes
     best_loc = min(quadrants, key=quadrants.get)
+    # pdb.set_trace()
+    # # --- Communicability thresholding ---
+    # triu_indices = np.triu_indices(num_nodes, k=1)
+    # all_dists = comm_dist[triu_indices]
+    # threshold = np.percentile(all_dists, threshold_percent)
 
-    print(len(dotted_existing,solid_existing,solid_new))
+    # existing_edges = set(tuple(sorted((u, v))) for u, v in G.edges())
+    # low_dist_edges = set(
+    #     (i, j) for i in range(num_nodes) for j in range(i+1, num_nodes)
+    #     if comm_dist[i, j] <= threshold
+    # )
+    # # pdb.set_trace()
+    # solid_existing = low_dist_edges & existing_edges
+    # solid_new = low_dist_edges - existing_edges
+    # dotted_existing = existing_edges - solid_existing
 
-    # Plot
-    plt.figure(figsize=(10, 10))
-    nx.draw_networkx_nodes(G, pos, node_color='lightblue', edgecolors='black', node_size=10)
-    nx.draw_networkx_edges(G, pos, edgelist=list(dotted_existing), style='dotted', edge_color='gray', width=0.5)
-    nx.draw_networkx_edges(G, pos, edgelist=list(solid_existing), style='solid', edge_color='blue', width=0.5)
-    nx.draw_networkx_edges(G, pos, edgelist=list(solid_new), style='solid', edge_color='red', width=0.5)
-
-    # Legend
-    import matplotlib.lines as mlines
-    legend_handles = [
-        mlines.Line2D([], [], color='gray', linestyle='dotted', linewidth=0.5, label='Existing edge (high comm. distance)'),
-        mlines.Line2D([], [], color='blue', linestyle='solid', linewidth=0.5, label='Existing edge (low comm. distance)'),
-        mlines.Line2D([], [], color='red', linestyle='solid', linewidth=0.5, label='New edge (low comm. distance)'),
-    ]
-    plt.legend(handles=legend_handles, loc=best_loc)
-    plt.title(f"Communicability-Aware Graph (Threshold = {threshold_percent}%)")
-    plt.axis('off')
-    plt.tight_layout()    
-    plt.savefig(folder+'/'+folder.rstrip()+'_'+filename+'.png',format='PNG')
-
-def draw_comparison_graphs(data, comm_dist, folder, filename, threshold_percent=10):
-    G = to_networkx(data, to_undirected=True)
-    num_nodes = data.num_nodes
-
-    # Threshold on communicability distance
+    # --- Communicability thresholding based on top-K communicability ---
     triu_indices = np.triu_indices(num_nodes, k=1)
-    all_dists = comm_dist[triu_indices]
-    threshold = np.percentile(all_dists, threshold_percent)
+    all_comms = comm_dist[triu_indices]  # comm is the communicability matrix
 
-    existing_edges = set([tuple(sorted((u, v))) for u, v in G.edges()])
-    low_dist_edges = set(
-        (i, j) for i in range(num_nodes) for j in range(i+1, num_nodes)
-        if comm_dist[i, j] <= threshold
+    # Determine threshold for top X% most communicable links
+    threshold = np.percentile(all_comms, 100 - threshold_percent)  # top X% ⇒ 100 - X percentile
+
+    # Identify edges based on communicability strength
+    high_comm_edges = set(
+        (i, j) for i, j in zip(*triu_indices)
+        if comm_dist[i, j] >= threshold
     )
-
-    solid_existing = low_dist_edges & existing_edges
-    solid_new = low_dist_edges - existing_edges
+    # pdb.set_trace()
+    # Edge categories
+    existing_edges = set(tuple(sorted((u, v))) for u, v in G.edges())
+    solid_existing = high_comm_edges & existing_edges
+    solid_new = high_comm_edges - existing_edges
     dotted_existing = existing_edges - solid_existing
 
-    # Shared layout
-    pos = nx.spring_layout(G, seed=42)
-    coords = np.array([pos[n] for n in G.nodes()])
-    xs, ys = coords[:, 0], coords[:, 1]
-    x_med, y_med = np.median(xs), np.median(ys)
-
-    quadrants = {
-        'upper right': ((xs > x_med) & (ys > y_med)).sum(),
-        'upper left': ((xs < x_med) & (ys > y_med)).sum(),
-        'lower left': ((xs < x_med) & (ys < y_med)).sum(),
-        'lower right': ((xs > x_med) & (ys < y_med)).sum(),
-    }
-    best_loc = min(quadrants, key=quadrants.get)
-
-    # Plot
+    # --- Plotting ---
     fig, axes = plt.subplots(1, 2, figsize=(18, 9))
 
-    # print(len(dotted_existing),len(solid_existing),len(solid_new))
-
-    # --- Figure 1: original graph with dotted and solid edges ---
+    # --- Original Graph View ---
     nx.draw_networkx_nodes(G, pos, node_color='lightblue', edgecolors='black', node_size=40, ax=axes[0])
     nx.draw_networkx_edges(G, pos, edgelist=list(dotted_existing), style='dotted', edge_color='gray', width=0.5, ax=axes[0])
     nx.draw_networkx_edges(G, pos, edgelist=list(solid_existing), style='solid', edge_color='blue', width=1.0, ax=axes[0])
     axes[0].set_title("Original Graph: High vs Low Communicability")
+    axes[0].text(0.01, 0.97,
+                 f"Threshold = {threshold_percent:.1f}\nBlue edges = {len(solid_existing)}\nGray edges = {len(dotted_existing)}",
+                 transform=axes[0].transAxes, fontsize=12, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.6))
     axes[0].axis('off')
 
-    # --- Figure 2: only low-distance edges ---
+    # --- Communicability View ---
     nx.draw_networkx_nodes(G, pos, node_color='lightblue', edgecolors='black', node_size=40, ax=axes[1])
     nx.draw_networkx_edges(G, pos, edgelist=list(solid_existing), style='solid', edge_color='blue', width=1.0, ax=axes[1])
     nx.draw_networkx_edges(G, pos, edgelist=list(solid_new), style='dotted', edge_color='red', width=1.0, ax=axes[1])
     axes[1].set_title("Communicability-Based View (Low Distance Edges)")
+    axes[1].text(0.01, 0.97,
+                 f"Threshold = {threshold_percent:.1f}\nBlue edges = {len(solid_existing)}\nRed edges = {len(solid_new)}",
+                 transform=axes[1].transAxes, fontsize=12, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.6))
+    axes[1].axis('off')
     axes[1].axis('off')
 
-    # --- Dynamic Legend ---
-    import matplotlib.lines as mlines
+    # --- Legend ---
     legend_handles = [
         mlines.Line2D([], [], color='gray', linestyle='dotted', linewidth=1.0, label='Existing edge (high comm. distance)'),
         mlines.Line2D([], [], color='blue', linestyle='solid', linewidth=1.0, label='Existing edge (low comm. distance)'),
@@ -168,31 +173,9 @@ def draw_comparison_graphs(data, comm_dist, folder, filename, threshold_percent=
     axes[1].legend(handles=legend_handles, loc=best_loc, fontsize=12)
 
     plt.tight_layout()
-    plt.savefig(folder+'/'+folder.rstrip()+'_'+filename+'.png',format='PNG')
-
-def visualize_graph_with_distances(data, dist_matrix, folder, filename):
-    G = nx.Graph()
-    G.add_edges_from(data.edge_index.t().tolist())
-
-    # Edge weights: inverse communicability distance
-    edge_weights = []
-    for u, v in G.edges():
-        d = dist_matrix[u, v]
-        edge_weights.append(1 / (d + 1e-6))  # avoid div by zero
-
-    pos = nx.spring_layout(G)
-    plt.figure(figsize=(8, 6))
-    nx.draw(G, pos, with_labels=True, edge_color=edge_weights, width=2.0, edge_cmap=plt.cm.plasma)
-    plt.title("Graph with Edge Color ∝ 1 / Communicability Distance")
-    plt.savefig(folder+'/'+folder.rstrip()+'_'+filename+'.png',format='PNG')
-
-def plot_heatmap(dist_matrix, folder, filename,):
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(dist_matrix, cmap='magma', square=True)
-    plt.title("Communicability Distance Heatmap")
-    plt.xlabel("Node")
-    plt.ylabel("Node")
-    plt.savefig(folder+'/'+folder.rstrip()+'_'+filename+'.png',format='PNG')
+    os.makedirs(folder, exist_ok=True)
+    plt.savefig(os.path.join(folder, folder.rstrip('_') + '_' + filename + '.png'), format='PNG')
+    plt.close()
 
 # Configurable run choices (JSON file that accompanies this example script).
 filename = '../tmqm.json'
@@ -201,7 +184,7 @@ with open(filename, "r") as f:
 
 var_config = config["NeuralNetwork"]["Variables_of_interest"]
 
-dataset = SimplePickleDataset(basedir='../dataset/non-encoder/tmqm.pickle', label="testset", var_config=var_config)
+dataset = SimplePickleDataset(basedir='/Users/67c/Documents/github/Hydragnn-data-res-backup/tmqm/non-encoder/tmqm.pickle', label="testset", var_config=var_config)
 dataset = [data for data in dataset]
 
 nx_graphs_sorted = sorted(dataset, key=lambda data: data.x.shape[0])
@@ -213,27 +196,28 @@ if not os.path.exists('comm_graph'):
 # if not os.path.exists('heatmap_comm'):
 #     os.makedirs('heatmap_comm')
 
-for indx, G in enumerate(top50): 
-    c_d, flag = communicability_distance(G)
-    # norm_dist = normalize_minmax(c_d)
-    # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
-    if flag:
-        comm_list.append(c_d)
-        draw_comparison_graphs(G,c_d,'comm_graph', str(indx)+'_'+str(G.num_nodes),threshold_percent=5)
-    # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
-    # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
-    # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
-
-# thresh_list = [1,2,5,10,15,25]
-# for thresh in thresh_list: 
-#     c_d, flag = communicability_distance(top50[-1])
+# for indx, G in enumerate(top50): 
+#     c_d, flag = communicability(G)#communicability_distance(G)
 #     # norm_dist = normalize_minmax(c_d)
 #     # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
 #     if flag:
 #         # comm_list.append(c_d)
-#         draw_comparison_graphs(top50[-1],c_d,'comm_graph', str(49)+'_'+str(top50[-1].num_nodes),threshold_percent=thresh)
+#         draw_comparison_graphs(G,c_d,'comm_graph', str(indx)+'_'+str(G.num_nodes),threshold_percent=20)
 #     # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
 #     # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
 #     # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
 
+thresh_list = range(1,101)#[1,2,5,10,15,25]
+for thresh in thresh_list: 
+    c_d, flag = communicability(top50[4])#communicability_distance(top50[-1])
+    # norm_dist = normalize_minmax(c_d)
+    # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
+    if flag:
+        # comm_list.append(c_d)
+        draw_comparison_graphs(top50[4],c_d,'comm_graph', str(4)+'_'+str(top50[4].num_nodes)+"_"+str(thresh),threshold_percent=thresh)
+    # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
+    # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
+    # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
+
 # pickle.dump(comm_list,open('comm.pkl','wb'))
+
