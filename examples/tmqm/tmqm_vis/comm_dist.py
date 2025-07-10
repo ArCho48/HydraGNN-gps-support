@@ -13,6 +13,7 @@ import seaborn as sns
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 import matplotlib.lines as mlines
+from networkx.algorithms.communicability_alg import communicability_exp
 
 from hydragnn.utils.datasets.pickledataset import SimplePickleDataset
 
@@ -162,7 +163,6 @@ def draw_comparison_graphs(data, comm_dist, folder, filename, threshold_percent=
                  f"Threshold = {threshold_percent:.1f}\nBlue edges = {len(solid_existing)}\nRed edges = {len(solid_new)}",
                  transform=axes[1].transAxes, fontsize=12, verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.6))
     axes[1].axis('off')
-    axes[1].axis('off')
 
     # --- Legend ---
     legend_handles = [
@@ -196,28 +196,29 @@ if not os.path.exists('comm_graph'):
 # if not os.path.exists('heatmap_comm'):
 #     os.makedirs('heatmap_comm')
 
-# for indx, G in enumerate(top50): 
-#     c_d, flag = communicability(G)#communicability_distance(G)
-#     # norm_dist = normalize_minmax(c_d)
-#     # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
-#     if flag:
-#         # comm_list.append(c_d)
-#         draw_comparison_graphs(G,c_d,'comm_graph', str(indx)+'_'+str(G.num_nodes),threshold_percent=20)
-#     # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
-#     # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
-#     # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
-
-thresh_list = range(1,101)#[1,2,5,10,15,25]
-for thresh in thresh_list: 
-    c_d, flag = communicability(top50[4])#communicability_distance(top50[-1])
+for indx, G in enumerate(top50): 
+    c_d = communicability_exp(to_networkx(G, to_undirected=True))
+    # c_d, flag = communicability(G)#communicability_distance(G)
     # norm_dist = normalize_minmax(c_d)
     # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
-    if flag:
+    # if flag:
         # comm_list.append(c_d)
-        draw_comparison_graphs(top50[4],c_d,'comm_graph', str(4)+'_'+str(top50[4].num_nodes)+"_"+str(thresh),threshold_percent=thresh)
+    draw_comparison_graphs(G,c_d,'comm_graph', str(indx)+'_'+str(G.num_nodes),threshold_percent=20)
     # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
     # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
     # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
 
-# pickle.dump(comm_list,open('comm.pkl','wb'))
+# thresh_list = range(1,101)#[1,2,5,10,15,25]
+# for thresh in thresh_list: 
+#     c_d, flag = communicability(top50[4])#communicability_distance(top50[-1])
+#     # norm_dist = normalize_minmax(c_d)
+#     # draw_communicability_graph(G,c_d,'comm_graph', str(G.num_nodes),threshold_percent=5)
+#     if flag:
+#         # comm_list.append(c_d)
+#         draw_comparison_graphs(top50[4],c_d,'comm_graph', str(4)+'_'+str(top50[4].num_nodes)+"_"+str(thresh),threshold_percent=thresh)
+#     # visualize_graph_with_distances(G,c_d,'comm_graph', str(G.num_nodes))
+#     # plot_mds( c_d, 'mds_comm', str(G.num_nodes))
+#     # plot_heatmap( c_d, 'heatmap_comm', str(G.num_nodes))
+
+# # pickle.dump(comm_list,open('comm.pkl','wb'))
 
