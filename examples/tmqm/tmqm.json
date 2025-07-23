@@ -1,0 +1,70 @@
+{
+    "Verbosity": {
+        "level": 2
+    },
+    "NeuralNetwork": {
+        "Profile": {"enable": 0},
+        "Architecture": {
+            "global_attn_engine": "GPS",
+            "global_attn_type": "multihead",
+            "mpnn_type": "DimeNet",
+            "radius": 7,
+            "max_neighbours": 5,
+            "periodic_boundary_conditions": false,
+            "num_laplacian_eigs": 6,
+            "global_attn_heads": 2,
+            "hidden_dim": 32,
+            "num_conv_layers": 2,
+	        "edge_features": ["distance"],
+            "int_emb_size": 32,
+            "out_emb_size": 16,
+            "basis_emb_size": 8,
+            "num_gaussians": 10,
+            "num_filters": 8,
+            "num_before_skip": 1,
+            "num_after_skip": 1,
+            "envelope_exponent": 5,
+            "max_ell": 1,
+            "node_max_ell": 1,
+            "num_radial": 5,
+            "num_spherical": 2,
+            "output_heads": {
+                "graph":{
+                    "num_sharedlayers": 2,
+                    "dim_sharedlayers": 50,
+                    "num_headlayers": 1,
+                    "dim_headlayers": [64]
+                }
+            },
+            "task_weights": [1.0]
+        },
+        "Variables_of_interest": {
+            "input_node_features": [0,1,2],
+            "output_names": ["dispersion_energy"],
+            "output_index": [4],
+            "graph_feature_dims": [1,1,1,1,1,1,1,1,1,1,1],
+            "node_feature_dims": [],
+            "type": ["graph"],
+            "denormalize_output": false
+        },
+        "Training": {
+            "num_epoch": 100,
+            "perc_train": 0.8,
+            "loss_function_type": "mse",
+            "batch_size": 8,
+            "continue": 0,
+            "EarlyStopping": true,
+            "Checkpoint": true,
+            "startfrom": "existing_model",
+            "Optimizer": {
+                "type": "AdamW",
+                "learning_rate": 1e-3
+            }
+        }
+    },
+    "Visualization": {
+        "plot_init_solution": true,
+        "plot_hist_solution": false,
+        "create_plots": true
+    }
+}

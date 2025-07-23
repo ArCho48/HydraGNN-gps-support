@@ -1,0 +1,10 @@
+frontier01403 slots=8
+frontier01532 slots=8
+frontier01404 slots=8
+frontier01531 slots=8
+frontier02681 slots=8
+frontier01405 slots=8
+frontier10206 slots=8
+frontier01533 slots=8
+frontier01660 slots=8
+frontier01661 slots=8

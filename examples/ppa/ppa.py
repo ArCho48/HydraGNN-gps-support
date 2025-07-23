@@ -1,0 +1,416 @@
+import os, sys, json, pdb, math, pickle
+import logging
+import argparse
+import random
+from mpi4py import MPI
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
+from multiprocessing import Pool, cpu_count
+import torch
+# torch.cuda.init()
+# from mpi4py import MPI
+# FIX random seed
+random_state = 0
+torch.manual_seed(random_state)
+import torch_geometric
+from torch_geometric.transforms import AddLaplacianEigenvectorPE, Distance
+
+from rdkit import Chem
+from rdkit.Chem import AllChem
+from ogb.graphproppred import GraphPropPredDataset, PygGraphPropPredDataset
+os.environ['OGB_DOWNLOAD_CONFIRM'] = '1'
+# import builtins
+# builtins.input = lambda prompt=None: 'y'
+
+import hydragnn
+from hydragnn.utils.profiling_and_tracing.time_utils import Timer
+from hydragnn.utils.model import print_model
+# from hydragnn.utils.descriptors_and_embeddings.atomicdescriptors import (
+#     atomicdescriptors,
+# )
+from hydragnn.utils.descriptors_and_embeddings.chemicaldescriptors import ChemicalFeatureEncoder
+from hydragnn.utils.descriptors_and_embeddings.topologicaldescriptors import compute_topo_features
+from hydragnn.utils.datasets.abstractbasedataset import AbstractBaseDataset
+from hydragnn.utils.datasets.distdataset import DistDataset
+from hydragnn.utils.datasets.pickledataset import (
+    SimplePickleWriter,
+    SimplePickleDataset,
+)
+from hydragnn.preprocess.graph_samples_checks_and_updates import gather_deg
+from hydragnn.preprocess.load_data import split_dataset
+import hydragnn.utils.profiling_and_tracing.tracer as tr
+
+try:
+    from hydragnn.utils.datasets.adiosdataset import AdiosWriter, AdiosDataset
+except ImportError:
+    pass
+
+from generate_dictionaries_pure_elements import (
+    generate_dictionary_elements,
+)
+
+def info(*args, logtype="info", sep=" "):
+    getattr(logging, logtype)(sep.join(map(str, args)))
+
+compute_edge_lengths = Distance(norm=False, cat=True)
+
+class PPA_enc(AbstractBaseDataset):
+    def __init__(
+        self, train, val, test, num_laplacian_eigs
+    ):
+        super().__init__()
+
+        self.trainset, self.valset, self.testset = [], [], []
+
+        # LPE
+        transform = AddLaplacianEigenvectorPE(
+            k=num_laplacian_eigs,
+            attr_name="lpe",
+            is_undirected=True,
+        )
+
+        for data in tqdm(train, total=len(train), desc="Train"):
+            # Encoders
+            try:
+                data = transform(data) #lapPE
+                data = compute_topo_features(data)
+
+                has_nan = torch.isnan(data.pe).any() + torch.isnan(data.rel_pe).any()
+                if has_nan:
+                    raise ValueError("NaN persists")
+                data.x = torch.ones((data.num_nodes, 1), dtype=torch.float32, device=data.edge_index.device) #dummy node feats for compatibility
+                data.y = data.y.to(torch.float32)
+                data.num_nodes = torch.tensor([data.num_nodes])
+                self.trainset.append( data )
+            except:
+                print(data.num_nodes)
+
+        for data in tqdm(val, total=len(val), desc="Val"):
+            # Encoders
+            try:
+                data = transform(data) #lapPE
+                data = compute_topo_features(data)
+
+                has_nan = torch.isnan(data.pe).any() + torch.isnan(data.rel_pe).any()
+                if has_nan:
+                    raise ValueError("NaN persists")
+                data.x = torch.ones((data.num_nodes, 1), dtype=torch.float32, device=data.edge_index.device) #dummy node feats for compatibility
+                data.y = data.y.to(torch.float32)
+                data.num_nodes = torch.tensor([data.num_nodes])                
+                self.valset.append( data )
+            except:
+                print(data.num_nodes)
+
+        for data in tqdm(test, total=len(test), desc="Test"):
+            # Encoders
+            try:
+                data = transform(data) #lapPE
+                data = compute_topo_features(data)
+
+                has_nan = torch.isnan(data.pe).any() + torch.isnan(data.rel_pe).any()
+                if has_nan:
+                    raise ValueError("NaN persists")
+                data.x = torch.ones((data.num_nodes, 1), dtype=torch.float32, device=data.edge_index.device) #dummy node feats for compatibility
+                data.y = data.y.to(torch.float32)
+                data.num_nodes = torch.tensor([data.num_nodes])
+                self.testset.append( data )
+            except:
+                print(data.num_nodes)
+
+        random.shuffle(self.trainset)
+        random.shuffle(self.valset)
+        random.shuffle(self.testset)
+
+        self.dataset = self.trainset + self.valset + self.testset
+
+    def len(self):
+        return( len(self.dataset) )
+
+    def get(self, idx):
+        return self.dataset[idx]
+
+    def split(self):
+        return(len(self.trainset), len(self.valset), len(self.testset))
+    
+def main(preonly=False, format='pickle', ddstore=False, 
+        ddstore_width=None, shmem=False, 
+        mpnn_type=None, global_attn_engine=None, 
+        global_attn_type=None):
+
+    # FIX random seed
+    random_state = 0
+    torch.manual_seed(random_state)
+
+    # Set this path for output.
+    try:
+        os.environ["SERIALIZED_DATA_PATH"]
+    except KeyError:
+        os.environ["SERIALIZED_DATA_PATH"] = os.getcwd()
+
+    # Configurable run choices (JSON file that accompanies this example script).
+    filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ppa.json")
+    with open(filename, "r") as f:
+        config = json.load(f)
+
+    ##################################################################################################################
+    # Always initialize for multi-rank training.
+    comm_size, rank = hydragnn.utils.distributed.setup_ddp()
+    ##################################################################################################################
+
+    comm = MPI.COMM_WORLD
+
+    modelname = "ppa" 
+
+    if preonly:
+        # Raw data 
+        dataset = PygGraphPropPredDataset(name="ogbg-ppa",root='dataset/raw') 
+        split_idx = dataset.get_idx_split() 
+        trainset = dataset[split_idx["train"]]
+        valset = dataset[split_idx["valid"]]
+        testset = dataset[split_idx["test"]]
+
+        ## Encoded data
+        dataset = PPA_enc(
+            trainset, valset, testset, config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
+        )    
+
+        num_train, num_val, _ = dataset.split()
+        trainset = dataset[:num_train]
+        valset = dataset[num_train:num_train+num_val]
+        testset = dataset[num_train+num_val:]
+    
+        print("Local splitting: ", len(trainset), len(valset), len(testset))
+
+        deg = gather_deg(trainset)
+        config["pna_deg"] = deg
+
+        ## adios
+        if format == "adios":
+            fname = os.path.join(
+                os.path.dirname(__file__), "./dataset/%s.bp" % modelname
+            )
+            adwriter = AdiosWriter(fname, comm)
+            adwriter.add("trainset", trainset)
+            adwriter.add("valset", valset)
+            adwriter.add("testset", testset)
+            adwriter.add_global("pna_deg", deg)
+            adwriter.save()
+
+        ## pickle
+        elif format == "pickle":
+            basedir = os.path.join(
+                os.path.dirname(__file__), "dataset", "%s.pickle" % modelname
+            )
+
+            attrs = dict()
+            attrs["pna_deg"] = deg
+
+            SimplePickleWriter(
+                trainset,
+                basedir,
+                "trainset",
+                use_subdir=True,
+                attrs=attrs,
+            )
+            SimplePickleWriter(
+                valset,
+                basedir,
+                "valset",
+                use_subdir=True,
+            )
+            SimplePickleWriter(
+                testset,
+                basedir,
+                "testset",
+                use_subdir=True,
+            )
+        sys.exit(0)
+
+    # If a model type is provided, update the configuration accordingly.
+    if global_attn_engine:
+        config["NeuralNetwork"]["Architecture"][
+            "global_attn_engine"
+        ] = global_attn_engine
+
+    if global_attn_type:
+        config["NeuralNetwork"]["Architecture"]["global_attn_type"] = global_attn_type
+
+    if mpnn_type:
+        config["NeuralNetwork"]["Architecture"]["mpnn_type"] = mpnn_type
+
+    verbosity = config["Verbosity"]["level"]
+    var_config = config["NeuralNetwork"]["Variables_of_interest"]
+
+    # Always initialize for multi-rank training.
+    world_size, world_rank = hydragnn.utils.distributed.setup_ddp()
+
+    log_name = f"ppa_test_{mpnn_type}" if mpnn_type else "ppa_test"
+    # Enable print to log file.
+    hydragnn.utils.print.print_utils.setup_log(log_name)
+
+    if format == "adios":
+        info("Adios load")
+        assert not (shmem and ddstore), "Cannot use both ddstore and shmem"
+        opt = {
+            "preload": False,
+            "shmem": shmem,
+            "ddstore": ddstore,
+            "ddstore_width": ddstore_width,
+        }
+        fname = os.path.join(os.path.dirname(__file__), "./dataset/%s.bp" % modelname)
+        trainset = AdiosDataset(fname, "trainset", comm, **opt, var_config=var_config)
+        valset = AdiosDataset(fname, "valset", comm, **opt, var_config=var_config)
+        testset = AdiosDataset(fname, "testset", comm, **opt, var_config=var_config)
+    elif format == "pickle":
+        info("Pickle load")
+        basedir = os.path.join(
+            os.path.dirname(__file__), "dataset", "%s.pickle" % modelname
+        )
+        trainset = SimplePickleDataset(
+            basedir=basedir, label="trainset", var_config=var_config
+        )
+        valset = SimplePickleDataset(
+            basedir=basedir, label="valset", var_config=var_config
+        )
+        testset = SimplePickleDataset(
+            basedir=basedir, label="testset", var_config=var_config
+        )
+        pna_deg = trainset.pna_deg
+        if ddstore:
+            opt = {"ddstore_width": ddstore_width}
+            trainset = DistDataset(trainset, "trainset", comm, **opt)
+            valset = DistDataset(valset, "valset", comm, **opt)
+            testset = DistDataset(testset, "testset", comm, **opt)
+            trainset.pna_deg = pna_deg
+    else:
+        raise NotImplementedError("No supported format: %s" % (format))
+
+    info(
+        "trainset,valset,testset size: %d %d %d"
+        % (len(trainset), len(valset), len(testset))
+    )
+
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = 0
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
+
+    if ddstore:
+        os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
+        os.environ["HYDRAGNN_USE_ddstore"] = "1"
+
+    (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
+        trainset, valset, testset, config["NeuralNetwork"]["Training"]["batch_size"]
+    )
+
+    ## Good to sync with everyone right after DDStore setup
+    comm.Barrier()
+
+    if args.ddstore:
+        train_loader.dataset.ddstore.epoch_begin()
+    config = hydragnn.utils.input_config_parsing.update_config(
+        config, train_loader, val_loader, test_loader
+    )
+    if args.ddstore:
+        train_loader.dataset.ddstore.epoch_end()
+    ## Good to sync with everyone right after DDStore setup
+    comm.Barrier()
+    
+    model = hydragnn.models.create_model_config(
+        config=config["NeuralNetwork"],
+        verbosity=verbosity,
+    )
+    model = hydragnn.utils.distributed.get_distributed_model(model, verbosity)
+
+    # Print details of neural network architecture
+    print_model(model)
+
+    learning_rate = config["NeuralNetwork"]["Training"]["Optimizer"]["learning_rate"]
+    optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        optimizer, mode="min", factor=0.5, patience=5, min_lr=0.00001
+    )
+
+    # Run training with the given model and ppa datasets.
+    writer = hydragnn.utils.model.model.get_summary_writer(log_name)
+    hydragnn.utils.input_config_parsing.save_config(config, log_name)
+
+    hydragnn.train.train_validate_test(
+        model,
+        optimizer,
+        train_loader,
+        val_loader,
+        test_loader,
+        writer,
+        scheduler,
+        config["NeuralNetwork"],
+        log_name,
+        verbosity,
+        create_plots=False
+    )
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Run the ppa example with optional model type."
+    )
+    parser.add_argument(
+        "--preonly",
+        action="store_true",
+        help="preprocess only (no training)",
+    )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--adios",
+        help="Adios dataset",
+        action="store_const",
+        dest="format",
+        const="adios",
+    )
+    group.add_argument(
+        "--pickle",
+        help="Pickle dataset",
+        action="store_const",
+        dest="format",
+        const="pickle",
+    )
+    parser.set_defaults(format="pickle")
+    parser.add_argument(
+        "--ddstore",
+        action="store_true", 
+        help="ddstore dataset"
+    )
+    parser.add_argument(
+        "--ddstore_width", 
+        type=int, 
+        help="ddstore width", 
+        default=None
+    )
+    parser.add_argument(
+        "--shmem", 
+        action="store_true", 
+        help="shmem"
+    )
+    parser.add_argument(
+        "--mpnn_type",
+        type=str,
+        default=None,
+        help="Specify the model type for training (default: None).",
+    )
+    parser.add_argument(
+        "--global_attn_engine",
+        type=str,
+        default=None,
+        help="Specify if global attention is being used (default: None).",
+    )
+    parser.add_argument(
+        "--global_attn_type",
+        type=str,
+        default=None,
+        help="Specify the global attention type (default: None).",
+    )
+    args = parser.parse_args()
+    main(preonly=args.preonly, format=args.format, ddstore=args.ddstore, 
+        ddstore_width=args.ddstore_width, shmem=args.shmem, mpnn_type=args.mpnn_type, 
+        global_attn_engine=args.global_attn_engine, global_attn_type=args.global_attn_type)
