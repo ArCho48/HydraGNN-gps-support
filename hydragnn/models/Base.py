@@ -37,6 +37,7 @@ class Base(Module):
         input_dim: int,
         hidden_dim: int,
         output_dim: list,
+        edge_embed_dim: int, # if edge_embed_dim not provided (default 0), it is set to hidden dim
         lpe_dim: int,
         pe_dim: int,
         ce_dim: int,
@@ -57,6 +58,7 @@ class Base(Module):
         dropout: float = 0.25,
         num_conv_layers: int = 16,
         num_nodes: int = None,
+        use_encodings: bool=False
     ):
         super().__init__()
         self.device = get_device()
@@ -74,6 +76,8 @@ class Base(Module):
         self.dropout = dropout
         self.global_attn_dropout = dropout
         self.num_conv_layers = num_conv_layers
+        # Flag to use encodings independently of Global Attention
+        self.use_encodings = use_encodings
         self.graph_convs = ModuleList()
         self.feature_layers = ModuleList()
         self.num_nodes = num_nodes
@@ -133,9 +137,6 @@ class Base(Module):
             if "edge_attr" not in self.conv_args:
                 self.conv_args += ", edge_attr"
 
-        # Flag to use encodings independently of Global Attention
-        self.use_encodings = True
-
         # Option to only train final property layers.
         self.freeze_conv = freeze_conv
         # Option to set initially large output bias (UQ).
@@ -145,9 +146,8 @@ class Base(Module):
         # if model can handle edge features, enforce use of relative edge encodings
         if self.global_attn_engine:
             self.use_global_attn = True
-            self.embed_dim = (
-                self.edge_embed_dim
-            ) = hidden_dim  # ensure that all input to gps have the same dimensionality
+            self.embed_dim = hidden_dim
+            self.edge_embed_dim = edge_embed_dim if edge_embed_dim > 0 else hidden_dim
             if self.is_edge_model:
                 if "edge_attr" not in self.input_args:
                     self.input_args += ", edge_attr"
@@ -155,13 +155,14 @@ class Base(Module):
                     self.conv_args += ", edge_attr"
         else:
             self.use_global_attn = False
-            # ensure that all inputs maintain original dimensionality if gps is turned off
-            self.embed_dim = hidden_dim if self.use_encodings else input_dim
-            self.edge_embed_dim = hidden_dim if self.use_encodings else (
-                self.edge_dim
-                if (hasattr(self, "edge_dim") and (self.edge_dim is not None))
-                else None
-            )
+            # ensure that all inputs maintain original dimensionality if gps is turned off unless use_encodings is active
+            if self.use_encodings:
+                self.embed_dim = hidden_dim
+                self.edge_embed_dim = edge_embed_dim if edge_embed_dim > 0 else hidden_dim
+            else: 
+                self.embed_dim = input_dim
+                self.edge_embed_dim = self.edge_dim if (hasattr(self, "edge_dim") and (self.edge_dim is not None)) else None
+
         # Specify learnable embeddings
         self.feature_embedder = FeatureEmbedder(lpe_dim=self.lpe_dim,
                         pe_dim=self.pe_dim,
@@ -170,6 +171,7 @@ class Base(Module):
                         edge_in_dim=self.edge_dim,
                         rel_pe_dim=self.rel_pe_dim,
                         hidden_dim=self.hidden_dim,
+                        edge_embed_dim=self.edge_embed_dim,
                         use_global_attn=self.use_global_attn,
                         use_encodings=self.use_encodings,
                         use_edge_attr=self.use_edge_attr,
@@ -656,6 +658,7 @@ class Base(Module):
             if pred_shape != value_shape:
                 head_val = torch.reshape(head_val, pred_shape)
             mask = ~torch.isnan(head_val) # For multi-label classification tasks
+
             if var is None:
                 assert (
                     self.loss_function_type != "GaussianNLLLoss"

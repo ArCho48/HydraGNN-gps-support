@@ -58,6 +58,8 @@ def loss_function_selection(loss_function_string: str):
         return torch.nn.GaussianNLLLoss()
     elif loss_function_string == "bce_logits":
         return torch.nn.BCEWithLogitsLoss()
+    elif loss_function_string == "ce_logits":
+        return torch.nn.CrossEntropyLoss()
     else:
         ImportError
 

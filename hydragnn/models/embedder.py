@@ -12,6 +12,7 @@ class FeatureEmbedder(nn.Module):
         edge_in_dim: int,
         rel_pe_dim: int,
         hidden_dim: int,
+        edge_embed_dim: int,
         use_global_attn: bool = True,
         use_encodings: bool = True,
         use_edge_attr: bool = True,
@@ -40,40 +41,44 @@ class FeatureEmbedder(nn.Module):
             self.node_proj = nn.Linear(self.node_input_dim, hidden_dim, bias=False)
 
             if self.is_edge_model:
-                edge_feats = [rel_pe_dim]
+                if not self.use_encodings:
+                    edge_feats = [lpe_dim]
+                else:
+                    edge_feats = [rel_pe_dim]
                 if self.use_edge_attr and edge_in_dim > 0:
                     edge_feats.append(edge_in_dim)
                 self.edge_input_dim = sum(edge_feats)
-                self.edge_proj = nn.Linear(self.edge_input_dim, hidden_dim, bias=False)
+                self.edge_proj = nn.Linear(self.edge_input_dim, edge_embed_dim, bias=False)
 
     def forward(self, data, conv_args):
         if self.use_global_attn or self.use_encodings:
             # === Node features ===
             feats = []
             if hasattr(data, "x"):
-                feats.append(data.x.float())              # [N, node_in_dim]
+                feats.append(data.x.float())                  # [N, node_in_dim]
             if self.use_global_attn:
-                feats.append(data.lpe)                    # [N, lpe_dim]
+                feats.append(data.lpe)                        # [N, lpe_dim]
             if self.use_encodings:
-                feats.append(data.pe)                     # [N, pe_dim]
+                feats.append(data.pe)                         # [N, pe_dim]
                 if hasattr(data, "ce"):
-                    feats.append(data.ce)                 # [N, ce_dim]
+                    feats.append(data.ce)                     # [N, ce_dim]
             # concat raw and project
-            x = torch.cat(feats, dim=-1)                  # [N, node_input_dim]
-            x = self.node_proj(x)                         # [N, hidden_dim]
+            x = torch.cat(feats, dim=-1)                      # [N, node_input_dim]
+            x = self.node_proj(x)                             # [N, hidden_dim]
 
             if self.is_edge_model:
-                e_feats = [data.rel_pe]                   # [E, rel_pe_dim]
+                if not self.use_encodings:
+                    source_lpe = data.lpe[data.edge_index[0]]
+                    target_lpe = data.lpe[data.edge_index[1]]
+                    e_feats = [torch.abs(source_lpe - target_lpe)]  # Compute difference of node-wise lpe [E, lpe_dim]
+                else:
+                    e_feats = [data.rel_pe]                   # [E, rel_pe_dim]
                 if self.use_edge_attr and "edge_attr" in conv_args:
-                    e_feats.append(conv_args["edge_attr"])# [E, edge_in_dim]
-                e = torch.cat(e_feats, dim=-1)            # [E, edge_input_dim]
-                e = self.edge_proj(e)                     # [E, hidden_dim]
+                    e_feats.append(conv_args["edge_attr"])    # [E, edge_in_dim]
+                e = torch.cat(e_feats, dim=-1)                # [E, edge_input_dim]
+                e = self.edge_proj(e)                         # [E, hidden_dim]
                 conv_args["edge_attr"] = e
-
+                
             return x, data.pos, conv_args
         else:
             return data.x, data.pos, conv_args
-
-    # source_pe = data.pe[data.edge_index[0]]
-    # target_pe = data.pe[data.edge_index[1]]
-    # data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference

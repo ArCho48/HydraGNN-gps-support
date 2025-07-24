@@ -15,6 +15,7 @@ from torch_geometric.data import Data
 from typing import List, Union
 
 from hydragnn.models.GINStack import GINStack
+from hydragnn.models.GINEStack import GINEStack
 from hydragnn.models.PNAStack import PNAStack
 from hydragnn.models.PNAPlusStack import PNAPlusStack
 from hydragnn.models.GATStack import GATStack
@@ -42,6 +43,7 @@ def create_model_config(
         config["Architecture"]["input_dim"],
         config["Architecture"]["hidden_dim"],
         config["Architecture"]["output_dim"],
+        config["Architecture"]["edge_embed_dim"],
         config["Architecture"]["lpe_dim"],
         config["Architecture"]["pe_dim"],
         config["Architecture"]["ce_dim"],
@@ -58,6 +60,7 @@ def create_model_config(
         config["Architecture"]["freeze_conv_layers"],
         config["Architecture"]["initial_bias"],
         config["Architecture"]["num_nodes"],
+        config["Architecture"]["use_encodings"],
         config["Architecture"]["max_neighbours"],
         config["Architecture"]["edge_dim"],
         config["Architecture"]["pna_deg"],
@@ -91,6 +94,7 @@ def create_model(
     input_dim: int,
     hidden_dim: int,
     output_dim: list,
+    edge_embed_dim: int,
     lpe_dim: int,
     pe_dim: int,
     ce_dim: int,
@@ -107,6 +111,7 @@ def create_model(
     freeze_conv: bool = False,
     initial_bias: float = None,
     num_nodes: int = None,
+    use_encodings: bool = False,
     max_neighbours: int = None,
     edge_dim: int = None,
     pna_deg: torch.tensor = None,
@@ -146,6 +151,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -163,6 +169,36 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
+        )
+
+    if mpnn_type == "GINE":
+        model = GINEStack(
+            "inv_node_feat, equiv_node_feat, edge_index",
+            "inv_node_feat, edge_index",
+            edge_dim,
+            input_dim,
+            hidden_dim,
+            output_dim,
+            edge_embed_dim,
+            lpe_dim,
+            pe_dim,
+            ce_dim,
+            rel_pe_dim,
+            global_attn_engine,
+            global_attn_type,
+            global_attn_heads,
+            output_type,
+            output_heads,
+            activation_function,
+            loss_function_type,
+            equivariance,
+            loss_weights=task_weights,
+            freeze_conv=freeze_conv,
+            initial_bias=initial_bias,
+            num_conv_layers=num_conv_layers,
+            num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "PNA":
@@ -175,6 +211,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -192,6 +229,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "PNAPlus":
@@ -212,6 +250,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -229,6 +268,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "GAT":
@@ -244,6 +284,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -261,6 +302,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "MFC":
@@ -272,6 +314,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -289,6 +332,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "CGCNN":
@@ -299,6 +343,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -316,6 +361,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "SAGE":
@@ -325,6 +371,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -341,6 +388,7 @@ def create_model(
             freeze_conv=freeze_conv,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "SchNet":
@@ -357,6 +405,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -375,6 +424,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "DimeNet":
@@ -405,6 +455,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -423,6 +474,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "EGNN":
@@ -433,6 +485,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -451,6 +504,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "PAINN":
@@ -464,6 +518,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -480,6 +535,7 @@ def create_model(
             freeze_conv=freeze_conv,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "PNAEq":
@@ -494,6 +550,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -510,6 +567,7 @@ def create_model(
             freeze_conv=freeze_conv,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
 
     elif mpnn_type == "MACE":
@@ -535,6 +593,7 @@ def create_model(
             input_dim,
             hidden_dim,
             output_dim,
+            edge_embed_dim,
             lpe_dim,
             pe_dim,
             ce_dim,
@@ -552,6 +611,7 @@ def create_model(
             initial_bias=initial_bias,
             num_conv_layers=num_conv_layers,
             num_nodes=num_nodes,
+            use_encodings=use_encodings,
         )
     else:
         raise ValueError("Unknown mpnn_type: {0}".format(mpnn_type))

@@ -34,7 +34,7 @@ def update_config(config, train_loader, val_loader, test_loader):
 
     if "Dataset" in config:
         check_output_dim_consistent(train_loader.dataset[0], config)
-
+    
     # Set default values for GPS variables
     if "global_attn_engine" not in config["NeuralNetwork"]["Architecture"]:
         config["NeuralNetwork"]["Architecture"]["global_attn_engine"] = None
@@ -44,6 +44,14 @@ def update_config(config, train_loader, val_loader, test_loader):
         config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = 0
     if "pe_dim" not in config["NeuralNetwork"]["Architecture"]:
         config["NeuralNetwork"]["Architecture"]["pe_dim"] = 0
+
+    # Set default value of use_encodings variable
+    if "use_encodings" not in config["NeuralNetwork"]["Architecture"]:
+        config["NeuralNetwork"]["Architecture"]["use_encodings"] = False
+
+    # Set default value of edge_embed_dim variable
+    if "edge_embed_dim" not in config["NeuralNetwork"]["Architecture"]:
+        config["NeuralNetwork"]["Architecture"]["edge_embed_dim"] = 0
 
     # update output_heads with latest config rules
     config["NeuralNetwork"]["Architecture"]["output_heads"] = update_multibranch_heads(
@@ -174,6 +182,7 @@ def update_config_equivariance(config):
 def update_config_edge_dim(config):
     config["edge_dim"] = None
     edge_models = [
+        "GINE",
         "GAT",
         "PNA",
         "PNAPlus",
@@ -188,7 +197,7 @@ def update_config_edge_dim(config):
     if "edge_features" in config and config["edge_features"]:
         assert (
             config["mpnn_type"] in edge_models
-        ), "Edge features can only be used with GAT, PNA, PNAPlus, PAINN, PNAEq, CGCNN, SchNet, EGNN, DimeNet, MACE."
+        ), "Edge features can only be used with GINE, GAT, PNA, PNAPlus, PAINN, PNAEq, CGCNN, SchNet, EGNN, DimeNet, MACE."
         config["edge_dim"] = len(config["edge_features"])
     elif config["mpnn_type"] == "CGCNN":
         # CG always needs an integer edge_dim
