@@ -47,6 +47,7 @@ def main():
     parser.add_argument("--inputfile", help="input file", type=str, default="niaid.json")
     parser.add_argument("--mpnn_type", help="mpnn_type", default="PNA")
     parser.add_argument("--hidden_dim", type=int, help="hidden_dim", default=64)
+    parser.add_argument("--edge_embed_dim", type=int, help="edge_embed_dim", default=0)
     parser.add_argument(
         "--num_conv_layers", type=int, help="num_conv_layers", default=2
     )
@@ -103,6 +104,7 @@ def main():
     config["NeuralNetwork"]["Architecture"]["global_attn_heads"] = args.parameters["global_attn_heads"]
     config["NeuralNetwork"]["Architecture"]["mpnn_type"] = args.parameters["mpnn_type"]
     config["NeuralNetwork"]["Architecture"]["hidden_dim"] = args.parameters["hidden_dim"]
+    config["NeuralNetwork"]["Architecture"]["edge_embed_dim"] = args.parameters["edge_embed_dim"]
     config["NeuralNetwork"]["Architecture"]["num_conv_layers"] = args.parameters[
         "num_conv_layers"
     ]
@@ -199,6 +201,7 @@ def main():
     )
 
     # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
     config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
     config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
     config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]

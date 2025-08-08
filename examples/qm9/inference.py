@@ -3,20 +3,20 @@ import logging
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-from mpi4py import MPI
+# from mpi4py import MPI
 import numpy as np
 from collections import OrderedDict
 from tqdm import tqdm
 from scipy.stats import pearsonr
 
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
-import torch_geometric
-from torch_geometric.transforms import AddLaplacianEigenvectorPE
+from torch_geometric.utils import k_hop_subgraph
+
 
 import hydragnn
 from hydragnn.utils.model import print_model
@@ -36,26 +36,8 @@ except ImportError:
 
 def info(*args, logtype="info", sep=" "):
     getattr(logging, logtype)(sep.join(map(str, args)))
-
-# Update each sample prior to loading.
-def qm9_pre_transform(data, transform):
-    # LPE
-    data = transform(data)
-    # Set descriptor as element type.
-    data.x = data.z.float().view(-1, 1)
-    # Only predict free energy (index 10 of 19 properties) for this run.
-    data.y = data.y[:, 10] / len(data.x)
-    graph_features_dim = [1]
-    node_feature_dim = [1]
-    # gps requires relative edge features, introduced rel_lapPe as edge encodings
-    source_pe = data.pe[data.edge_index[0]]
-    target_pe = data.pe[data.edge_index[1]]
-    data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
-    return data
-
-
-def qm9_pre_filter(data):
-    return data.idx < 1e8
+def info(*args, logtype="info", sep=" "):
+    getattr(logging, logtype)(sep.join(map(str, args)))
 
 def load_existing_model(model, path):
     path_name = os.path.join(path, path.split('/')[-1] + ".pk")
@@ -113,35 +95,55 @@ def main(dir_path, format='pickle', ddstore=False,
 
     # Always initialize for multi-rank training.
     world_size, world_rank = hydragnn.utils.distributed.setup_ddp()
-    
-    # Preprocess configurations for edge computation
-    arch_config = config["NeuralNetwork"]["Architecture"]
-    compute_edges = hydragnn.preprocess.get_radius_graph_config(arch_config)
 
-   # LPE
-    transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
-        attr_name="pe",
-        is_undirected=True,
-    )
+    if format == "adios":
+        info("Adios load")
+        assert not (shmem and ddstore), "Cannot use both ddstore and shmem"
+        opt = {
+            "preload": False,
+            "shmem": shmem,
+            "ddstore": ddstore,
+            "ddstore_width": ddstore_width,
+        }
+        fname = os.path.join(os.path.dirname(__file__), "./dataset/%s.bp" % modelname)
+        trainset = AdiosDataset(fname, "trainset", comm, **opt, var_config=var_config)
+        valset = AdiosDataset(fname, "valset", comm, **opt, var_config=var_config)
+        testset = AdiosDataset(fname, "testset", comm, **opt, var_config=var_config)
+    elif format == "pickle":
+        info("Pickle load")
+        basedir = os.path.join(
+            os.path.dirname(__file__), "dataset", "%s.pickle" % modelname
+        )
+        trainset = SimplePickleDataset(
+            basedir=basedir, label="trainset", var_config=var_config
+        )
+        valset = SimplePickleDataset(
+            basedir=basedir, label="valset", var_config=var_config
+        )
+        testset = SimplePickleDataset(
+            basedir=basedir, label="testset", var_config=var_config
+        )
+        pna_deg = trainset.pna_deg
+        if ddstore:
+            opt = {"ddstore_width": ddstore_width}
+            trainset = DistDataset(trainset, "trainset", comm, **opt)
+            valset = DistDataset(valset, "valset", comm, **opt)
+            testset = DistDataset(testset, "testset", comm, **opt)
+            trainset.pna_deg = pna_deg
+    else:
+        raise NotImplementedError("No supported format: %s" % (format))
 
-    # Use built-in torch_geometric datasets.
-    # Filter function above used to run quick example.
-    # NOTE: data is moved to the device in the pre-transform.
-    # NOTE: transforms/filters will NOT be re-run unless the qm9/processed/ directory is removed.
-    dataset = torch_geometric.datasets.QM9(
-        root="dataset/qm9",
-        pre_transform=lambda data: qm9_pre_transform(data, transform),
-        pre_filter=qm9_pre_filter,
-    )
-
-    trainset, valset, testset = hydragnn.preprocess.split_dataset(
-        dataset, config["NeuralNetwork"]["Training"]["perc_train"], False
-    )
     info(
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
+
+
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
 
     if ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
@@ -318,6 +320,44 @@ def main(dir_path, format='pickle', ddstore=False,
         print(f"Inference complete. Plots saved to '{dir_path}' directory.")
 
 if __name__ == "__main__":
-    dir_path = 'HPO_wogps/logs/qm9_hpo_trials_0.127'
+    parser = argparse.ArgumentParser(
+        description="Run HydraGNN Inference."
+    )
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
+        "--adios",
+        help="Adios dataset",
+        action="store_const",
+        dest="format",
+        const="adios",
+    )
+    group.add_argument(
+        "--pickle",
+        help="Pickle dataset",
+        action="store_const",
+        dest="format",
+        const="pickle",
+    )
+    parser.set_defaults(format="pickle")
+    parser.add_argument(
+        "--ddstore",
+        action="store_true", 
+        help="ddstore dataset"
+    )
+    parser.add_argument(
+        "--ddstore_width", 
+        type=int, 
+        help="ddstore width", 
+        default=None
+    )
+    parser.add_argument(
+        "--shmem", 
+        action="store_true", 
+        help="shmem"
+    )
+    args = parser.parse_args()
 
-    main(dir_path)
+    dir_path = 'hpo_backup/exp3/logs/qm9_hpo_trials_0.95'
+
+    main(dir_path, format=args.format, ddstore=args.ddstore, 
+        ddstore_width=args.ddstore_width, shmem=args.shmem)

@@ -2,14 +2,14 @@ import os, sys, json, pdb, math, pickle
 import logging
 import argparse
 import random
-from mpi4py import MPI
+# from mpi4py import MPI
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -80,7 +80,7 @@ class PPA_enc(AbstractBaseDataset):
                 if has_nan:
                     raise ValueError("NaN persists")
                 data.x = torch.ones((data.num_nodes, 1), dtype=torch.float32, device=data.edge_index.device) #dummy node feats for compatibility
-                data.y = data.y.to(torch.float32)
+                data.y = torch.nn.functional.one_hot( data.y, num_classes=37 ).squeeze(1).to(torch.float32) #one-hot targets for 37-way multi-class classification
                 data.num_nodes = torch.tensor([data.num_nodes])
                 self.trainset.append( data )
             except:
@@ -96,7 +96,7 @@ class PPA_enc(AbstractBaseDataset):
                 if has_nan:
                     raise ValueError("NaN persists")
                 data.x = torch.ones((data.num_nodes, 1), dtype=torch.float32, device=data.edge_index.device) #dummy node feats for compatibility
-                data.y = data.y.to(torch.float32)
+                data.y = torch.nn.functional.one_hot( data.y, num_classes=37 ).squeeze(1).to(torch.float32) #one-hot targets for 37-way multi-class classification
                 data.num_nodes = torch.tensor([data.num_nodes])                
                 self.valset.append( data )
             except:
@@ -112,7 +112,7 @@ class PPA_enc(AbstractBaseDataset):
                 if has_nan:
                     raise ValueError("NaN persists")
                 data.x = torch.ones((data.num_nodes, 1), dtype=torch.float32, device=data.edge_index.device) #dummy node feats for compatibility
-                data.y = data.y.to(torch.float32)
+                data.y = torch.nn.functional.one_hot( data.y, num_classes=37 ).squeeze(1).to(torch.float32) #one-hot targets for 37-way multi-class classification
                 data.num_nodes = torch.tensor([data.num_nodes])
                 self.testset.append( data )
             except:

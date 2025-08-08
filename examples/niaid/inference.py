@@ -3,18 +3,20 @@ import logging
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-from mpi4py import MPI
+# from mpi4py import MPI
 import numpy as np
 from collections import OrderedDict
 from tqdm import tqdm
 from scipy.stats import pearsonr
 
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
+from torch_geometric.utils import k_hop_subgraph
+
 
 import hydragnn
 from hydragnn.utils.model import print_model
@@ -32,6 +34,8 @@ try:
 except ImportError:
     pass
 
+def info(*args, logtype="info", sep=" "):
+    getattr(logging, logtype)(sep.join(map(str, args)))
 def info(*args, logtype="info", sep=" "):
     getattr(logging, logtype)(sep.join(map(str, args)))
 
@@ -134,12 +138,18 @@ def main(dir_path, format='pickle', ddstore=False,
         % (len(trainset), len(valset), len(testset))
     )
 
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
+
     if ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
         os.environ["HYDRAGNN_USE_ddstore"] = "1"
 
     # Batch size for current system
-    with open("tmqm.json", "r") as f:
+    with open("niaid.json", "r") as f:
         config_sys = json.load(f)
 
     (train_loader, val_loader, test_loader,) = hydragnn.preprocess.create_dataloaders(
@@ -346,7 +356,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    dir_path = 'HPO_wogps/logs/niaid_hpo_trials_0.94'
+    dir_path = 'hpo_backup/exp3/logs/niaid_hpo_trials_0.110'
 
     main(dir_path, format=args.format, ddstore=args.ddstore, 
         ddstore_width=args.ddstore_width, shmem=args.shmem)

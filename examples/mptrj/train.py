@@ -1,7 +1,7 @@
 import os, json
 import logging
 import sys
-from mpi4py import MPI
+# from mpi4py import MPI
 import argparse
 
 import numpy as np
@@ -9,6 +9,8 @@ import numpy as np
 import random
 
 import torch
+torch.cuda.init()
+from mpi4py import MPI
 
 # FIX random seed
 random_state = 0
@@ -63,11 +65,11 @@ def info(*args, logtype="info", sep=" "):
 
 
 # transform_coordinates = Spherical(norm=False, cat=False)
-transform_coordinates = LocalCartesian(norm=False, cat=False)
-# transform_coordinates = Distance(norm=False, cat=False)
+# transform_coordinates = LocalCartesian(norm=False, cat=False)
+transform_coordinates = Distance(norm=False, cat=False)
 
-transform_coordinates_pbc = PBCLocalCartesian(norm=False, cat=False)
-# transform_coordinates_pbc = PBCDistance(norm=False, cat=False)
+# transform_coordinates_pbc = PBCLocalCartesian(norm=False, cat=False)
+transform_coordinates_pbc = PBCDistance(norm=False, cat=False)
 
 
 class MPTrjDataset(AbstractBaseDataset):
@@ -344,32 +346,6 @@ if __name__ == "__main__":
     var_config["node_feature_names"] = node_feature_names
     var_config["node_feature_dims"] = node_feature_dims
 
-    # Transformation to create positional and structural laplacian encoders
-    # Chemical encoder
-    ChemEncoder = ChemicalFeatureEncoder()
-
-    # LPE
-    lpe_transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
-        attr_name="lpe",
-        is_undirected=True,
-    )
-    """
-    graphgps_transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
-        attr_name="pe",
-        is_undirected=True,
-    )
-    """
-    def graphgps_transform(data):
-        try:
-            data = lpe_transform(data) #lapPE
-        except:
-            return
-        data = ChemEncoder.compute_chem_features(data)
-        data = compute_topo_features(data)
-        return data
-
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
 
@@ -394,7 +370,28 @@ if __name__ == "__main__":
     log("Command: {0}\n".format(" ".join([x for x in sys.argv])), rank=0)
 
     modelname = "MPTrj" if args.modelname is None else args.modelname
+
     if args.preonly:
+        # Transformation to create positional and structural laplacian encoders
+        # Chemical encoder
+        ChemEncoder = ChemicalFeatureEncoder()
+
+        # LPE
+        lpe_transform = AddLaplacianEigenvectorPE(
+            k=config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
+            attr_name="lpe",
+            is_undirected=True,
+        )
+
+        def graphgps_transform(data):
+            try:
+                data = lpe_transform(data) #lapPE
+            except:
+                return
+            data = ChemEncoder.compute_chem_features(data)
+            data = compute_topo_features(data)
+            return data
+
         ## local data
         total = MPTrjDataset(
             os.path.join(datadir),

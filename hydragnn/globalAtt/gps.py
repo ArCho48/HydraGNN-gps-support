@@ -26,8 +26,29 @@ from torch_geometric.nn.resolver import (
     normalization_resolver,
 )
 from torch_geometric.typing import Adj
-from torch_geometric.utils import to_dense_batch
+from torch_geometric.utils import to_dense_batch, to_dense_adj
 
+# def make_high_centrality_edge_mask_from_eig(
+#     edge_index, batch, node_eig,
+#     L, keep_pct=0.10):
+#     c_batch, pad_mask = to_dense_batch(node_eig, batch, max_num_nodes=L)
+#     c_batch = torch.exp(c_batch)
+#     cent_prod = c_batch.unsqueeze(2) * c_batch.unsqueeze(1)  
+#     adj = to_dense_adj(edge_index, batch, max_num_nodes=L).squeeze(dim=0)
+#     edge_bool = adj.bool()
+#     # idx = torch.arange(L, device=edge_bool.device)
+#     # edge_bool[:, idx, idx] = True             # block self‐loops
+#     cent_prod = cent_prod.masked_fill(edge_bool, 0.0)
+#     valid_row = pad_mask.unsqueeze(2)           
+#     valid_col = pad_mask.unsqueeze(1)           
+#     valid_both = valid_row & valid_col          
+#     cent_prod = cent_prod.masked_fill(~valid_both, 0.0)
+#     flat = cent_prod.flatten(1)
+#     thresh = torch.quantile(flat, 1.0 - keep_pct, dim=1, keepdim=True)
+#     thresh = thresh.unsqueeze(-1)
+#     new_edge_bool = cent_prod >= thresh
+
+#     return new_edge_bool
 
 class GPSConv(torch.nn.Module):
     def __init__(
@@ -104,12 +125,17 @@ class GPSConv(torch.nn.Module):
         self,
         inv_node_feat: Tensor,
         equiv_node_feat: Tensor,
-        graph_batch: Optional[torch.Tensor] = None,
         **kwargs,
     ) -> Tensor:
-        """Runs the forward pass of the module."""
+        # Extract keyword args for transformer
+        graph_batch = kwargs.get('batch', None)
+        edge_index = kwargs.get('edge_index', None)
+        edge_index = torch.reshape(edge_index, [2,-1])
+        # node_eig = kwargs.get('eig_cent', None)
+
+        # Local MPNN 
         hs = []
-        if self.conv is not None:  # Local MPNN.
+        if self.conv is not None:  
             h, equiv_node_feat = self.conv(
                 inv_node_feat=inv_node_feat, equiv_node_feat=equiv_node_feat, **kwargs
             )
@@ -122,15 +148,27 @@ class GPSConv(torch.nn.Module):
                     h = self.norm1(h)
             hs.append(h)
 
-        # Global attention transformer-style model.
-        h, mask = to_dense_batch(inv_node_feat, graph_batch)
+        # Key padding mask
+        h, padding_mask = to_dense_batch(inv_node_feat, graph_batch)
 
+        # Attention mask
+        # adj = to_dense_adj(edge_index, batch=graph_batch, max_num_nodes=h.shape[1]).to(h.device).bool()
+        # eig_mask = ~make_high_centrality_edge_mask_from_eig(edge_index=edge_index, node_eig=node_eig, batch=graph_batch, L=h.shape[1])
+        # attention_mask = adj.bool() | eig_mask # allowed edges ∪ new edges
+        # idx = torch.arange(h.shape[1], device=h.device)
+        # attention_mask[:, idx, idx] = True
+        # attention_mask = ~attention_mask
+        # attention_mask = attention_mask.repeat_interleave(self.heads, dim=0)
+        # attention_mask = adj.repeat_interleave(self.heads, dim=0)
+
+        # Global-Attention Transformer
         if isinstance(self.attn, torch.nn.MultiheadAttention):
-            h, _ = self.attn(h, h, h, key_padding_mask=~mask, need_weights=False)
+            # h, _ = self.attn(h, h, h, key_padding_mask=~padding_mask, attn_mask=attention_mask, need_weights=False)
+            h, _ = self.attn(h, h, h, key_padding_mask=~padding_mask, need_weights=False)
         elif isinstance(self.attn, PerformerAttention):
-            h = self.attn(h, mask=mask)
+            h = self.attn(h, mask=padding_mask)
 
-        h = h[mask]
+        h = h[padding_mask]
         h = F.dropout(h, p=self.dropout, training=self.training)
         h = h + inv_node_feat  # Residual connection.
         if self.norm2 is not None:

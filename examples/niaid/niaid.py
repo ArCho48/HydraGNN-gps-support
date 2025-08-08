@@ -3,7 +3,7 @@ import logging
 import argparse
 import random
 import numpy as np
-from mpi4py import MPI
+# from mpi4py import MPI
 import pandas as pd
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
@@ -11,8 +11,8 @@ import numpy as np
 
 import random
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -63,17 +63,6 @@ reverse_pt = reverse_dict(periodic_table)
 
 def get_atomic_number(symbol):
     return reverse_pt.get(symbol)
-
-# # Update each sample prior to loading.
-# def niaid_pre_transform(data, transform):
-#     # LPE
-#     data = transform(data)
-
-#     # gps requires relative edge features, introduced rel_lapPe as edge encodings
-#     source_pe = data.pe[data.edge_index[0]]
-#     target_pe = data.pe[data.edge_index[1]]
-#     data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
-#     return data
 
 class niaid(AbstractBaseDataset):
     def __init__(
@@ -291,7 +280,7 @@ def main(preonly=False, format='pickle', ddstore=False,
     # Always initialize for multi-rank training.
     world_size, world_rank = hydragnn.utils.distributed.setup_ddp()
 
-    log_name = f"niaid_test_{mpnn_type}" if mpnn_type else "niaid_test"
+    log_name = f"niaid_test_{mpnn_type}" if mpnn_type else "niaid_exp"
     # Enable print to log file.
     hydragnn.utils.print.print_utils.setup_log(log_name)
 

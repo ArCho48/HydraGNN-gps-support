@@ -448,6 +448,9 @@ class MACEStack(Base):
             "edge_index": data.edge_index,
         }
 
+        # Batch indices necessary for masking inputs to Transformer
+        conv_args.update({"batch": data.batch})
+
         x, _, conv_args = self.feature_embedder(data, conv_args)
         return (x[:, : self.hidden_dim], x[:, self.hidden_dim :], conv_args)
 

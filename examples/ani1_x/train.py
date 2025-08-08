@@ -1,13 +1,15 @@
-import os, json
+import os, json, pdb
 import logging
 import sys
-from mpi4py import MPI
+# from mpi4py import MPI
 import argparse
 
 import numpy as np
 
 import random
 import torch
+torch.cuda.init()
+from mpi4py import MPI
 
 # FIX random seed
 random_state = 0
@@ -58,8 +60,8 @@ def info(*args, logtype="info", sep=" "):
 
 
 # transform_coordinates = Spherical(norm=False, cat=False)
-transform_coordinates = LocalCartesian(norm=False, cat=False)
-# transform_coordinates = Distance(norm=False, cat=False)
+# transform_coordinates = LocalCartesian(norm=False, cat=False)
+transform_coordinates = Distance(norm=False, cat=False)
 
 
 class ANI1xDataset(AbstractBaseDataset):
@@ -171,7 +173,7 @@ class ANI1xDataset(AbstractBaseDataset):
                 """
 
                 data_object = Data(
-                    dataset_name="ani1x",
+                    dataset_name="ANI1x",
                     natoms=natoms,
                     pos=pos,
                     cell=cell,  # even if not needed, cell needs to be defined because ADIOS requires consistency across datasets
@@ -326,32 +328,6 @@ if __name__ == "__main__":
     var_config["node_feature_names"] = node_feature_names
     var_config["node_feature_dims"] = node_feature_dims
 
-    # Transformation to create positional and structural laplacian encoders
-    # Chemical encoder
-    ChemEncoder = ChemicalFeatureEncoder()
-
-    # LPE
-    lpe_transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
-        attr_name="lpe",
-        is_undirected=True,
-    )
-    """
-    graphgps_transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
-        attr_name="pe",
-        is_undirected=True,
-    )
-    """
-    def graphgps_transform(data):
-        try:
-            data = lpe_transform(data) #lapPE
-        except:
-            return
-        data = ChemEncoder.compute_chem_features(data)
-        data = compute_topo_features(data)
-        return data
-
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
 
@@ -377,6 +353,26 @@ if __name__ == "__main__":
 
     modelname = "ANI1x" if args.modelname is None else args.modelname
     if args.preonly:
+        # Transformation to create positional and structural laplacian encoders
+        # Chemical encoder
+        ChemEncoder = ChemicalFeatureEncoder()
+
+        # LPE
+        lpe_transform = AddLaplacianEigenvectorPE(
+            k=config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
+            attr_name="lpe",
+            is_undirected=True,
+        )
+
+        def graphgps_transform(data):
+            try:
+                data = lpe_transform(data) #lapPE
+            except:
+                return
+            data = ChemEncoder.compute_chem_features(data)
+            data = compute_topo_features(data)
+            return data
+
         ## local data
         total = ANI1xDataset(
             os.path.join(datadir),

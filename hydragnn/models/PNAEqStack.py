@@ -202,6 +202,9 @@ class PNAEqStack(Base):
 
         x, _, conv_args = self.feature_embedder(data, conv_args)
 
+        # Batch indices necessary for masking inputs to Transformer
+        conv_args.update({"batch": data.batch})
+
         # Instantiate tensor to hold equivariant traits
         v = torch.zeros(x.size(0), 3, x.size(1), device=x.device)
         return x, v, conv_args

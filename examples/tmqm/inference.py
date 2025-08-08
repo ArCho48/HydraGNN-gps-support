@@ -3,15 +3,15 @@ import logging
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-from mpi4py import MPI
+# from mpi4py import MPI
 import numpy as np
 from collections import OrderedDict
 from tqdm import tqdm
 from scipy.stats import pearsonr
 
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -34,6 +34,8 @@ try:
 except ImportError:
     pass
 
+def info(*args, logtype="info", sep=" "):
+    getattr(logging, logtype)(sep.join(map(str, args)))
 def info(*args, logtype="info", sep=" "):
     getattr(logging, logtype)(sep.join(map(str, args)))
 
@@ -135,6 +137,12 @@ def main(dir_path, format='pickle', ddstore=False,
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
+
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
 
     if ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
@@ -348,7 +356,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    dir_path = 'HPO_wgps/logs/tmqm_hpo_trials_0.52'
+    dir_path = 'logs/tmqm_test_unmasked'#'hpo_backup/exp2/logs/tmqm_hpo_trials_0.48'
 
     main(dir_path, format=args.format, ddstore=args.ddstore, 
         ddstore_width=args.ddstore_width, shmem=args.shmem)

@@ -12,9 +12,11 @@
             "max_neighbours": 5,
             "periodic_boundary_conditions": false,
             "num_laplacian_eigs": 2,
-            "global_attn_heads": 2,
-            "hidden_dim": 8,
-            "num_conv_layers": 6,
+            "global_attn_heads": 4,
+            "hidden_dim": 32,
+            "edge_embed_dim": 0,
+            "num_conv_layers": 2,
+            "use_encodings": false,
             "edge_features": ["single","double","triple","aromatic"],
             "int_emb_size": 32,
             "out_emb_size": 16,
@@ -48,14 +50,14 @@
             "denormalize_output": false
         },
         "Training": {
-            "num_epoch": 50,
+            "num_epoch": 100,
             "perc_train": 0.7,
             "loss_function_type": "mse",
             "batch_size": 8,
             "continue": 0,
-            "EarlyStopping": false,
+            "EarlyStopping": true,
             "Checkpoint": true,
-            "startfrom": "existing_model",
+            "startfrom": "qm9_test",
             "Optimizer": {
                 "type": "AdamW",
                 "learning_rate": 1e-3

@@ -119,6 +119,9 @@ class PNAPlusStack(Base):
             ), "Data must have edge attributes if use_edge_attributes is set."
             conv_args.update({"edge_attr": data.edge_attr})
 
+        # Batch indices necessary for masking inputs to Transformer
+        conv_args.update({"batch": data.batch})
+
         return self.feature_embedder(data, conv_args) 
 
     def __str__(self):

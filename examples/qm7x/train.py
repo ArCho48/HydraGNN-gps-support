@@ -29,6 +29,8 @@ from hydragnn.preprocess.graph_samples_checks_and_updates import gather_deg
 import numpy as np
 
 import torch
+# torch.cuda.init()
+# from mpi4py import MPI
 
 # FIX random seed
 random_state = 0
@@ -76,8 +78,8 @@ def info(*args, logtype="info", sep=" "):
 
 
 # transform_coordinates = Spherical(norm=False, cat=False)
-transform_coordinates = LocalCartesian(norm=False, cat=False)
-# transform_coordinates = Distance(norm=False, cat=False)
+# transform_coordinates = LocalCartesian(norm=False, cat=False)
+transform_coordinates = Distance(norm=False, cat=False)
 
 
 from hydragnn.utils.datasets.abstractbasedataset import AbstractBaseDataset
@@ -131,7 +133,9 @@ class QM7XDataset(AbstractBaseDataset):
                 for line in lines:
                     dirlist.append(line.rstrip())
 
-        setids_files = [x for x in dirfiles if x.endswith("hdf5")]
+        # setids_files = [x for x in dirfiles if x.endswith("hdf5")]
+        setids_files = ['1000', '2000', '3000', '4000', '5000', '6000', '7000', '8000']
+        # setids_files = [setid+'.hdf5' for setid in set_ids]
 
         self.read_setids(dirpath, setids_files)
 
@@ -264,7 +268,7 @@ class QM7XDataset(AbstractBaseDataset):
                 """
 
                 data_object = Data(
-                    dataset_name="qm7x",
+                    dataset_name="QM7-X",
                     natoms=natoms,
                     pos=pos,
                     cell=cell,  # even if not needed, cell needs to be defined because ADIOS requires consistency across datasets
@@ -397,23 +401,6 @@ if __name__ == "__main__":
     var_config["node_feature_names"] = node_feature_names
     var_config["node_feature_dims"] = node_feature_dims
 
-    # Transformation to create positional and structural laplacian encoders
-    """
-    graphgps_transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
-        attr_name="pe",
-        is_undirected=True,
-    )
-    """
-    def graphgps_transform(data):
-        # try:
-        data = lpe_transform(data) #lapPE
-        # except:
-        #     return
-        data = ChemEncoder.compute_chem_features(data)
-        data = compute_topo_features(data)
-        return data
-
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
 
@@ -437,8 +424,27 @@ if __name__ == "__main__":
 
     log("Command: {0}\n".format(" ".join([x for x in sys.argv])), rank=0)
 
-    modelname = "qm7x"
+    modelname = "QM7-X"
     if args.preonly:
+        # Transformation to create positional and structural laplacian encoders
+        # Chemical encoder
+        ChemEncoder = ChemicalFeatureEncoder()
+
+        # LPE
+        lpe_transform = AddLaplacianEigenvectorPE(
+            k=config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
+            attr_name="lpe",
+            is_undirected=True,
+        )
+
+        def graphgps_transform(data):
+            # try:
+            data = lpe_transform(data) #lapPE
+            # except:
+            #     return
+            data = ChemEncoder.compute_chem_features(data)
+            data = compute_topo_features(data)
+            return data
 
         ## local data
         total = QM7XDataset(
@@ -527,7 +533,6 @@ if __name__ == "__main__":
         trainset = AdiosDataset(fname, "trainset", comm, **opt, var_config=var_config)
         valset = AdiosDataset(fname, "valset", comm, **opt, var_config=var_config)
         testset = AdiosDataset(fname, "testset", comm, **opt, var_config=var_config)
-
     elif args.format == "pickle":
         info("Pickle load")
         basedir = os.path.join(
@@ -560,6 +565,12 @@ if __name__ == "__main__":
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
+
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
 
     if args.ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"

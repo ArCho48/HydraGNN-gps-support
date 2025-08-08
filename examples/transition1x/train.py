@@ -16,6 +16,8 @@ import argparse
 import numpy as np
 
 import torch
+# torch.cuda.init()
+# from mpi4py import MPI
 import torch.distributed as dist
 
 from torch_geometric.data import Data
@@ -65,8 +67,8 @@ def info(*args, logtype="info", sep=" "):
 
 # FIXME: this radis cutoff overwrites the radius cutoff currently written in the JSON file
 # transform_coordinates = Spherical(norm=False, cat=False)
-transform_coordinates = LocalCartesian(norm=False, cat=False)
-# transform_coordinates = Distance(norm=False, cat=False)
+# transform_coordinates = LocalCartesian(norm=False, cat=False)
+transform_coordinates = Distance(norm=False, cat=False)
 
 
 class Transition1xDataset(AbstractBaseDataset):
@@ -347,23 +349,6 @@ if __name__ == "__main__":
     var_config["node_feature_names"] = node_feature_names
     var_config["node_feature_dims"] = node_feature_dims
 
-    # Transformation to create positional and structural laplacian encoders
-    """
-    graphgps_transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
-        attr_name="pe",
-        is_undirected=True,
-    )
-    """
-    def graphgps_transform(data):
-        # try:
-        data = lpe_transform(data) #lapPE
-        # except:
-        #     return
-        data = ChemEncoder.compute_chem_features(data)
-        data = compute_topo_features(data)
-        return data
-
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
 
@@ -389,6 +374,31 @@ if __name__ == "__main__":
 
     modelname = "transition1x"
     if args.preonly:
+        # Transformation to create positional and structural laplacian encoders
+        # Chemical encoder
+        ChemEncoder = ChemicalFeatureEncoder()
+
+        # LPE
+        lpe_transform = AddLaplacianEigenvectorPE(
+            k=config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
+            attr_name="lpe",
+            is_undirected=True,
+        )
+        """
+        graphgps_transform = AddLaplacianEigenvectorPE(
+            k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
+            attr_name="pe",
+            is_undirected=True,
+        )
+        """
+        def graphgps_transform(data):
+            # try:
+            data = lpe_transform(data) #lapPE
+            # except:
+            #     return
+            data = ChemEncoder.compute_chem_features(data)
+            data = compute_topo_features(data)
+            return data
 
         ## local data
         total = Transition1xDataset(

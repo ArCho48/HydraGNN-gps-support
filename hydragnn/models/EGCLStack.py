@@ -126,6 +126,9 @@ class EGCLStack(Base):
                 "edge_attr": None,
             }
 
+        # Batch indices necessary for masking inputs to Transformer
+        conv_args.update({"batch": data.batch})
+        
         return self.feature_embedder(data, conv_args)
 
     def __str__(self):

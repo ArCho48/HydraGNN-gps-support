@@ -147,7 +147,7 @@ class Base(Module):
         if self.global_attn_engine:
             self.use_global_attn = True
             self.embed_dim = hidden_dim
-            self.edge_embed_dim = edge_embed_dim if edge_embed_dim > 0 else hidden_dim
+            self.edge_embed_dim = edge_embed_dim if edge_embed_dim > 0 else self.edge_dim
             if self.is_edge_model:
                 if "edge_attr" not in self.input_args:
                     self.input_args += ", edge_attr"
@@ -231,6 +231,9 @@ class Base(Module):
                 data.edge_attr is not None
             ), "Data must have edge attributes if use_edge_attributes is set."
             conv_args.update({"edge_attr": data.edge_attr})
+
+        # Batch indices necessary for masking inputs to Transformer
+        conv_args.update({"batch": data.batch})
 
         return self.feature_embedder(data, conv_args)
 

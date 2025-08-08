@@ -14,7 +14,9 @@
             "num_laplacian_eigs": 5,
             "global_attn_heads": 4,
             "hidden_dim": 32,
+            "edge_embed_dim": 0,
             "num_conv_layers": 2,
+            "use_encodings": false,
             "edge_features": ["bond_type", "bond_stereo", "is_conjugated"],
             "int_emb_size": 32,
             "out_emb_size": 16,
@@ -48,11 +50,11 @@
             "denormalize_output": false
         },
         "Training": {
-            "num_epoch": 50,
+            "num_epoch": 100,
             "loss_function_type": "bce_logits",
             "batch_size": 8,
             "continue": 0,
-            "EarlyStopping": false,
+            "EarlyStopping": true,
             "Checkpoint": true,
             "startfrom": "pcba_test",
             "Optimizer": {

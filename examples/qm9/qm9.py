@@ -2,14 +2,14 @@ import os, sys, json, pdb, math
 import logging
 import argparse
 import random
-from mpi4py import MPI
+# from mpi4py import MPI
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from multiprocessing import Pool, cpu_count
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
@@ -71,6 +71,7 @@ class QM9_enc(AbstractBaseDataset):
             data.x = data.z.float().view(-1, 1)
             data.y = data.y[:,:12].float()
             data.y[:,6:11] = data.y[:,6:11] / len(data.x)
+            data.y = data.y.reshape([-1,1])
             del data.z
             del data.smiles
             del data.name
@@ -238,7 +239,7 @@ def main(preonly=False, format='pickle', ddstore=False,
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
-
+    pdb.set_trace()
     # Update encoding dimensions
     config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
     config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]

@@ -7,7 +7,6 @@
             "global_attn_engine": "GPS",
             "global_attn_type": "multihead",
             "mpnn_type": "EGNN",
-            "equivariance": true,
             "radius": 10.0,
             "max_neighbours": 10,
             "num_gaussians": 50,
@@ -22,7 +21,9 @@
             "num_filters": 126,
             "edge_features": ["length"],
             "hidden_dim": 50,
+            "edge_embed_dim": 0,
             "num_conv_layers": 3,
+            "use_encodings": false,
             "global_attn_heads": 2,
             "num_laplacian_eigs": 3,
             "output_heads": {
@@ -39,7 +40,8 @@
             "input_node_features": [0, 1, 2, 3],
             "output_names": ["energy"],
             "output_index": [0],
-            "output_dim": [1],
+            "graph_feature_dims": [1],
+            "node_feature_dims": [1, 3, 3],
             "type": ["graph"]
         },
         "Training": {
@@ -48,6 +50,8 @@
             "loss_function_type": "mae",
             "batch_size": 32,
             "continue": 0,
+            "EarlyStopping": true,
+            "Checkpoint": true,
             "Optimizer": {
                 "type": "AdamW",
                 "learning_rate": 1e-3

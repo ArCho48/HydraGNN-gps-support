@@ -11,6 +11,8 @@ import numpy as np
 import random
 
 import torch
+# torch.cuda.init()
+# from mpi4py import MPI
 from torch_geometric.data import Data
 from torch_geometric.transforms import AddLaplacianEigenvectorPE
 from hydragnn.utils.descriptors_and_embeddings.chemicaldescriptors import ChemicalFeatureEncoder
@@ -75,11 +77,11 @@ periodic_table = generate_dictionary_elements()
 reversed_dict_periodic_table = {value: key for key, value in periodic_table.items()}
 
 # transform_coordinates = Spherical(norm=False, cat=False)
-transform_coordinates = LocalCartesian(norm=False, cat=False)
-# transform_coordinates = Distance(norm=False, cat=False)
+# transform_coordinates = LocalCartesian(norm=False, cat=False)
+transform_coordinates = Distance(norm=False, cat=False)
 
-transform_coordinates_pbc = PBCLocalCartesian(norm=False, cat=False)
-# transform_coordinates_pbc = PBCDistance(norm=False, cat=False)
+# transform_coordinates_pbc = PBCLocalCartesian(norm=False, cat=False)
+transform_coordinates_pbc = PBCDistance(norm=False, cat=False)
 
 
 class Alexandria(AbstractBaseDataset):
@@ -493,15 +495,6 @@ if __name__ == "__main__":
     var_config["node_feature_names"] = node_feature_names
     var_config["node_feature_dims"] = node_feature_dims
 
-    # Transformation to create positional and structural laplacian encoders
-    """
-    graphgps_transform = AddLaplacianEigenvectorPE(
-        k=config["NeuralNetwork"]["Architecture"]["pe_dim"],
-        attr_name="pe",
-        is_undirected=True,
-    )
-    """
-
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
 
@@ -527,12 +520,32 @@ if __name__ == "__main__":
 
     modelname = "Alexandria" if args.modelname is None else args.modelname
     if args.preonly:
+        # Transformation to create positional and structural laplacian encoders
+        # Chemical encoder
+        ChemEncoder = ChemicalFeatureEncoder()
+
+        # LPE
+        lpe_transform = AddLaplacianEigenvectorPE(
+            k=config["NeuralNetwork"]["Architecture"]["num_laplacian_eigs"],
+            attr_name="lpe",
+            is_undirected=True,
+        )
+
+        def graphgps_transform(data):
+            try:
+                data = lpe_transform(data) #lapPE
+            except:
+                return
+            data = ChemEncoder.compute_chem_features(data)
+            data = compute_topo_features(data)
+            return data
+
         ## local data
         total = Alexandria(
             os.path.join(datadir),
             config,
-            # graphgps_transform=graphgps_transform,
-            graphgps_transform=None,
+            graphgps_transform=graphgps_transform,
+            # graphgps_transform=None,
             energy_per_atom=args.energy_per_atom,
             dist=True,
         )
@@ -651,6 +664,12 @@ if __name__ == "__main__":
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
+
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = trainset[0].ce.shape[1]
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
 
     if args.ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"

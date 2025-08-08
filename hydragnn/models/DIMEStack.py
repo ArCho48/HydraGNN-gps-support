@@ -196,13 +196,17 @@ class DIMEStack(Base):
             "j": j,
             "idx_kj": idx_kj,
             "idx_ji": idx_ji,
+            "edge_index": data.edge_index
         }
-
+        
         if self.use_edge_attr:
             assert (
                 data.edge_attr is not None
             ), "Data must have edge attributes if use_edge_attributes is set."
             conv_args.update({"edge_attr": data.edge_attr})
+
+        # Batch indices necessary for masking inputs to Transformer
+        conv_args.update({"batch": data.batch})
 
         return self.feature_embedder(data, conv_args)   
 

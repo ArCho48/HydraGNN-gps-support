@@ -23,7 +23,7 @@ class FeatureEmbedder(nn.Module):
         self.use_encodings = use_encodings
         self.use_edge_attr = use_edge_attr
         self.is_edge_model = is_edge_model
-
+        
         if self.use_global_attn or self.use_encodings:
             # Compute total input dims
             node_feats = []

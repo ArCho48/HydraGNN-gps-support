@@ -3,22 +3,20 @@ import logging
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
-from mpi4py import MPI
+# from mpi4py import MPI
 import numpy as np
 from collections import OrderedDict
 from tqdm import tqdm
 from scipy.stats import pearsonr
 
 import torch
-# torch.cuda.init()
-# from mpi4py import MPI
+torch.cuda.init()
+from mpi4py import MPI
 # FIX random seed
 random_state = 0
 torch.manual_seed(random_state)
 from torch_geometric.utils import k_hop_subgraph
-from torch_geometric.transforms import AddLaplacianEigenvectorPE
-from torch_geometric.datasets import ZINC
-import torch_geometric.transforms as T
+
 
 import hydragnn
 from hydragnn.utils.model import print_model
@@ -38,17 +36,8 @@ except ImportError:
 
 def info(*args, logtype="info", sep=" "):
     getattr(logging, logtype)(sep.join(map(str, args)))
-
-def zinc_pre_transform(data):
-    data.x = data.x.float().view(-1, 1)
-    data.edge_attr = data.edge_attr.float().view(-1, 1)
-    data = lapPE(data)
-    # gps requires relative edge features, introduced rel_lapPe as edge encodings
-    source_pe = data.pe[data.edge_index[0]]
-    target_pe = data.pe[data.edge_index[1]]
-    data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
-    return data
-
+def info(*args, logtype="info", sep=" "):
+    getattr(logging, logtype)(sep.join(map(str, args)))
 
 def load_existing_model(model, path):
     path_name = os.path.join(path, path.split('/')[-1] + ".pk")
@@ -107,29 +96,53 @@ def main(dir_path, format='pickle', ddstore=False,
     # Always initialize for multi-rank training.
     world_size, world_rank = hydragnn.utils.distributed.setup_ddp()
 
-    trainset = ZINC(
-        root="dataset/zinc",
-        subset=False,
-        split="train",
-        pre_transform=zinc_pre_transform,  # TODO:change subset=True before merge
-    )
-    valset = ZINC(
-        root="dataset/zinc",
-        subset=False,
-        split="val",
-        pre_transform=zinc_pre_transform,  # TODO:change subset=True before merge
-    )
-    testset = ZINC(
-        root="dataset/zinc",
-        subset=False,
-        split="test",
-        pre_transform=zinc_pre_transform,  # TODO:change subset=True before merge
-    )
+    if format == "adios":
+        info("Adios load")
+        assert not (shmem and ddstore), "Cannot use both ddstore and shmem"
+        opt = {
+            "preload": False,
+            "shmem": shmem,
+            "ddstore": ddstore,
+            "ddstore_width": ddstore_width,
+        }
+        fname = os.path.join(os.path.dirname(__file__), "./dataset/%s.bp" % modelname)
+        trainset = AdiosDataset(fname, "trainset", comm, **opt, var_config=var_config)
+        valset = AdiosDataset(fname, "valset", comm, **opt, var_config=var_config)
+        testset = AdiosDataset(fname, "testset", comm, **opt, var_config=var_config)
+    elif format == "pickle":
+        info("Pickle load")
+        basedir = os.path.join(
+            os.path.dirname(__file__), "dataset", "%s.pickle" % modelname
+        )
+        trainset = SimplePickleDataset(
+            basedir=basedir, label="trainset", var_config=var_config
+        )
+        valset = SimplePickleDataset(
+            basedir=basedir, label="valset", var_config=var_config
+        )
+        testset = SimplePickleDataset(
+            basedir=basedir, label="testset", var_config=var_config
+        )
+        pna_deg = trainset.pna_deg
+        if ddstore:
+            opt = {"ddstore_width": ddstore_width}
+            trainset = DistDataset(trainset, "trainset", comm, **opt)
+            valset = DistDataset(valset, "valset", comm, **opt)
+            testset = DistDataset(testset, "testset", comm, **opt)
+            trainset.pna_deg = pna_deg
+    else:
+        raise NotImplementedError("No supported format: %s" % (format))
 
     info(
         "trainset,valset,testset size: %d %d %d"
         % (len(trainset), len(valset), len(testset))
     )
+
+    # Update encoding dimensions
+    config["NeuralNetwork"]["Architecture"]["lpe_dim"] = trainset[0].lpe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["pe_dim"] = trainset[0].pe.shape[1]
+    config["NeuralNetwork"]["Architecture"]["ce_dim"] = 0
+    config["NeuralNetwork"]["Architecture"]["rel_pe_dim"] = trainset[0].rel_pe.shape[1]
 
     if ddstore:
         os.environ["HYDRAGNN_AGGR_BACKEND"] = "mpi"
@@ -162,8 +175,8 @@ def main(dir_path, format='pickle', ddstore=False,
     )
     model = hydragnn.utils.distributed.get_distributed_model(model, verbosity)
 
-    # # Print details of neural network architecture
-    # print_model(model)
+    # Print details of neural network architecture
+    print_model(model)
 
     # Load model weights from checkpoint
     model = load_existing_model(model, path=dir_path)
@@ -343,7 +356,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    dir_path = 'HPO_wogps/logs/zinc_hpo_trials_0.75'
+    dir_path = 'hpo_backup/exp3/logs/zinc_hpo_trials_0.114'
 
     main(dir_path, format=args.format, ddstore=args.ddstore, 
         ddstore_width=args.ddstore_width, shmem=args.shmem)

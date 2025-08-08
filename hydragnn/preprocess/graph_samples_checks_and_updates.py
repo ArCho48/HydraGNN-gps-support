@@ -502,7 +502,7 @@ def update_predicted_values(
     data: Data
         A Data object representing a structure that has atoms.
     """
-    # pdb.set_trace()
+    data.y = data.y.reshape([-1,1]) if 'y' in data.keys() else None # in case data.y is shaped [1,tar_dim]
     output_feature = []
     data.y_loc = torch.zeros(1, len(type) + 1, dtype=torch.int64, device=data.x.device)
     for item in range(len(type)):

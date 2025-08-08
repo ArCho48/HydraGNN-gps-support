@@ -62,17 +62,6 @@ reverse_pt = reverse_dict(periodic_table)
 def get_atomic_number(symbol):
     return reverse_pt.get(symbol)
 
-# # Update each sample prior to loading.
-# def tmqm_pre_transform(data, transform):
-#     # LPE
-#     data = transform(data)
-
-#     # gps requires relative edge features, introduced rel_lapPe as edge encodings
-#     source_pe = data.pe[data.edge_index[0]]
-#     target_pe = data.pe[data.edge_index[1]]
-#     data.rel_pe = torch.abs(source_pe - target_pe)  # Compute feature-wise difference
-#     return data
-
 class tmQM(AbstractBaseDataset):
     def __init__(
         self, datadir, num_laplacian_eigs
@@ -305,7 +294,7 @@ def main(preonly=False, format='pickle', ddstore=False,
     # Always initialize for multi-rank training.
     world_size, world_rank = hydragnn.utils.distributed.setup_ddp()
 
-    log_name = f"tmqm_test_{mpnn_type}" if mpnn_type else "tmqm_test"
+    log_name = f"tmqm_test_{mpnn_type}" if mpnn_type else "tmqm_test_mpnn"
     # Enable print to log file.
     hydragnn.utils.print.print_utils.setup_log(log_name)
 
