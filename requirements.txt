@@ -6,3 +6,8 @@ tensorboard
 psutil
 sympy
 matscipy
+igraph
+mendeleev
+pyarrow 
+fastparquet
+PyCifRW
