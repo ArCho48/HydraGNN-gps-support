@@ -126,7 +126,7 @@ def main():
         ] = dim_headlayers
 
     if args.parameters["mpnn_type"] not in ["EGNN", "SchNet", "DimeNet"]:
-        trial_config["NeuralNetwork"]["Architecture"]["equivariance"] = False
+        config["NeuralNetwork"]["Architecture"]["equivariance"] = False
 
     if args.batch_size is not None:
         config["NeuralNetwork"]["Training"]["batch_size"] = args.batch_size
